@@ -1,0 +1,17 @@
+name,function,safety_score,description
+aqua,Solvent,5,Вода — основной растворитель в косметике.
+glycerin,Humectant,5,Увлажнитель, помогает сохранить влагу в коже.
+parabens,Preservative,1,Консерванты, вызывающие гормональные нарушения.
+phenoxyethanol,Preservative,3,Консервант, спорный по безопасности.
+cetearyl_alcohol,Emollient,5,Смягчитель кожи, безопасен.
+sodium_laureth_sulfate,Cleansing agent,2,Пенообразователь, может раздражать кожу.
+fragrance,Fragrance,1,Ароматизатор, может вызвать аллергию.
+tocopherol,Antioxidant,5,Витамин E, антиоксидант.
+dimethicone,Emollient,4,Силикон для разглаживания кожи.
+benzyl_alcohol,Preservative,3,Консервант, умеренно безопасен.
+ethylhexyl_methoxycinnamate,UV filter,3,Фильтр от UV-излучения, спорный.
+phenyl_trimethicone,Emollient,5,Смягчитель и кондиционер для кожи.
+sorbitol,Humectant,5,Увлажнитель.
+citric_acid,pH adjuster,4,Регулятор pH, обычно безопасен.
+retinol,Active ingredient,3,Витамин A, активный компонент ухода.
+aloe_barbadensis_leaf_extract,Soothing agent,5,Экстракт алоэ вера, успокаивает кожу.
