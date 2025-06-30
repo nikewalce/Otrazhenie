@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h1 class="app-logo">Otrazhenie</h1>
+                <p class="app-subtitle">Анализ косметики</p>
+            </div>
+            <div class="badge-container">
+                <span class="product-badge">Продуктов: 24</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="recommendations-section">
+            <h2 class="section-title">Рекомендации</h2>
+            <p class="section-subtitle">Персонализированные советы для вашей кожи</p>
+
+            <!-- Главная рекомендация -->
+            <div class="main-recommendation">
+                <div class="recommendation-card">
+                    <div class="recommendation-header">
+                        <i data-lucide="leaf" class="recommendation-icon"></i>
+                        <h3>Ваша идеальная рутина</h3>
+                    </div>
+                    <p class="recommendation-text">
+                        На основе анализа 12 продуктов мы подобрали оптимальную рутину для комбинированной кожи
+                    </p>
+                    <button class="recommendation-button">Посмотреть рутину</button>
+                </div>
+            </div>
+
+            <!-- Безопасные аналоги -->
+            <div class="safe-alternatives">
+                <h3 class="alternatives-title">Безопасные аналоги</h3>
+                
+                <div class="alternative-item">
+                    <div class="alternative-info">
+                        <h4>Сыворотка с гиалуроновой кислотой</h4>
+                        <p>от 890 ₽</p>
+                    </div>
+                    <span class="alternative-rating">9.2/10</span>
+                </div>
+                
+                <div class="alternative-item">
+                    <div class="alternative-info">
+                        <h4>Увлажняющий крем без парабенов</h4>
+                        <p>от 1 290 ₽</p>
+                    </div>
+                    <span class="alternative-rating">9.5/10</span>
+                </div>
+            </div>
+
+            <!-- Дополнительные советы -->
+            <div class="additional-tips">
+                <h3 class="tips-title">Полезные советы</h3>
+                
+                <div class="tip-item">
+                    <i data-lucide="sun" class="tip-icon"></i>
+                    <p>Используйте SPF 30+ каждый день, даже в пасмурную погоду</p>
+                </div>
+                
+                <div class="tip-item">
+                    <i data-lucide="droplet" class="tip-icon"></i>
+                    <p>Пейте не менее 2 литров воды в день для увлажнения кожи</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

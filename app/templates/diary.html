@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h1 class="app-logo">Otrazhenie</h1>
+                <p class="app-subtitle">Анализ косметики</p>
+            </div>
+            <div class="badge-container">
+                <span class="product-badge">Продуктов: 24</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="diary-section">
+            <h2 class="section-title">Косметический дневник</h2>
+            <p class="section-subtitle">История ваших сканирований и анализов</p>
+            
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-header">
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <p class="product-brand">{{ product.brand }}</p>
+                    </div>
+                    <span class="rating-badge {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}">
+                        {% if product.rating == 'safe' %}Безопасно
+                        {% elif product.rating == 'moderate' %}Умеренно
+                        {% else %}Риск{% endif %}
+                    </span>
+                </div>
+                
+                <div class="product-stats">
+                    <div class="score-container">
+                        <div class="score-value">{{ product.score }}</div>
+                        <div class="score-max">/10</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}" 
+                                 style="width: {{ product.score * 10 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="ingredients-count">
+                        <span>Ингредиентов</span>
+                        <strong>{{ product.ingredients }}</strong>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="outline-button">Подробнее</button>
+                    <button class="primary-button">В рутину</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

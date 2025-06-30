@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h1 class="app-logo">Otrazhenie</h1>
+                <p class="app-subtitle">Анализ косметики</p>
+            </div>
+            <div class="badge-container">
+                <span class="product-badge">Продуктов: 24</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="scanner-section">
+            <div class="scanner-circle">
+                <i data-lucide="camera" class="scanner-icon"></i>
+            </div>
+            <h2 class="scanner-title">Сканируйте продукт</h2>
+            <p class="scanner-description">Наведите камеру на штрих-код или введите название продукта вручную</p>
+
+            <button class="scan-button">
+                <i data-lucide="scan" class="button-icon"></i>
+                Сканировать штрих-код
+            </button>
+
+            <div class="search-container">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" placeholder="Или введите название продукта..." class="search-input">
+            </div>
+
+            <div class="info-card">
+                <div class="info-header">
+                    <i data-lucide="shield" class="info-icon"></i>
+                    <span class="info-title">Как мы анализируем?</span>
+                </div>
+                <p class="info-text">
+                    Наша база содержит информацию о более чем 50,000 ингредиентах.
+                    Анализ основан на научных исследованиях и рейтингах безопасности EWG.
+                </p>
+            </div>
+            <div class="analysis-form">
+                <h3 class="form-title">Анализ состава</h3>
+                <form method="POST" class="form-content">
+                    <div class="form-group">
+                        <label for="composition" class="form-label">Введите ингредиенты через запятую:</label>
+                        <textarea name="composition" id="composition" rows="4" class="form-input" required></textarea>
+                    </div>
+                    <button type="submit" class="analyze-button">
+                        <i data-lucide="search" class="button-icon"></i>
+                        Проанализировать состав
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

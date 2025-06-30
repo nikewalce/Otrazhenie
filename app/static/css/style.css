@@ -1,0 +1,915 @@
+/* Основные переменные */
+:root {
+    --sage-50: #f6f7f6;
+    --sage-100: #e3e7e3;
+    --sage-200: #c7d0c7;
+    --sage-300: #a0b0a0;
+    --sage-400: #7a8e7a;
+    --sage-500: #5f7260;
+    --sage-600: #4a5a4b;
+    --sage-700: #3d483e;
+    --sage-800: #333b34;
+    --sage-900: #2b312c;
+
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+
+    --rose-400: #fb7185;
+    --rose-500: #f43f5e;
+
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+
+    --radius: 12px;
+}
+
+/* Базовые стили */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--sage-50) 0%, white 50%, #d1fae5 100%);
+    color: var(--slate-800);
+    min-height: 100vh;
+}
+
+/* Контейнер приложения */
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* Шапка */
+.app-header {
+    background: white;
+    border-bottom: 1px solid var(--sage-100);
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-logo {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(to right, var(--sage-600), var(--emerald-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+}
+
+.app-subtitle {
+    font-size: 14px;
+    color: var(--slate-500);
+    margin: 4px 0 0 0;
+}
+
+.product-badge {
+    background-color: var(--emerald-100);
+    color: var(--emerald-800);
+    border: 1px solid var(--emerald-200);
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Основной контент */
+.main-content {
+    padding: 16px;
+}
+
+/* Секция сканера */
+.scanner-section {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.scanner-circle {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--sage-100) 0%, var(--sage-200) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scanner-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--sage-600);
+}
+
+.scanner-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 8px 0;
+}
+
+.scanner-description {
+    color: var(--slate-600);
+    margin: 0 0 24px 0;
+    padding: 0 16px;
+}
+
+/* Кнопки */
+.scan-button {
+    width: 100%;
+    height: 56px;
+    background-color: var(--sage-600);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scan-button:hover {
+    background-color: var(--sage-700);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.button-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+/* Поиск */
+.search-container {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--slate-400);
+    width: 20px;
+    height: 20px;
+}
+
+.search-input {
+    width: 100%;
+    height: 48px;
+    padding-left: 48px;
+    border: 1px solid var(--slate-300);
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--sage-500);
+}
+
+/* Информационная карточка */
+.info-card {
+    background-color: var(--sage-50);
+    border: 1px solid var(--sage-100);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.info-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--sage-600);
+    margin-right: 12px;
+}
+
+.info-title {
+    font-weight: 500;
+    color: var(--slate-800);
+}
+
+.info-text {
+    font-size: 14px;
+    color: var(--slate-600);
+    margin: 0;
+}
+
+/* Секция продуктов */
+.products-section {
+    margin-top: 32px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 8px 0;
+}
+
+.section-subtitle {
+    color: var(--slate-600);
+    margin: 0 0 16px 0;
+}
+
+/* Карточка продукта */
+.product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 4px 0;
+}
+
+.product-brand {
+    font-size: 14px;
+    color: var(--slate-500);
+    margin: 0;
+}
+
+.rating-badge {
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.rating-badge.safe {
+    background-color: var(--emerald-100);
+    color: var(--emerald-800);
+    border: 1px solid var(--emerald-200);
+}
+
+.rating-badge.moderate {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.rating-badge.risk {
+    background-color: var(--rose-100);
+    color: var(--rose-800);
+    border: 1px solid var(--rose-200);
+}
+
+.product-stats {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.score-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.score-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin-right: 4px;
+}
+
+.score-max {
+    font-size: 16px;
+    color: var(--slate-500);
+    margin-right: 16px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: var(--slate-100);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.progress-fill.safe {
+    background-color: var(--emerald-500);
+}
+
+.progress-fill.moderate {
+    background-color: #f59e0b;
+}
+
+.progress-fill.risk {
+    background-color: var(--rose-500);
+}
+
+.ingredients-count {
+    text-align: center;
+}
+
+.ingredients-count span {
+    display: block;
+    font-size: 12px;
+    color: var(--slate-500);
+}
+
+.ingredients-count strong {
+    font-size: 16px;
+    color: var(--slate-800);
+}
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.primary-button {
+    flex: 1;
+    height: 40px;
+    background-color: var(--sage-600);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-button:hover {
+    background-color: var(--sage-700);
+}
+
+.outline-button {
+    flex: 1;
+    height: 40px;
+    background: transparent;
+    color: var(--sage-700);
+    border: 1px solid var(--sage-200);
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.outline-button:hover {
+    background-color: var(--sage-50);
+}
+
+/* Навигация */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--sage-100);
+    padding: 8px 16px;
+    z-index: 10;
+}
+
+.nav-items-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--slate-500);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-item.active {
+    background-color: var(--sage-100);
+    color: var(--sage-700);
+}
+
+.nav-item i {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+}
+
+.nav-item span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Стили для страницы дневника */
+.diary-section {
+    padding: 16px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 8px 0;
+}
+
+.section-subtitle {
+    color: var(--slate-600);
+    margin: 0 0 16px 0;
+}
+
+/* Стили для страницы рекомендаций */
+.recommendations-section {
+    padding: 16px;
+}
+
+.main-recommendation {
+    margin-bottom: 24px;
+}
+
+.recommendation-card {
+    background: linear-gradient(135deg, var(--sage-500) 0%, var(--emerald-500) 100%);
+    border-radius: 12px;
+    padding: 16px;
+    color: white;
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.recommendation-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    color: white;
+}
+
+.recommendation-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.recommendation-text {
+    font-size: 14px;
+    margin: 0 0 16px 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.recommendation-button {
+    background: white;
+    color: var(--sage-700);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.recommendation-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Безопасные аналоги */
+.safe-alternatives {
+    margin-bottom: 24px;
+}
+
+.alternatives-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 12px 0;
+}
+
+.alternative-item {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--sage-100);
+}
+
+.alternative-info h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    color: var(--slate-800);
+}
+
+.alternative-info p {
+    font-size: 14px;
+    margin: 0;
+    color: var(--slate-500);
+}
+
+.alternative-rating {
+    background-color: var(--emerald-100);
+    color: var(--emerald-800);
+    border: 1px solid var(--emerald-200);
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Полезные советы */
+.tips-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 12px 0;
+}
+
+.tip-item {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--sage-100);
+}
+
+.tip-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    color: var(--sage-600);
+}
+
+.tip-item p {
+    font-size: 14px;
+    margin: 0;
+    color: var(--slate-700);
+}
+
+/* Стили для страницы профиля */
+.profile-section {
+    padding: 16px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.avatar-circle {
+    width: 96px;
+    height: 96px;
+    background: linear-gradient(135deg, var(--sage-400) 0%, var(--emerald-400) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-icon {
+    width: 40px;
+    height: 40px;
+    color: white;
+}
+
+.profile-info {
+    text-align: center;
+}
+
+.profile-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: var(--slate-800);
+}
+
+.profile-type {
+    font-size: 16px;
+    color: var(--slate-500);
+    margin: 0;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--sage-100);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--slate-800);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info-label {
+    color: var(--slate-600);
+}
+
+.info-value {
+    font-weight: 500;
+    color: var(--slate-800);
+}
+
+.ingredients-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ingredient-badge {
+    background-color: var(--rose-100);
+    color: var(--rose-800);
+    border: 1px solid var(--rose-200);
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-button {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    background: transparent;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.setting-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    color: var(--sage-600);
+}
+
+.setting-button span {
+    flex: 1;
+    text-align: left;
+    color: var(--slate-800);
+    font-size: 14px;
+}
+
+.arrow-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--slate-400);
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--rose-200);
+    border-radius: 8px;
+    color: var(--rose-600);
+    font-weight: 500;
+    margin-top: 24px;
+    cursor: pointer;
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+}
+
+/* Стили для страницы результатов */
+.results-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.results-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--slate-800);
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.composition-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--sage-100);
+}
+
+.composition-section h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--slate-800);
+}
+
+.composition-text {
+    font-size: 16px;
+    color: var(--slate-600);
+    margin: 0;
+}
+
+.analysis-table {
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.ingredients-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.ingredients-table th {
+    background-color: var(--sage-50);
+    color: var(--slate-800);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--sage-100);
+}
+
+.ingredients-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--sage-100);
+    color: var(--slate-700);
+}
+
+.ingredients-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Цвета для оценки безопасности */
+.score-safe {
+    background-color: #d4edda;
+}
+
+.score-warning {
+    background-color: #fff3cd;
+}
+
+.score-danger {
+    background-color: #f8d7da;
+}
+
+.score-unknown {
+    background-color: #e2e3e5;
+}
+
+/* Кнопка назад */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: white;
+    color: var(--sage-700);
+    border: 1px solid var(--sage-200);
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: var(--sage-50);
+    color: var(--sage-800);
+}
+
+.button-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+}
+
+/* Стили для формы анализа */
+.analysis-form {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 24px;
+    border: 1px solid var(--sage-100);
+}
+
+.form-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--slate-800);
+    margin: 0 0 16px 0;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--slate-800);
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--sage-200);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+}
+
+.analyze-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--sage-600);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.analyze-button:hover {
+    background-color: var(--sage-700);
+}

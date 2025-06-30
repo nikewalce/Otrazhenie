@@ -1,0 +1,7 @@
+*.docx
+.idea
+.venv
+node_modules
+package.json
+package-lock.json
+node_modules
