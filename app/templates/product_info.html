@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h1 class="app-logo">Otrazhenie</h1>
+                <p class="app-subtitle">Информация о продукте</p>
+            </div>
+            <div class="badge-container">
+                <span class="product-badge">Штрих-код: {{ product.barcode }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="product-card">
+            <!-- Блок с основной информацией -->
+            <div class="product-header">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                <div class="product-image-placeholder">
+                    <i data-lucide="package" class="placeholder-icon"></i>
+                </div>
+                {% endif %}
+
+                <div class="product-info">
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <p class="product-brand">{{ product.brand or 'Бренд не указан' }}</p>
+
+                    {% if product.category %}
+                    <div class="product-category">
+                        <i data-lucide="tag"></i>
+                        <span>{{ product.category }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Блок с составом -->
+            <div class="product-section">
+                <h3 class="section-title">
+                    <i data-lucide="list"></i>
+                    <span>Состав продукта</span>
+                </h3>
+
+                {% if product.ingredients %}
+                <div class="composition-box">
+                    {{ product.ingredients }}
+                </div>
+                <a href="{{ url_for('index', composition=product.ingredients) }}" class="action-button">
+                    <i data-lucide="search"></i>
+                    Анализировать состав
+                </a>
+                {% else %}
+                <div class="empty-state">
+                    <i data-lucide="alert-circle"></i>
+                    <p>Состав не указан</p>
+                </div>
+                <form method="POST" action="{{ url_for('manual_analysis') }}" class="manual-form">
+                    <input type="hidden" name="product_name" value="{{ product.name }}">
+                    <textarea name="composition" placeholder="Введите состав вручную..." required></textarea>
+                    <button type="submit" class="action-button">
+                        <i data-lucide="check"></i>
+                        Отправить на анализ
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Дополнительная информация -->
+            {% if product.additional_info %}
+            <div class="product-section">
+                <h3 class="section-title">
+                    <i data-lucide="info"></i>
+                    <span>Дополнительная информация</span>
+                </h3>
+                <div class="additional-info">
+                    {{ product.additional_info }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<script>
+    // Инициализация иконок Lucide
+    lucide.createIcons();
+</script>
+{% endblock %}

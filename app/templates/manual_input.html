@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- ... header ... -->
+    
+    <main class="main-content">
+        <div class="manual-input-section">
+            <h2>Продукт "{{ product_name }}" не найден</h2>
+            <p>Введите состав вручную:</p>
+            
+            <form method="POST" action="{{ url_for('analyze_composition') }}">
+                <input type="hidden" name="product_name" value="{{ product_name }}">
+                <textarea name="composition" class="form-input" rows="4" required></textarea>
+                <button type="submit" class="analyze-button">Анализировать</button>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

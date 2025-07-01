@@ -1,5 +1,31 @@
 name,function,safety_score,description
 aqua,Solvent,5,Вода — основной растворитель в косметике.
+water,Solvent,5,Альтернативное название воды, используется как база в косметических формулах.
+glycerin,Humectant,5,Увлажнитель, помогает сохранить влагу в коже.
+cetearyl alcohol,Emulsifier|Emollient|Viscosity Controlling,3,Смесь цетилового и стеарилового спиртов, придает густоту и смягчает кожу.
+caprylic,Emollient|Solvent,1,Жирная кислота, используется как смягчающий компонент и растворитель.
+capric triglyceride,Emollient|Solvent,1,Производное кокосового масла, смягчает кожу и улучшает текстуру средства.
+cetyl alcohol,Emulsifier|Emollient,1,Жирный спирт, стабилизирует эмульсии и смягчает кожу.
+ceteareth-20,Surfactant|Emulsifier,3,Эмульгатор, помогает смешивать воду и масла.
+petroleum,Emollient|Occlusive,4,Создает защитную пленку на коже, предотвращая потерю влаги.
+potassium phosphate,pH Adjuster,1,Регулирует кислотность средства.
+ceramide np,Skin-Conditioning Agent,1,Восстанавливает кожный барьер, удерживает влагу.
+ceramide ap,Skin-Conditioning Agent,1,Укрепляет защитную функцию кожи.
+ceramide eop,Skin-Conditioning Agent,1,Поддерживает увлажнение и эластичность кожи.
+carbomer,Viscosity Controlling,1,Загуститель, придает гелевую текстуру.
+dimethicone,Emollient|Antifoaming,1,Силикон, смягчает кожу и улучшает скольжение средства.
+behentrimonium methosulfate,Antistatic|Conditioning,3,Кондиционирующий агент, смягчает волосы и кожу.
+cetearyl glucoside,Emulsifier,1,Мягкий эмульгатор на основе сахаров.
+lauroyl lactylate,Emulsifier|Surfactant,1,Помогает стабилизировать текстуру продукта.
+sodium hyaluronate,Humectant,1,Гиалуроновая кислота, интенсивно увлажняет кожу.
+cholesterol,Emollient|Skin-Conditioning Agent,1,Поддерживает липидный барьер кожи.
+phenoxyethanol,Preservative,4,Консервант, предотвращает рост бактерий.
+sodium edta,Chelating Agent,1,Стабилизирует формулу, связывает ионы металлов.
+dipotassium phosphate,pH Adjuster,1,Регулирует pH средства.
+tocopherol,Antioxidant,1,Витамин E, защищает кожу от окисления.
+phytosphingosine,Skin-Conditioning Agent,5,Укрепляет кожный барьер, обладает противовоспалительным эффектом.
+xanthan gum,Viscosity Controlling,1,Натуральный загуститель, улучшает текстуру.
+ethylhexylglycerin,Preservative Booster|Skin-Conditioning Agent,1,Усиливает действие консервантов, смягчает кожу.
 glycerin,Humectant,5,Увлажнитель, помогает сохранить влагу в коже.
 parabens,Preservative,1,Консерванты, вызывающие гормональные нарушения.
 phenoxyethanol,Preservative,3,Консервант, спорный по безопасности.

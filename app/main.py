@@ -1,51 +1,11 @@
-# from fastapi import FastAPI, Request, Form
-# from fastapi.responses import HTMLResponse
-# from fastapi.staticfiles import StaticFiles
-# from fastapi.templating import Jinja2Templates
-# import csv
-# import os
-#
-# app = FastAPI()
-#
-# # Подключение статических файлов и шаблонов
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
-# templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-#
-# # Загрузка базы ингредиентов (CSV)
-# INCI_DB = {}
-# with open(os.path.join(BASE_DIR, "analyzers/inci_data.csv"), encoding='utf-8') as f:
-#     reader = csv.DictReader(f)
-#     for row in reader:
-#         INCI_DB[row['name'].strip().lower()] = row
-#
-# @app.get("/", response_class=HTMLResponse)
-# def home(request: Request):
-#     return templates.TemplateResponse("home.html", {"request": request})
-#
-# @app.post("/analyze", response_class=HTMLResponse)
-# def analyze(request: Request, composition: str = Form(...)):
-#     ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
-#     analysis = []
-#
-#     for name in ingredients:
-#         data = INCI_DB.get(name, {
-#             'name': name,
-#             'function': 'Unknown',
-#             'safety_score': '?',
-#             'description': 'Not found in database'
-#         })
-#         analysis.append(data)
-#
-#     return templates.TemplateResponse("results.html", {
-#         "request": request,
-#         "composition": composition,
-#         "analysis": analysis
-#     })
-
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+import cv2
+import pyzbar.pyzbar as pyzbar
+import numpy as np
 import csv
 import os
+from analyzers.qr_reader import get_cosmetic_info
+from flask import flash
 
 app = Flask(__name__)
 
@@ -88,6 +48,74 @@ def index():
                                active_tab='scanner')
 
     return render_template("index.html", active_tab='scanner')
+
+
+@app.route("/handle-scan", methods=['POST'])
+def handle_scan():
+    if 'barcode_image' not in request.files:
+        return redirect(url_for('index'))
+
+    file = request.files['barcode_image']
+    if file.filename == '':
+        return redirect(url_for('index'))
+
+    # Здесь будет обработка изображения
+    print("Получено изображение для сканирования:", file.filename)
+    return redirect(url_for('index'))
+
+
+@app.route("/handle-search", methods=['POST'])
+def handle_search():
+    input_data = request.form.get('product_name', '').strip()
+
+    # Проверяем, является ли ввод штрих-кодом (EAN-13 обычно 13 цифр)
+    if input_data.isdigit() and len(input_data) >= 8:
+        try:
+            product_info = get_cosmetic_info(input_data)
+
+            if product_info:
+                # Если нашли продукт - рендерим страницу с информацией
+                return render_template("product_info.html",
+                                       product=product_info,
+                                       active_tab='scanner')
+
+            flash("Продукт с таким штрих-кодом не найден", "warning")
+        except Exception as e:
+            flash(f"Ошибка при поиске продукта: {str(e)}", "error")
+
+    return redirect(url_for('index'))
+
+@app.route("/manual-analysis", methods=['POST'])
+def manual_analysis():
+    product_name = request.form.get('product_name', '').strip()
+    composition = request.form.get('composition', '').strip()
+
+    if not composition:
+        flash("Пожалуйста, введите состав продукта", "error")
+        return redirect(url_for('index'))
+
+    return redirect(url_for('index', composition=composition))
+
+# Вспомогательные функции
+def decode_barcode(image_data):
+    """Декодирует штрих-код из изображения"""
+    nparr = np.frombuffer(image_data, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    barcodes = pyzbar.decode(gray)
+    return barcodes[0].data.decode('utf-8') if barcodes else None
+
+
+def lookup_product_by_barcode(barcode):
+    """Заглушка: поиск продукта по штрих-коду"""
+    # Реализуйте подключение к API или вашей БД
+    return {'id': '123', 'name': 'Пример продукта', 'ingredients': 'aqua,parfum'}
+
+
+def search_product_by_name(name):
+    """Заглушка: поиск продукта по названию"""
+    # Реализуйте поиск в вашей базе данных
+    return {'id': '456', 'name': name, 'ingredients': 'aqua,glycerin'}
 
 
 @app.route("/diary")
