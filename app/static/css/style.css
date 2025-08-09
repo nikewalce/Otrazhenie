@@ -3,13 +3,9 @@
     --sage-50: #f6f7f6;
     --sage-100: #e3e7e3;
     --sage-200: #c7d0c7;
-    --sage-300: #a0b0a0;
-    --sage-400: #7a8e7a;
     --sage-500: #5f7260;
     --sage-600: #4a5a4b;
     --sage-700: #3d483e;
-    --sage-800: #333b34;
-    --sage-900: #2b312c;
 
     --emerald-400: #34d399;
     --emerald-500: #10b981;
@@ -24,8 +20,6 @@
     --slate-600: #475569;
     --slate-700: #334155;
     --slate-800: #1e293b;
-
-    --radius: 12px;
 }
 
 /* Базовые стили */
@@ -77,16 +71,6 @@ body {
     font-size: 14px;
     color: var(--slate-500);
     margin: 4px 0 0 0;
-}
-
-.product-badge {
-    background-color: var(--emerald-100);
-    color: var(--emerald-800);
-    border: 1px solid var(--emerald-200);
-    padding: 4px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 500;
 }
 
 /* Основной контент */
@@ -222,11 +206,7 @@ body {
     margin: 0;
 }
 
-/* Секция продуктов */
-.products-section {
-    margin-top: 32px;
-}
-
+/* Заголовки секций */
 .section-title {
     font-size: 24px;
     font-weight: 600;
@@ -276,9 +256,9 @@ body {
 }
 
 .rating-badge.safe {
-    background-color: var(--emerald-100);
-    color: var(--emerald-800);
-    border: 1px solid var(--emerald-200);
+    background-color: var(--emerald-400);
+    color: var(--emerald-600);
+    border: 1px solid var(--emerald-500);
 }
 
 .rating-badge.moderate {
@@ -288,9 +268,9 @@ body {
 }
 
 .rating-badge.risk {
-    background-color: var(--rose-100);
-    color: var(--rose-800);
-    border: 1px solid var(--rose-200);
+    background-color: var(--rose-400);
+    color: #ffffff;
+    border: 1px solid var(--rose-500);
 }
 
 .product-stats {
@@ -321,7 +301,7 @@ body {
 .progress-bar {
     flex: 1;
     height: 8px;
-    background-color: var(--slate-100);
+    background-color: var(--slate-300);
     border-radius: 9999px;
     overflow: hidden;
 }
@@ -446,18 +426,6 @@ body {
     padding: 16px;
 }
 
-.section-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--slate-800);
-    margin: 0 0 8px 0;
-}
-
-.section-subtitle {
-    color: var(--slate-600);
-    margin: 0 0 16px 0;
-}
-
 /* Стили для страницы рекомендаций */
 .recommendations-section {
     padding: 16px;
@@ -499,618 +467,100 @@ body {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.recommendation-button {
-    background: white;
-    color: var(--sage-700);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/*Анализ состава*/
+.analysis-form {
+    background-color: var(--sage-50);
+    border: 1px solid var(--sage-100);
+    border-radius: 12px;
+    padding: 24px 20px;
+    margin-top: 32px;
+    box-shadow: 0 4px 8px rgba(95, 114, 96, 0.1);
 }
 
-.recommendation-button:hover {
-    background: rgba(255, 255, 255, 0.9);
-}
-
-/* Безопасные аналоги */
-.safe-alternatives {
-    margin-bottom: 24px;
-}
-
-.alternatives-title {
-    font-size: 18px;
+.analysis-form .form-title {
+    font-size: 20px;
     font-weight: 600;
     color: var(--slate-800);
-    margin: 0 0 12px 0;
-}
-
-.alternative-item {
-    background: white;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid var(--sage-100);
-}
-
-.alternative-info h4 {
-    font-size: 16px;
-    font-weight: 500;
-    margin: 0 0 4px 0;
-    color: var(--slate-800);
-}
-
-.alternative-info p {
-    font-size: 14px;
-    margin: 0;
-    color: var(--slate-500);
-}
-
-.alternative-rating {
-    background-color: var(--emerald-100);
-    color: var(--emerald-800);
-    border: 1px solid var(--emerald-200);
-    padding: 4px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-/* Полезные советы */
-.tips-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--slate-800);
-    margin: 0 0 12px 0;
-}
-
-.tip-item {
-    background: white;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    border: 1px solid var(--sage-100);
-}
-
-.tip-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
-    color: var(--sage-600);
-}
-
-.tip-item p {
-    font-size: 14px;
-    margin: 0;
-    color: var(--slate-700);
-}
-
-/* Стили для страницы профиля */
-.profile-section {
-    padding: 16px;
-}
-
-.profile-header {
-    text-align: center;
-    margin-bottom: 24px;
-}
-
-.avatar-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
-}
-
-.avatar-circle {
-    width: 96px;
-    height: 96px;
-    background: linear-gradient(135deg, var(--sage-400) 0%, var(--emerald-400) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.avatar-icon {
-    width: 40px;
-    height: 40px;
-    color: white;
-}
-
-.profile-info {
+    margin-bottom: 20px;
     text-align: center;
 }
 
-.profile-name {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 4px 0;
-    color: var(--slate-800);
-}
-
-.profile-type {
-    font-size: 16px;
-    color: var(--slate-500);
-    margin: 0;
-}
-
-.profile-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    border: 1px solid var(--sage-100);
-}
-
-.card-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-    color: var(--slate-800);
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-}
-
-.info-item {
-    display: flex;
-    justify-content: space-between;
-}
-
-.info-label {
-    color: var(--slate-600);
-}
-
-.info-value {
-    font-weight: 500;
-    color: var(--slate-800);
-}
-
-.ingredients-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.ingredient-badge {
-    background-color: var(--rose-100);
-    color: var(--rose-800);
-    border: 1px solid var(--rose-200);
-    padding: 4px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.settings-list {
+.analysis-form .form-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-}
-
-.setting-button {
-    display: flex;
-    align-items: center;
-    padding: 12px 0;
-    background: transparent;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-}
-
-.setting-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
-    color: var(--sage-600);
-}
-
-.setting-button span {
-    flex: 1;
-    text-align: left;
-    color: var(--slate-800);
-    font-size: 14px;
-}
-
-.arrow-icon {
-    width: 16px;
-    height: 16px;
-    color: var(--slate-400);
-}
-
-.logout-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: 1px solid var(--rose-200);
-    border-radius: 8px;
-    color: var(--rose-600);
-    font-weight: 500;
-    margin-top: 24px;
-    cursor: pointer;
-}
-
-.logout-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-}
-
-/* Стили для страницы результатов */
-.results-container {
-    padding: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.results-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--slate-800);
-    text-align: center;
-    margin-bottom: 24px;
-}
-
-.composition-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 24px;
-    border: 1px solid var(--sage-100);
-}
-
-.composition-section h5 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: var(--slate-800);
-}
-
-.composition-text {
-    font-size: 16px;
-    color: var(--slate-600);
-    margin: 0;
-}
-
-.analysis-table {
-    overflow-x: auto;
-    margin-bottom: 24px;
-}
-
-.ingredients-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.ingredients-table th {
-    background-color: var(--sage-50);
-    color: var(--slate-800);
-    font-weight: 600;
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 2px solid var(--sage-100);
-}
-
-.ingredients-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--sage-100);
-    color: var(--slate-700);
-}
-
-.ingredients-table tr:last-child td {
-    border-bottom: none;
-}
-
-/* Цвета для оценки безопасности */
-.score-safe {
-    background-color: #d4edda;
-}
-
-.score-warning {
-    background-color: #fff3cd;
-}
-
-.score-danger {
-    background-color: #f8d7da;
-}
-
-.score-unknown {
-    background-color: #e2e3e5;
-}
-
-/* Кнопка назад */
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    padding: 12px 24px;
-    background-color: white;
-    color: var(--sage-700);
-    border: 1px solid var(--sage-200);
-    border-radius: 8px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.back-button:hover {
-    background-color: var(--sage-50);
-    color: var(--sage-800);
-}
-
-.button-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-}
-
-/* Стили для формы анализа */
-.analysis-form {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 24px;
-    border: 1px solid var(--sage-100);
-}
-
-.form-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--slate-800);
-    margin: 0 0 16px 0;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--slate-800);
-}
-
-.form-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--sage-200);
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    resize: vertical;
-}
-
-.analyze-button {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--sage-600);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.analyze-button:hover {
-    background-color: var(--sage-700);
-}
-
-/* Стили для форм */
-.search-form {
-    margin: 16px 0;
-}
-
-.manual-input-section {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--sage-200);
-    border-radius: 8px;
-    margin: 12px 0;
-}
-
-.analyze-button {
-    background-color: var(--sage-600);
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-/* Стили для страницы информации о продукте */
-.product-info {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px;
-    text-align: center;
-}
-
-.product-image {
-    max-width: 200px;
-    max-height: 200px;
-    margin: 0 auto 20px;
-    display: block;
-    border-radius: 8px;
-}
-
-.product-brand {
-    color: var(--slate-500);
-    margin-bottom: 20px;
-}
-
-.ingredients-section {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--sage-100);
-}
-
-.no-ingredients textarea {
-    width: 100%;
-    min-height: 100px;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid var(--sage-200);
-    border-radius: 8px;
-}
-/* Стили для страницы продукта */
-.product-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.product-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
     gap: 16px;
 }
 
-.product-image {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    border-radius: 8px;
-    border: 1px solid var(--sage-100);
-}
-
-.product-image-placeholder {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--sage-50);
-    border-radius: 8px;
-}
-
-.placeholder-icon {
-    width: 40px;
-    height: 40px;
-    color: var(--sage-400);
-}
-
-.product-info {
-    flex: 1;
-}
-
-.product-name {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 4px 0;
-    color: var(--slate-800);
-}
-
-.product-brand {
-    font-size: 14px;
-    color: var(--slate-500);
-    margin: 0 0 8px 0;
-}
-
-.product-category {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--slate-600);
-}
-
-.product-section {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--sage-100);
-}
-
-.section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--slate-800);
-    margin: 0 0 12px 0;
-}
-
-.composition-box {
-    background: var(--sage-50);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--slate-700);
-    margin-bottom: 16px;
-    white-space: pre-wrap;
-}
-
-.empty-state {
+.analysis-form .form-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 20px;
-    color: var(--slate-500);
 }
 
-.manual-form textarea {
-    width: 100%;
-    min-height: 120px;
-    padding: 12px;
-    border: 1px solid var(--sage-200);
-    border-radius: 8px;
-    margin: 12px 0;
-    font-family: 'Inter', sans-serif;
+.analysis-form .form-label {
+    font-weight: 500;
+    color: var(--sage-700);
+    margin-bottom: 8px;
+    user-select: none;
 }
 
-.action-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 12px;
+.analysis-form .form-input {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--sage-200);
+    resize: vertical;
+    min-height: 96px;
+    color: var(--slate-700);
+    transition: border-color 0.3s ease;
+}
+
+.analysis-form .form-input:focus {
+    outline: none;
+    border-color: var(--emerald-500);
+    box-shadow: 0 0 8px var(--emerald-400);
+}
+
+.analysis-form .analyze-button {
     background-color: var(--sage-600);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 500;
+    border-radius: 12px;
+    height: 52px;
+    font-weight: 600;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 8px;
 }
 
-.action-button:hover {
+.analysis-form .analyze-button:hover {
     background-color: var(--sage-700);
+    box-shadow: 0 10px 15px rgba(15, 70, 40, 0.15);
 }
 
-.additional-info {
-    font-size: 14px;
-    color: var(--slate-700);
-    line-height: 1.5;
+.analysis-form .button-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/*badge-container*/
+.badge-container {
+    display: inline-block;
+    margin-left: 12px;
+}
+
+.product-badge {
+    font-weight: bold;
+    font-size: 16px;
+    background: linear-gradient(to right, var(--sage-600), var(--emerald-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    user-select: none;
 }

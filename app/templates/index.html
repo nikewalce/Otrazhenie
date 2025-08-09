@@ -2,65 +2,77 @@
 
 {% block content %}
 <div class="app-container">
-    <!-- Header -->
+    <!-- Шапка приложения -->
     <header class="app-header">
         <div class="header-content">
+            <!-- Логотип и название -->
             <div class="logo-container">
                 <h1 class="app-logo">Otrazhenie</h1>
                 <p class="app-subtitle">Анализ косметики</p>
             </div>
+            <!-- Бейдж с количеством продуктов -->
             <div class="badge-container">
-                <span class="product-badge">Продуктов: 24</span>
+                <span class="product-badge">Продуктов: {{ product_count }}</span>
             </div>
         </div>
     </header>
 
+    <!-- Вывод flash-сообщений, если они есть -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="flash-messages">
         {% for category, message in messages %}
+        <!-- Класс категории позволяет стилизовать разные типы сообщений -->
         <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
     </div>
     {% endif %}
     {% endwith %}
 
-    <!-- Основной контент -->
+    <!-- Основной контент страницы -->
     <main class="main-content">
         <div class="scanner-section">
+            <!-- Круглый элемент с иконкой камеры -->
             <div class="scanner-circle">
                 <i data-lucide="camera" class="scanner-icon"></i>
             </div>
+
+            <!-- Заголовок и описание секции сканирования -->
             <h2 class="scanner-title">Сканируйте продукт</h2>
             <p class="scanner-description">Наведите камеру на штрих-код или введите название продукта вручную</p>
 
-            <!-- Форма для сканирования штрих-кода (видимая версия) -->
+            <!-- Секция с формами для сканирования и поиска -->
             <div class="scan-section">
+                <!-- Форма для загрузки изображения со штрих-кодом -->
                 <form id="barcode-form" method="POST" action="{{ url_for('handle_scan') }}" enctype="multipart/form-data">
                     <div class="file-input-wrapper">
-                        <button type="button" class="scan-button">
+                        <!-- Кнопка для открытия выбора файла -->
+                        <button type="button" class="scan-button" id="scan-trigger">
                             <i data-lucide="scan" class="button-icon"></i>
                             Сканировать штрих-код
                         </button>
+                        <!-- Скрытый input для выбора фото с камеры или из файлов -->
                         <input type="file" id="barcode-input" name="barcode_image"
-                               accept="image/*" capture="environment" class="file-input">
+                               accept="image/*" capture="environment" class="file-input-hidden">
                     </div>
                 </form>
 
                 <p class="scan-hint">или</p>
 
-                <!-- Форма для поиска по названию -->
+                <!-- Форма для поиска продукта по названию -->
                 <form method="POST" action="{{ url_for('handle_search') }}" class="search-form">
                     <div class="search-container">
+                        <!-- Иконка поиска слева в поле -->
                         <i data-lucide="search" class="search-icon"></i>
+                        <!-- Текстовое поле для ввода названия продукта -->
                         <input type="text" name="product_name"
-                               placeholder="Введите название продукта..."
+                               placeholder="Введите название продукта и нажмите Enter..."
                                class="search-input" required>
                     </div>
                 </form>
             </div>
 
-
+            <!-- Информационная карточка с пояснением анализа -->
             <div class="info-card">
                 <div class="info-header">
                     <i data-lucide="shield" class="info-icon"></i>
@@ -71,6 +83,8 @@
                     Анализ основан на научных исследованиях и рейтингах безопасности EWG.
                 </p>
             </div>
+
+            <!-- Форма для ручного ввода состава для анализа -->
             <div class="analysis-form">
                 <h3 class="form-title">Анализ состава</h3>
                 <form method="POST" class="form-content">
@@ -88,17 +102,30 @@
     </main>
 </div>
 
-<script>
-// Активация иконок Lucide
-document.addEventListener('DOMContentLoaded', function() {
-    lucide.createIcons();
+<!-- Стили для скрытого input выбора файла (чтобы показать кастомную кнопку) -->
+<style>
+.file-input-hidden {
+    position: absolute;
+    left: -9999px; /* Прячем input за пределы экрана */
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+</style>
 
-    // Обработчик кнопки сканирования
-    document.querySelector('.scan-button').addEventListener('click', function() {
+<!-- Скрипт для инициализации иконок lucide и управления загрузкой файла -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons(); // Инициализируем иконки lucide
+
+    // Клик по кнопке открывает скрытый input выбора файла
+    document.getElementById('scan-trigger').addEventListener('click', function() {
         document.getElementById('barcode-input').click();
     });
 
-    // Автоотправка формы при выборе изображения
+    // При выборе файла автоматически отправляем форму
     document.getElementById('barcode-input').addEventListener('change', function() {
         if (this.files.length > 0) {
             document.getElementById('barcode-form').submit();
@@ -106,4 +133,39 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<!-- Всплывающий алерт -->
+{% if alert_message %}
+    <div id="alert-box" class="alert alert-{{ alert_type }}" role="alert" style="
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050;
+      background: linear-gradient(135deg, var(--sage-600), var(--emerald-600));
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(15, 70, 40, 0.25);
+      max-width: 320px;
+      user-select: none;
+      cursor: default;">
+      {{ alert_message }}
+    </div>
+
+    <script>
+      // Автоматическое скрытие алерта через 3 секунды
+      setTimeout(() => {
+        const alertBox = document.getElementById('alert-box');
+        if (alertBox) {
+          alertBox.style.transition = 'opacity 0.5s ease-out';
+          alertBox.style.opacity = '0';
+          setTimeout(() => alertBox.remove(), 500);
+        }
+      }, 3000);
+    </script>
+{% endif %}
+
 {% endblock %}
