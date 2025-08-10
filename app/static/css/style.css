@@ -21,6 +21,124 @@
     --slate-700: #334155;
     --slate-800: #1e293b;
 }
+/* ---------- Контейнер (стековая компоновка) ---------- */
+.product-header {
+  display: flex;               /* используем flexbox */
+  flex-direction: column;      /* стек по вертикали: сначала изображение, потом текст */
+  align-items: center;         /* центрируем элементы по горизонтали */
+  gap: 12px;                   /* расстояние между картинкой и текстом */
+  padding: 16px 12px;          /* внутренние отступы */
+  background: transparent;
+}
+
+/* ---------- Изображение и плейсхолдер: одинаковый "короб"" ---------- */
+.product-image,
+.product-image-placeholder {
+  width: clamp(96px, 24vw, 160px);   /* адаптивная ширина: от 96px до 160px */
+  height: clamp(96px, 24vw, 160px);  /* высота = ширина (квадратный блок) */
+  border-radius: 12px;               /* закруглённые углы */
+  background: var(--sage-50);        /* мягкий фон, если картинка прозрачная */
+  border: 1px solid var(--sage-100); /* тонкая рамка */
+  display: flex;                     /* чтобы плейсхолдер-иконка центрировалась */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(15, 70, 40, 0.06); /* лёгкая тень */
+  transition: transform .18s ease, box-shadow .18s ease; /* плавность при hover */
+  overflow: hidden;                  /* обрезает лишнее у изображения */
+}
+
+/* если <img class="product-image"> — убедимся, что подстраивается корректно */
+.product-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* сохраняет пропорции, помещая картинку внутрь "короба" */
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column; /* Лейбл сверху, значение снизу */
+    margin-bottom: 30px;
+}
+
+.info-label-row {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Расстояние между иконкой и текстом */
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 4px; /* Отступ от значения */
+}
+
+.info-label {
+    font-size: 12px;
+    color: var(--slate-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+
+/* ---------- Стили для иконки плейсхолдера (lucide) ---------- */
+.placeholder-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--sage-600); /* цвет иконки */
+}
+
+/* ---------- Блок с текстовой информацией: центрируем текст ---------- */
+.product-info {
+  text-align: center;   /* важно: чтобы все строки были по центру под изображением */
+  max-width: 420px;     /* ограничение ширины — красиво смотрится */
+}
+
+/* Заголовок продукта */
+.product-name,
+.product-brand {
+    margin: 0;
+    font-size: 14px;
+    font-weight: normal;
+    color: #222;
+}
+
+/* Категория — маленькая "таблетка" */
+.product-category {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: var(--sage-50);
+  border: 1px solid var(--sage-100);
+  color: var(--slate-600);
+  font-size: 13px;
+}
+
+/* Если в category есть SVG-иконка, чтобы она наследовала цвет */
+.product-category svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* ---------- Небольшая адаптивность: на больших экранах можно вернуть строку ---------- */
+@media (min-width: 880px) {
+  .product-header {
+    flex-direction: row;   /* на широких экранах — картинка слева, текст справа */
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .product-info {
+    text-align: left;
+  }
+}
+
+
+
 
 /* Базовые стили */
 body {
