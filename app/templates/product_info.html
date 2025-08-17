@@ -30,21 +30,20 @@
 
                 <div class="product-info">
                     <div class="info-block">
-                        <div class="info-label-row">
+                        <span class="info-label">Название</span>
+                        <div class="product-category">
                             <i data-lucide="info"></i>
-                            <span>Название</span>
+                            <span>{{ product.name }}</span>
                         </div>
-                        <h2 class="product-name">{{ product.name }}</h2>
                     </div>
 
                     <div class="info-block">
-                        <div class="info-label-row">
+                        <span class="info-label">Бренд</span>
+                        <div class="product-category">
                             <i data-lucide="factory"></i>
-                            <span>Бренд</span>
+                            <span>{{ product.brand or 'Бренд не указан' }}</span>
                         </div>
-                        <p class="product-brand">{{ product.brand or 'Бренд не указан' }}</p>
                     </div>
-
 
                     {% if product.category %}
                     <div class="info-block">
@@ -96,8 +95,19 @@
                     <i data-lucide="info"></i>
                     <span>Дополнительная информация</span>
                 </h3>
+                {% set icons = {
+                    'Упаковка': 'package',
+                    'Вес': 'scale',
+                    'Страна': 'globe'
+                } %}
                 <div class="additional-info">
-                    {{ product.additional_info }}
+                  {% for key, value in product.additional_info.items() %}
+                    <p class="additional-info-dict">
+                        <i data-lucide="{{ icons.get(key, 'info') }}"></i>
+                        <span class="info-key">{{ key }}:</span>
+                        <span class="info-value">{{ value }}</span>
+                    </p>
+                  {% endfor %}
                 </div>
             </div>
             {% endif %}

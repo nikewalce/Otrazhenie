@@ -61,17 +61,8 @@
     margin-bottom: 30px;
 }
 
-.info-label-row {
-    display: flex;
-    align-items: center;
-    gap: 6px; /* Расстояние между иконкой и текстом */
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 4px; /* Отступ от значения */
-}
-
 .info-label {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--slate-400);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -93,15 +84,6 @@
   max-width: 420px;     /* ограничение ширины — красиво смотрится */
 }
 
-/* Заголовок продукта */
-.product-name,
-.product-brand {
-    margin: 0;
-    font-size: 14px;
-    font-weight: normal;
-    color: #222;
-}
-
 /* Категория — маленькая "таблетка" */
 .product-category {
   display: inline-flex;
@@ -113,13 +95,13 @@
   background: var(--sage-50);
   border: 1px solid var(--sage-100);
   color: var(--slate-600);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* Если в category есть SVG-иконка, чтобы она наследовала цвет */
 .product-category svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
   fill: none;
 }
@@ -324,9 +306,51 @@ body {
     margin: 0;
 }
 
+/*Ингридиенты продукта*/
+.composition-box{
+    font-size: 14px;
+    text-align: justify;
+    margin: 0 0 20px 0;
+}
+
+/*Ссылка анализировать состав*/
+.action-button{
+    font-size: 14px;
+    margin: 8px 0 20px 0;
+    background-color: var(--sage-600);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    height: 35px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.action-button:hover{
+    background-color: var(--sage-700);
+    box-shadow: 0 10px 15px rgba(15, 70, 40, 0.15);
+}
+
+/*Дополнительная информация: ключ*/
+.info-key {
+  margin-right: 5px;
+}
+/*Дополнительная информация: p*/
+.additional-info-dict{
+    margin: 0 0 5px 0;
+}
+
+.additional-info{
+    font-size: 14px;
+}
+
 /* Заголовки секций */
 .section-title {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--slate-800);
     margin: 0 0 8px 0;
@@ -335,6 +359,11 @@ body {
 .section-subtitle {
     color: var(--slate-600);
     margin: 0 0 16px 0;
+}
+
+/*Состав продукта*/
+.product-section{
+    margin: 0 0 20px 0;
 }
 
 /* Карточка продукта */
@@ -351,19 +380,6 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 16px;
-}
-
-.product-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--slate-800);
-    margin: 0 0 4px 0;
-}
-
-.product-brand {
-    font-size: 14px;
-    color: var(--slate-500);
-    margin: 0;
 }
 
 .rating-badge {
