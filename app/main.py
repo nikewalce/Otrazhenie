@@ -34,30 +34,37 @@ def index():
     """
     Главная страница.
     При GET-запросе рендерит index.html.
-    При POST-запросе принимает состав продукта из формы,
-    разбивает строку на ингредиенты, ищет информацию по каждому в базе и отображает результаты на results.html.
+    При POST-запросе принимает состав продукта из формы и редиректит с этой информацией на эндпоинт results
     """
     if request.method == 'POST':
         composition = request.form.get('composition', '')
-        ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
-        analysis = []
-
-        for name in ingredients:
-            data = INCI_DB.get(name, {
-                'name': name,
-                'function': 'Неизвестно',
-                'safety_score': '?',
-                'description': 'Не найден в базе данных'
-            })
-            analysis.append(data)
-
-        return render_template("results.html",
-                               composition=composition,
-                               analysis=analysis,
-                               active_tab='scanner')
+        # после отправки формы редиректим на /results
+        return redirect(url_for('results', composition=composition))
 
     return render_template("index.html", active_tab='scanner')
+@app.route("/results", methods=['GET'])
+def results():
+    """
+    Страница с анализом состава.
+    """
+    composition = request.args.get('composition', '')
 
+    ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
+    analysis = []
+
+    for name in ingredients:
+        data = INCI_DB.get(name, {
+            'name': name,
+            'function': 'Неизвестно',
+            'safety_score': '?',
+            'description': 'Не найден в базе данных'
+        })
+        analysis.append(data)
+
+    return render_template("results.html",
+                           composition=composition,
+                           analysis=analysis,
+                           active_tab='scanner')
 
 @app.route("/handle-scan", methods=['POST'])
 def handle_scan():

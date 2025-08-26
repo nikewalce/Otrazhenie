@@ -68,7 +68,7 @@
                 <div class="composition-box">
                     {{ product.ingredients }}
                 </div>
-                <a href="{{ url_for('index', composition=product.ingredients) }}" class="action-button">
+                <a href="{{ url_for('results', composition=product.ingredients) }}" class="action-button">
                     <i data-lucide="search"></i>
                     Анализировать состав
                 </a>
