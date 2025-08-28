@@ -5,6 +5,8 @@ import numpy as np
 import csv
 import os
 from analyzers.qr_reader import get_cosmetic_info
+from app.db import crud
+
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)

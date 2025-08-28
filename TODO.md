@@ -1,26 +1,29 @@
 # BeautyCycle MVP - TODO List
 
 ## 1. Настройка проекта
-- [x] Создать виртуальное окружение (`venv`/`poetry`) и установить зависимости: `Flask`, `psycopg2-binary`, `SQLAlchemy`, `opencv-python`, `pyzbar`, `numpy`.
+- [x] Создать виртуальное окружение (`venv`/`poetry`) и установить зависимости
 - [x] Создать структуру проекта:
 ``` 
-project/
-app.py
-config.py
-analyzers/
-templates/
-static/
-models/
-tests/
+Otrazhenie/
+|_ app.py
+|_ config.py
+|_ analyzers/
+|_ db/
+|_ templates/
+|_ static/
+|_ tests/
 ```
-- [ ] Настроить PostgreSQL для проекта (создать базу `beautycycle_mvp`, пользователя, пароль).
-- [ ] Настроить подключение через SQLAlchemy (`app.config['SQLALCHEMY_DATABASE_URI'] = ...`).
-- [x] Проверить запуск сервера `flask run`.
+- [x] Настроить PostgreSQL для проекта (создать базу `otrazhenie`, пользователя, пароль).
+- [x] Настроить подключение через SQLAlchemy
+- [x] Проверить запуск сервера `flask run`
 
-## 2. База ингредиентов
-- [ ] Создать таблицу `ingredients` в PostgreSQL: `id`, `name`, `function`, `safety_score`, `description`.
-- [ ] Сделать скрипт импорта CSV `analyzers/inci_data.csv` в PostgreSQL.
-- [ ] Добавить функцию `get_ingredient(name)` для поиска ингредиента по имени.
+## 2. База данных
+- [x] Создать таблицу `product_ingredients` в PostgreSQL: `id`, `name`, `function`, `safety_score`, `description`.
+- [x] Сделать скрипт импорта CSV `analyzers/inci_data.csv` в PostgreSQL.
+- [x] Добавить функцию `select_one_ingredient(ingredient_name: str)` для поиска ингредиента по имени.
+- [ ] Заполнить `ProductIngredient` 
+- [ ] Добавить функции в `crud.py` для операций над бд
+- [ ] Рефакторинг под ООП
 
 ## 3. Сканер состава
 - [x] Создать страницу `/` с формой загрузки штрих-кода и ручного ввода состава.
