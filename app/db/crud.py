@@ -17,13 +17,18 @@ class OtrazhenieDB(Database):
         print("Таблицы удалены!")
 
     def add_ingredient(self, name: str, category_id: int = None, safety_score: float = None, description: str = None):
-        """Добавляет новый ингредиент"""
+        """Добавляет новый ингредиент
+        :param name: название ингредиента
+        :param category_id: id категории из таблицы ingredient_categories
+        :param safety_score: оценка безопасности ингредиента (1 - безопасен, 10 - вреден)
+        :param description: Описание ингредиента
+        """
         with self.get_session() as session:
             ingredient = ProductIngredient(
                 name=name,
-                category_id=category_id,
                 safety_score=safety_score,
-                description=description
+                description=description,
+                category_id=category_id
             )
             session.add(ingredient)
             session.commit() # фиксируем изменения
@@ -31,7 +36,11 @@ class OtrazhenieDB(Database):
             return ingredient
 
     def add_category(self, name_en: str = None, name_ru: str = None, description: str = None):
-        """Добавляет новую категорию ингредиентов"""
+        """Добавляет новую категорию ингредиентов
+        :param name_en: наименование категории на английском
+        :param name_ru: наименование категории на русском
+        :param description: описание категории
+        """
         with self.get_session() as session:
             category = IngredientCategory(
                 name_en=name_en,
@@ -83,6 +92,22 @@ class OtrazhenieDB(Database):
         with self.get_session() as session:
             return session.query(ProductIngredient).all()
 
+    def select_all_ingredients_with_names(self):
+        """Возвращает все записи из таблицы product_ingredients с названиями ингредиентов вместо внешних ключей"""
+        with self.get_session() as session:
+            # Выполняем JOIN запрос между таблицами product_ingredients и ingredients
+            results = session.query(
+                ProductIngredient.id,
+                ProductIngredient.name,
+                IngredientCategory.name_ru.label('ingredient_name'),  # Берем русское название ингредиента
+                ProductIngredient.safety_score,
+                ProductIngredient.description
+            ).join(
+                IngredientCategory,  # Указываем таблицу для JOIN
+                ProductIngredient.category_id == IngredientCategory.id  # Условие соединения
+            ).all()
+            return results
+
     def select_one_ingredient(self, ingredient_name: str):
         """
         Возвращает один ингредиент
@@ -91,13 +116,16 @@ class OtrazhenieDB(Database):
         with self.get_session() as session:
             return session.query(ProductIngredient).filter(ProductIngredient.name == ingredient_name).first()  # одна запись
 
-#print(add_ingredient("aqua", "solvent",5,"Вода — основной растворитель в косметике"))
-# ingredients = OtrazhenieDB().select_all_ingredients()
-ingredients = OtrazhenieDB().select_all_categories()
-for ing in ingredients:
-    print(ing.to_dict())
-
-
-# print(OtrazhenieDB().select_one_ingredient("aqua"))
-
-# OtrazhenieDB().create_tables()
+if __name__ == '__main__':
+    db = OtrazhenieDB()
+    # db.delete_tables()
+    # db.create_tables()
+    # db.select_one_ingredient("aqua")
+    ingredients = OtrazhenieDB().select_all_ingredients()
+    print('Вывод ингредиентов')
+    for ing in ingredients:
+        print(ing.to_dict())
+    categories = OtrazhenieDB().select_all_categories()
+    print('Вывод категорий ингедиентов')
+    for category in categories:
+        print(category.to_dict())

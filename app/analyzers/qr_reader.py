@@ -118,4 +118,4 @@ def get_cosmetic_info(barcode):
         return None
 
 if __name__ == "__main__":
-    read_barcode_from_image("barcode.jpg")
+    read_barcode_from_image("img_example/barcode.jpg")

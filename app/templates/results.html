@@ -40,9 +40,9 @@
                         {% set score = item['safety_score'] %}
                         {% if score == '?' %}
                             {% set row_class = 'score-unknown' %}
-                        {% elif score|int <= 1 %}
+                        {% elif score|float >= 8 %}
                             {% set row_class = 'score-danger' %}
-                        {% elif score|int <= 3 %}
+                        {% elif score|float >= 4 %}
                             {% set row_class = 'score-warning' %}
                         {% else %}
                             {% set row_class = 'score-safe' %}
@@ -53,9 +53,9 @@
                             <td>
                                 {% if score == '?' %}
                                     ❓ Неизвестно
-                                {% elif score|int <= 1 %}
+                                {% elif score|float >= 8 %}
                                     ❌ Вреден ({{ score }})
-                                {% elif score|int <= 3 %}
+                                {% elif score|float >= 4 %}
                                     ⚠️ Спорно ({{ score }})
                                 {% else %}
                                     ✅ Безопасен ({{ score }})

@@ -11,26 +11,21 @@ from app.db import crud
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Словарь для хранения базы ингредиентов
-INCI_DB = {}
-
 def load_ingredients_database():
     """
-    Загружает базу ингредиентов из CSV-файла 'analyzers/inci_data.csv' в глобальный словарь INCI_DB.
-    Ключ — имя ингредиента в нижнем регистре, значение — вся строка из CSV в виде словаря.
-    Если файл не найден, выводит предупреждение.
+    Подгружаем данные из бд и преобразуем в словарь
+    Ключ — имя ингредиента в нижнем регистре, значение — словарь из данных бд
+    Если ошибка, выводит предупреждение
     """
     try:
-        with open('analyzers/inci_data.csv', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                INCI_DB[row['name'].strip().lower()] = row
+        db_data = crud.OtrazhenieDB().select_all_ingredients_with_names()
+        ingredients_dict = {}
+        for row in db_data:
+            db_dict = {'name': row[1], 'function': row[2], 'safety_score': row[3], 'description': row[4]}
+            ingredients_dict[row[1].lower()] = db_dict
+        return ingredients_dict
     except FileNotFoundError:
         print("Warning: Ingredients database not found!")
-
-load_ingredients_database()
-
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
     """
@@ -47,15 +42,16 @@ def index():
 @app.route("/results", methods=['GET'])
 def results():
     """
-    Страница с анализом состава.
+    Страница с анализом состава
+    Получаем данные из формы composition, подгружаем данные из бд,
+    помещаем их в список и рендерим result.html
     """
     composition = request.args.get('composition', '')
-
     ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
     analysis = []
-
+    db_data = load_ingredients_database()
     for name in ingredients:
-        data = INCI_DB.get(name, {
+        data = db_data.get(name, {
             'name': name,
             'function': 'Неизвестно',
             'safety_score': '?',

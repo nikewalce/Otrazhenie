@@ -28,7 +28,7 @@ class CSVToDB(Database):
     def import_ingredients_from_csv(self, file_path: str):
         """
         Импорт ингредиентов (product_ingredients) из CSV
-        Ожидаемые поля: name, safety_score, description, category_en (ключ к категории)
+        Ожидаемые поля: name, function_id, safety_score, description
         """
         with self.get_session() as session:
             with open(file_path, newline='', encoding='utf-8') as csvfile:
@@ -38,19 +38,23 @@ class CSVToDB(Database):
                     if existing:
                         continue
 
-                    # ищем категорию по name_en
-                    category = None
-                    if row.get("category_en"):
-                        category = session.query(IngredientCategory).filter_by(name_en=row["category_en"]).first()
+                    # Получаем category_id из CSV и преобразуем в int
+                    category_id = None
+                    if row.get("category_id"):
+                        try:
+                            category_id = int(row["category_id"])
+                        except (ValueError, TypeError):
+                            category_id = None
 
                     ingredient = ProductIngredient(
                         name=row["name"],
-                        safety_score=float(row["safety_score"]) if row.get("safety_score") else None,
+                        safety_score=int(row["safety_score"]) if row.get("safety_score") else None,
                         description=row.get("description"),
-                        category_id=category.id if category else None
+                        category_id=category_id
                     )
                     session.add(ingredient)
                 session.commit()
         print("Ингредиенты импортированы!")
 
-#CSVToDB().import_categories_from_csv("ingredient_categories.csv")
+#CSVToDB().import_categories_from_csv("csv_files/ingredient_categories.csv")
+CSVToDB().import_ingredients_from_csv("csv_files/ingredients.csv")

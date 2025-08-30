@@ -20,7 +20,7 @@ class ProductIngredient(Base):
     def __repr__(self):
         return (
             f"ProductIngredient(\nid={self.id}, \nname='{self.name}', "
-            f"\nfunction='{self.function}', \nsafety_score={self.safety_score}, "
+            f"\ncategory_id='{self.category_id}', \nsafety_score={self.safety_score}, "
             f"\ndescription='{self.description}')"
         )
 
@@ -28,7 +28,7 @@ class ProductIngredient(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "function": self.category.to_dict() if self.category else None,
+            "category_id": self.category_id,
             "safety_score": self.safety_score,
             "description": self.description
         }
