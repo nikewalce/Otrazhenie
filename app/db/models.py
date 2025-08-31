@@ -1,8 +1,8 @@
-# описания таблиц (SQLAlchemy ORM)
-
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean
 from app.db.session import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 
 class ProductIngredient(Base):
     """Класс для таблицы с ингредиентами"""
@@ -34,6 +34,7 @@ class ProductIngredient(Base):
         }
 
 class IngredientCategory(Base):
+    """Класс для категорий ингредиентов"""
     __tablename__ = "ingredient_categories"
 
     id = Column(Integer, primary_key=True, index=True)  # уникальный ID
@@ -54,3 +55,20 @@ class IngredientCategory(Base):
             "name_ru": self.name_ru,
             "description": self.description
         }
+
+class User(Base):
+    """Класс пользователя"""
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    password_hash = Column(String(256), nullable=False)
+
+    first_name = Column(String(50))
+    last_name = Column(String(50))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    is_active = Column(Boolean, default=True)
+
+    def __repr__(self):
+        return f"<User {self.username}>"

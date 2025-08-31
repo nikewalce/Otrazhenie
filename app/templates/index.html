@@ -44,7 +44,7 @@
             <!-- Секция с формами для сканирования и поиска -->
             <div class="scan-section">
                 <!-- Форма для загрузки изображения со штрих-кодом -->
-                <form id="barcode-form" method="POST" action="{{ url_for('handle_scan') }}" enctype="multipart/form-data">
+                <form id="barcode-form" method="POST" action="{{ url_for('handle_scan_bp.handle_scan') }}" enctype="multipart/form-data">
                     <div class="file-input-wrapper">
                         <!-- Кнопка для открытия выбора файла -->
                         <button type="button" class="scan-button" id="scan-trigger">
@@ -60,7 +60,7 @@
                 <p class="scan-hint">или</p>
 
                 <!-- Форма для поиска продукта по названию -->
-                <form method="POST" action="{{ url_for('handle_search') }}" class="search-form">
+                <form method="POST" action="{{ url_for('handle_search_bp.handle_search') }}" class="search-form">
                     <div class="search-container">
                         <!-- Иконка поиска слева в поле -->
                         <i data-lucide="search" class="search-icon"></i>

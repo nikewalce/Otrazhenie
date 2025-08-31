@@ -68,7 +68,7 @@
                 <div class="composition-box">
                     {{ product.ingredients }}
                 </div>
-                <a href="{{ url_for('results', composition=product.ingredients) }}" class="action-button">
+                <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button">
                     <i data-lucide="search"></i>
                     Анализировать состав
                 </a>
@@ -77,7 +77,7 @@
                     <i data-lucide="alert-circle"></i>
                     <p>Состав не указан</p>
                 </div>
-                <form method="POST" action="{{ url_for('manual_analysis') }}" class="manual-form">
+                <form method="POST" action="{{ url_for('manual_analysis_bp.manual_analysis') }}" class="manual-form">
                     <input type="hidden" name="product_name" value="{{ product.name }}">
                     <textarea name="composition" placeholder="Введите состав вручную..." required></textarea>
                     <button type="submit" class="action-button">
