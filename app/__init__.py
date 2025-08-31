@@ -1,5 +1,5 @@
 from flask import Flask
-import os
+from decouple import config
 from app.routes.auth import auth
 from app.routes.handle_scan import handle_scan_bp
 from app.routes.handle_search import handle_search_bp
@@ -12,7 +12,7 @@ from app.routes.manual_analysis import manual_analysis_bp
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key = os.urandom(24)
+    app.secret_key = config("SECRET_KEY")
     app.register_blueprint(auth)
     app.register_blueprint(index_bp)
     app.register_blueprint(handle_scan_bp)

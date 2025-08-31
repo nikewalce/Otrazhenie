@@ -1,5 +1,3 @@
-from unicodedata import category
-
 from app.db.session import Database, Base
 from app.db.models import ProductIngredient, IngredientCategory
 
@@ -119,7 +117,7 @@ class OtrazhenieDB(Database):
 if __name__ == '__main__':
     db = OtrazhenieDB()
     # db.delete_tables()
-    # db.create_tables()
+    #db.create_tables()
     # db.select_one_ingredient("aqua")
     ingredients = OtrazhenieDB().select_all_ingredients()
     print('Вывод ингредиентов')
