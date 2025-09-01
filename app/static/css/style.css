@@ -722,6 +722,26 @@ body {
     margin-top: 1rem;
 }
 
+/* Форма регистрации и логина */
+.form-login {
+    font-weight: 500;
+    color: var(--sage-700);
+    margin-bottom: 8px;
+    user-select: none;
+    width: 100%;
+    max-width: 418px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--sage-600);
+    border-radius: 6px;
+}
+
+.form-group-login{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
 /* Дополнительно — медиа-запрос */
 @media (max-width: 600px) {
     .ingredients-table {

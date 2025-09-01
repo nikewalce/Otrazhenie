@@ -90,6 +90,15 @@ class User(Base):
     activities = relationship("ActivityLog", back_populates="user")
     reset_tokens = relationship("PasswordResetToken", back_populates="user")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "password": self.password_hash,
+            "created_at": self.created_at,
+        }
+
     def __repr__(self):
         return f"<User {self.username}>"
 

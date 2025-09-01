@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-container">
+    <div class="analysis-form">
+        <h2 class="form-title">Вход в аккаунт</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="info-text" style="color: {% if category == 'error' %}var(--rose-500){% else %}var(--emerald-600){% endif %};">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-login" type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Пароль</label>
+                <input class="form-login" type="password" id="password" name="password" required>
+            </div>
+
+            <button class="analyze-button" type="submit">Войти</button>
+        </form>
+
+        <p style="text-align:center; margin-top: 12px;">
+            Нет аккаунта? <a href="{{ url_for('auth_bp.auth_register') }}">Зарегистрироваться</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

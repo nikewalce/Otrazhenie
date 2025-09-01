@@ -1,16 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-  <form method="post">
-  <input type="text" name="username" placeholder="Логин" required>
-  <input type="email" name="email" placeholder="E-mail" required>
-  <input type="password" name="password" placeholder="Пароль" required>
-  <button type="submit">Зарегистрироваться</button>
-</form>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+<div class="app-container">
+  <div class="main-content">
+    <form class="analysis-form" method="POST" action="{{ url_for('auth_bp.auth_register') }}">
+      <div class="product-header">
+        <div class="product-info">
+          <h2 class="form-title">Регистрация</h2>
+          <p class="section-subtitle">Создайте аккаунт, чтобы начать использовать приложение</p>
+        </div>
+      </div>
+
+
+        <!-- Username -->
+        <div class="form-group-login">
+          <label class="info-label" for="username">Имя пользователя</label>
+          <input class="form-login" type="text" id="username" name="username" placeholder="Введите имя пользователя" required>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group-login">
+          <label class="info-label" for="email">Электронная почта</label>
+          <input class="form-login" type="email" id="email" name="email" placeholder="Введите email" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group-login">
+          <label class="info-label" for="password">Пароль</label>
+          <input class="form-login" type="password" id="password" name="password" placeholder="Введите пароль" required>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group-login">
+          <label class="info-label" for="confirm_password">Подтвердите пароль</label>
+          <input class="form-login" type="password" id="confirm_password" name="confirm_password" placeholder="Повторите пароль" required>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="analyze-button">
+          Зарегистрироваться
+        </button>
+
+        <!-- Link to login -->
+        <p class="text-center" style="margin-top:1rem;">
+          Уже есть аккаунт? <a href="{{ url_for('auth_bp.auth_login') }}" style="color: var(--emerald-500); text-decoration: none;">Войти</a>
+        </p>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}

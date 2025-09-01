@@ -1,5 +1,6 @@
 from app.db.session import Database, Base
-from app.db.models import ProductIngredient, IngredientCategory
+from app.db.models import ProductIngredient, IngredientCategory, User
+from app.db.encrypt import EncryptData
 
 class OtrazhenieDB(Database):
     """Класс для работы с таблицами"""
@@ -114,16 +115,75 @@ class OtrazhenieDB(Database):
         with self.get_session() as session:
             return session.query(ProductIngredient).filter(ProductIngredient.name == ingredient_name).first()  # одна запись
 
+    # --- Функции для пользователей ---
+    def create_user_table(self):
+        """Создаёт только таблицу пользователей"""
+        User.__table__.create(self.engine, checkfirst=True)
+        print("Таблица users создана!")
+
+    def delete_user_table(self):
+        """Удаляет только таблицу пользователей"""
+        User.__table__.drop(self.engine, checkfirst=True)
+        print("Таблица users удалена!")
+
+    def select_all_users(self):
+        """Возвращает всех юзеров"""
+        with self.get_session() as session:
+            return session.query(User).all()
+
+    def get_user_by_email(self, email: str):
+        """Возвращает пользователя по email"""
+        with self.get_session() as session:
+            return session.query(User).filter(User.email == email).first()
+
+    def get_user_by_username(self, username: str):
+        """Возвращает пользователя по username"""
+        with self.get_session() as session:
+            return session.query(User).filter(User.username == username).first()
+
+    def create_user(self, username: str, email: str, password: str):
+        """Создаёт нового пользователя"""
+        encryptor = EncryptData()
+        with self.get_session() as session:
+            user = User(
+                username=username,
+                email=email,
+                password_hash=encryptor.hash_password(password)
+            )
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            return user
+
+    def verify_user_password(self, email: str, password: str):
+        """Проверяет пароль пользователя"""
+        encryptor = EncryptData()
+        with self.get_session() as session:
+            user = session.query(User).filter(User.email == email).first()
+            if not user:
+                return False
+
+            is_valid, new_hash = encryptor.verify_password(user.password_hash, password)
+            if is_valid and new_hash:
+                # обновляем хеш в базе на Argon2
+                user.password_hash = new_hash
+                session.commit()
+            return is_valid
+
 if __name__ == '__main__':
     db = OtrazhenieDB()
     # db.delete_tables()
     #db.create_tables()
     # db.select_one_ingredient("aqua")
-    ingredients = OtrazhenieDB().select_all_ingredients()
-    print('Вывод ингредиентов')
-    for ing in ingredients:
-        print(ing.to_dict())
-    categories = OtrazhenieDB().select_all_categories()
-    print('Вывод категорий ингедиентов')
-    for category in categories:
-        print(category.to_dict())
+    # ingredients = OtrazhenieDB().select_all_ingredients()
+    # print('Вывод ингредиентов')
+    # for ing in ingredients:
+    #     print(ing.to_dict())
+    # categories = OtrazhenieDB().select_all_categories()
+    # print('Вывод категорий ингедиентов')
+    # for category in categories:
+    #     print(category.to_dict())
+    # db.create_user_table()
+    users = db.select_all_users()
+    for user in users:
+        print(user.to_dict())
