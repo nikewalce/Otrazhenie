@@ -61,7 +61,15 @@
                                     ✅ Безопасен ({{ score }})
                                 {% endif %}
                             </td>
-                            <td>{{ item['description'] }}</td>
+                            <td>
+                                {{ item['description'] }}
+                                {% if score == '?' %}
+                                    <button class="add-ingredient-btn"
+                                            data-ingredient="{{ item['name'] }}">
+                                        ➕ Добавить информацию
+                                    </button>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -74,6 +82,85 @@
                     Новый анализ
                 </a>
             </div>
+
+            <!-- Модальное окно -->
+            <div id="ingredientModal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Добавить ингредиент</h2>
+                    <form id="ingredientForm">
+                        <input type="hidden" name="name" id="modal-name">
+
+                        <label>Функция на русском:</label>
+                        <input type="text" name="function_ru" required>
+
+                        <label>Функция на английском:</label>
+                        <input type="text" name="function_en" required>
+
+                        <label>Описание функции (категории):</label>
+                        <textarea name="description_category"></textarea>
+
+                        <label>Описание ингредиента:</label>
+                        <textarea name="description"></textarea>
+
+                        <label>Безопасность (0–10):</label>
+                        <input type="number" name="safety_score" min="0" max="10" required>
+
+                        <button type="submit">💾 Сохранить</button>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const modal = document.getElementById("ingredientModal");
+                    const closeBtn = modal.querySelector(".close");
+                    const form = document.getElementById("ingredientForm");
+                    const nameInput = document.getElementById("modal-name");
+                    let activeButton = null;
+
+                    // Открытие модалки
+                    document.querySelectorAll(".add-ingredient-btn").forEach(button => {
+                        button.addEventListener("click", () => {
+                            activeButton = button;
+                            nameInput.value = button.dataset.ingredient;
+                            modal.classList.remove("hidden");
+                        });
+                    });
+
+                    // Закрытие
+                    closeBtn.onclick = () => modal.classList.add("hidden");
+                    window.onclick = (e) => { if (e.target === modal) modal.classList.add("hidden"); };
+
+                    // Отправка формы
+                    form.addEventListener("submit", (e) => {
+                        e.preventDefault();
+
+                        const formData = new FormData(form);
+                        const payload = Object.fromEntries(formData);
+
+                        fetch("{{ url_for('results_bp.add_unknown') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(payload)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                modal.classList.add("hidden");
+                                activeButton.textContent = "✔ Добавлено";
+                                activeButton.disabled = true;
+                            } else {
+                                alert("Ошибка: " + data.message);
+                            }
+                        });
+                    });
+                });
+            </script>
+
+            <!-- Модальное окно -->
         </div>
     </main>
 </div>

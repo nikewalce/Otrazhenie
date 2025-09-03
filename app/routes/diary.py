@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 
-diary_bp = Blueprint("diary_bp", __name__, url_prefix="/diary")
+diary_bp = Blueprint("diary_bp", __name__)
 
 @diary_bp.route("/diary", endpoint="diary")
 def diary():

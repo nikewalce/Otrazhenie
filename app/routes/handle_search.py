@@ -4,7 +4,7 @@ import pyzbar.pyzbar as pyzbar
 import numpy as np
 from app.analyzers.qr_reader import get_cosmetic_info
 
-handle_search_bp = Blueprint("handle_search_bp", __name__, url_prefix="/handle-search")
+handle_search_bp = Blueprint("handle_search_bp", __name__)
 
 
 @handle_search_bp.route("/handle-search", methods=['POST'], endpoint='handle_search')

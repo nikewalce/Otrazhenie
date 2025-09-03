@@ -15,7 +15,7 @@
 
 ## 🔹 2. Платформы
 - **Мобильное приложение:** iOS и Android (React Native или Flutter).  
-- **Бэкенд:** REST API (Python/Node.js) + БД (PostgreSQL, MongoDB).  
+- **Бэкенд:** REST API (Python/Node.js) + БД (PostgreSQL).  
 
 ---
 

@@ -4,7 +4,7 @@ import pyzbar.pyzbar as pyzbar
 import numpy as np
 from app.analyzers.qr_reader import get_cosmetic_info
 
-handle_scan_bp = Blueprint("handle_scan_bp", __name__, url_prefix="/handle-scan")
+handle_scan_bp = Blueprint("handle_scan_bp", __name__)
 
 def decode_barcode(image_data):
     """

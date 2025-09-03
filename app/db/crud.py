@@ -51,6 +51,50 @@ class OtrazhenieDB(Database):
             session.refresh(category)  # обновляем, чтобы получить ID
             return category
 
+    def add_ingredient_with_category(self, name: str, category_name_ru: str = None, category_name_en: str = None,
+                       description_category: str = None, safety_score: float = None, description: str = None):
+        """Добавляет новый ингредиент с проверкой категории.
+        Если категории нет — создается новая.
+
+        :param name: название ингредиента
+        :param category_name_ru: название категории на русском
+        :param category_name_en: название категории на английском
+        :param description_category: описание для категории
+        :param safety_score: оценка безопасности (1 - безопасен, 10 - вреден)
+        :param description: описание ингредиента
+        """
+        with self.get_session() as session:
+            category_id = None
+
+            # Проверяем, передано ли имя категории
+            if category_name_ru or category_name_en:
+                query = session.query(IngredientCategory)
+                if category_name_ru:
+                    query = query.filter(IngredientCategory.name_ru == category_name_ru)
+                elif category_name_en:
+                    query = query.filter(IngredientCategory.name_en == category_name_en)
+
+                category = query.first()
+
+                if category:
+                    category_id = category.id
+                else:
+                    category = self.add_category(
+                        name_ru = category_name_ru,
+                        name_en = category_name_en,
+                        description = description_category
+                    )
+                    category_id = category.id
+
+            # Создаем ингредиент
+            ingredient = self.add_ingredient(
+                name=name,
+                safety_score=safety_score,
+                description=description,
+                category_id=category_id
+            )
+            return ingredient
+
     def update_ingredient(self, ingredient_id: int, name: str = None, function: str = None,
                           safety_score: float = None, description: str = None):
         """Обновляет данные ингредиента"""

@@ -65,26 +65,28 @@
                 </h3>
 
                 {% if product.ingredients %}
-                <div class="composition-box">
-                    {{ product.ingredients }}
-                </div>
-                <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button">
-                    <i data-lucide="search"></i>
-                    Анализировать состав
-                </a>
+                    <div class="composition-box">
+                        {{ product.ingredients }}
+                    </div>
+                    <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button">
+                        <i data-lucide="search"></i>
+                        Анализировать состав
+                    </a>
                 {% else %}
-                <div class="empty-state">
-                    <i data-lucide="alert-circle"></i>
-                    <p>Состав не указан</p>
-                </div>
-                <form method="POST" action="{{ url_for('manual_analysis_bp.manual_analysis') }}" class="manual-form">
-                    <input type="hidden" name="product_name" value="{{ product.name }}">
-                    <textarea name="composition" placeholder="Введите состав вручную..." required></textarea>
-                    <button type="submit" class="action-button">
-                        <i data-lucide="check"></i>
-                        Отправить на анализ
-                    </button>
-                </form>
+                    <!-- Форма для ручного ввода состава для анализа -->
+                    <div class="analysis-form">
+                        <h3 class="form-title">Состав не указан</h3>
+                        <form method="POST" class="form-content" action="{{ url_for('results_bp.results') }}">
+                            <div class="form-group">
+                                <label for="composition" class="form-label">Введите ингредиенты через запятую:</label>
+                                <textarea name="composition" id="composition" rows="4" class="form-input" required></textarea>
+                            </div>
+                            <button type="submit" class="analyze-button">
+                                <i data-lucide="search" class="button-icon"></i>
+                                Проанализировать состав
+                            </button>
+                        </form>
+                    </div>
                 {% endif %}
             </div>
 
