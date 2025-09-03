@@ -69,6 +69,58 @@ user_roles = Table(
     Column('role_id', Integer, ForeignKey('roles.id'), primary_key=True)
 )
 
+# Связь продукты → ингредиенты (многие-ко-многим)
+product_ingredients_link = Table(
+    'product_ingredients_link', Base.metadata,
+    Column('product_id', Integer, ForeignKey('products.id'), primary_key=True),
+    Column('ingredient_id', Integer, ForeignKey('product_ingredients.id'), primary_key=True)
+)
+
+class Product(Base):
+    """Сканированный продукт"""
+    __tablename__ = "products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    barcode = Column(Integer, unique=True, nullable=False)
+    name = Column(String(255), nullable=False)
+    brand = Column(String(255), nullable=True)
+
+    ingredients_text = Column(Text, nullable=True)       # Английский текст ингредиентов
+    ingredients_text_ru = Column(Text, nullable=True)    # Русский текст ингредиентов
+
+    image_url = Column(String(512), nullable=True)
+    packaging = Column(String(255), nullable=True)
+    quantity = Column(Integer, nullable=True)
+    countries = Column(String(255), nullable=True)
+
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+
+    # Связь с ингредиентами
+    ingredients = relationship(
+        "ProductIngredient",
+        secondary=product_ingredients_link,
+        backref="products"
+    )
+
+    def __repr__(self):
+        return f"<Product {self.name} ({self.barcode})>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "barcode": self.barcode,
+            "name": self.name,
+            "brand": self.brand,
+            "ingredients_text": self.ingredients_text,
+            "ingredients_text_ru": self.ingredients_text_ru,
+            "image_url": self.image_url,
+            "packaging": self.packaging,
+            "quantity": self.quantity,
+            "countries": self.countries,
+            "ingredients": [i.to_dict() for i in self.ingredients],
+            "created_at": self.created_at
+        }
+
 
 class User(Base):
     """Класс пользователя"""

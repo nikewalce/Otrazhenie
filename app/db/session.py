@@ -1,7 +1,7 @@
 # подключение/engine/Session
 from decouple import config
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, declarative_base,  Session
 
 load_dotenv()
@@ -21,6 +21,7 @@ class Database:
             autocommit=False,  # управление транзакциями вручную
             class_=Session  # используем ORM сессию
         )
+        self.inspect = inspect(self.engine)
 
     def get_session(self):
         """Метод для получения сессии через контекстный менеджер

@@ -1,5 +1,5 @@
 from app.db.session import Database, Base
-from app.db.models import ProductIngredient, IngredientCategory, User
+from app.db.models import ProductIngredient, IngredientCategory, User, Product
 from app.db.encrypt import EncryptData
 
 class OtrazhenieDB(Database):
@@ -9,6 +9,27 @@ class OtrazhenieDB(Database):
         """Создаёт все таблицы, которые определены в моделях"""
         Base.metadata.create_all(self.engine)
         print("Таблицы созданы!")
+
+    def create_table(self, table_class):
+        """
+        Создаёт конкретную таблицу в базе.
+
+        :param engine: SQLAlchemy engine
+        :param table_class: ORM класс таблицы, например Product
+        """
+        # Определяем объект таблицы
+        if hasattr(table_class, "__table__"):  # ORM-класс
+            table = table_class.__table__
+        else:  # объект Table
+            table = table_class
+        inspector = self.inspect
+
+        # Проверяем, есть ли уже таблица в базе
+        if table.name not in inspector.get_table_names():
+            table.create(self.engine)
+            print(f"Таблица '{table.name}' создана!")
+        else:
+            print(f"Таблица '{table.name}' уже существует.")
 
     def delete_tables(self):
         """Удаляет все таблицы, которые определены в моделях"""
@@ -50,6 +71,68 @@ class OtrazhenieDB(Database):
             session.commit()
             session.refresh(category)  # обновляем, чтобы получить ID
             return category
+
+    def add_product(
+            self,
+            barcode: int,
+            name: str,
+            brand: str = None,
+            ingredients_text: str = None,
+            ingredients_text_ru: str = None,
+            image_url: str = None,
+            packaging: str = None,
+            quantity: int = None,
+            countries: str = None
+    ):
+        """
+        Добавляет новый продукт в базу.
+
+        :param barcode: штрихкод продукта
+        :param name: название продукта
+        :param brand: бренд
+        :param ingredients_text: список ингредиентов, строка (англ)
+        :param ingredients_text_ru: список ингредиентов, строка (рус)
+        :param image_url: ссылка на изображение
+        :param packaging: упаковка
+        :param quantity: количество
+        :param countries: страна производства
+        :return: объект Product
+        """
+        with self.get_session() as session:
+            # Проверяем, есть ли уже продукт с таким barcode
+            existing_product = session.query(Product).filter_by(barcode=barcode).first()
+            if existing_product:
+                return existing_product  # можно обновить данные, если нужно
+
+            # Создаём продукт
+            product = Product(
+                barcode=barcode,
+                name=name,
+                brand=brand,
+                ingredients_text=ingredients_text,
+                ingredients_text_ru=ingredients_text_ru,
+                image_url=image_url,
+                packaging=packaging,
+                quantity=quantity,
+                countries=countries
+            )
+            ingredients_list = [item.strip() for item in ingredients_text.split(',')]
+            # Добавляем ингредиенты
+            if ingredients_list:
+                for ing_name in ingredients_list:
+                    # Ищем ингредиент в базе, если нет — создаём
+                    ingredient = session.query(ProductIngredient).filter_by(name=ing_name).first()
+                    if not ingredient:
+                        ingredient = ProductIngredient(name=ing_name)
+                        session.add(ingredient)
+                        session.flush()  # чтобы получить id
+                    product.ingredients.append(ingredient)
+
+            # Добавляем продукт в сессию и сохраняем
+            session.add(product)
+            session.commit()
+            session.refresh(product)
+            return product
 
     def add_ingredient_with_category(self, name: str, category_name_ru: str = None, category_name_en: str = None,
                        description_category: str = None, safety_score: float = None, description: str = None):
@@ -231,3 +314,4 @@ if __name__ == '__main__':
     users = db.select_all_users()
     for user in users:
         print(user.to_dict())
+    # db.create_table(Product)

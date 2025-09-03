@@ -96,7 +96,6 @@ def get_cosmetic_info(barcode):
             timeout=5
         )
         data = response.json()
-
         if data.get("status") == 1:
             product = data.get("product", {})
             return {
@@ -118,4 +117,5 @@ def get_cosmetic_info(barcode):
         return None
 
 if __name__ == "__main__":
-    read_barcode_from_image("img_example/barcode.jpg")
+    barcode = read_barcode_from_image("img_example/barcode.jpg")
+    print(get_cosmetic_info(barcode))
