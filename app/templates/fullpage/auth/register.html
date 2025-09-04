@@ -1,0 +1,42 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}Регистрация - Otrazhenie{% endblock %}
+{% block description %}Создайте аккаунт, чтобы сохранять анализы и получать рекомендации{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="auth-title"><i data-lucide="user-plus" class="title-icon"></i>Регистрация</h1>
+            <p class="auth-subtitle">Создайте новый аккаунт</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth_bp.auth_register') }}" class="auth-form">
+            <div class="form-group">
+                <label for="username" class="form-label">Имя</label>
+                <input type="text" id="username" name="username" class="form-input" placeholder="Ваше имя" required />
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="Придумайте пароль" required />
+            </div>
+
+            <button type="submit" class="action-button primary">
+                <i data-lucide="user-plus" class="button-icon"></i>
+                <span>Зарегистрироваться</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <span>Уже есть аккаунт?</span>
+            <a href="{{ url_for('auth_bp.auth_login') }}" class="link">Войти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

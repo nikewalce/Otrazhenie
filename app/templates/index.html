@@ -2,21 +2,6 @@
 
 {% block content %}
 <div class="app-container">
-    <!-- Шапка приложения -->
-    <header class="app-header">
-        <div class="header-content">
-            <!-- Логотип и название -->
-            <div class="logo-container">
-                <h1 class="app-logo">Otrazhenie</h1>
-                <p class="app-subtitle">Анализ косметики</p>
-            </div>
-            <!-- Бейдж с количеством продуктов -->
-            <div class="badge-container">
-                <span class="product-badge">Продуктов: {{ product_count }}</span>
-            </div>
-        </div>
-    </header>
-
     <!-- Вывод flash-сообщений, если они есть -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -32,14 +17,22 @@
     <!-- Основной контент страницы -->
     <main class="main-content">
         <div class="scanner-section">
-            <!-- Круглый элемент с иконкой камеры -->
-            <div class="scanner-circle">
-                <i data-lucide="camera" class="scanner-icon"></i>
+            <!-- Заголовок секции -->
+            <div class="scanner-header">
+                <h2 class="scanner-title">
+                    <i data-lucide="scan-line" class="scanner-title-icon"></i>
+                    Анализ косметики
+                </h2>
+                <p class="scanner-description">Узнайте правду о составе вашей косметики за 30 секунд</p>
             </div>
 
-            <!-- Заголовок и описание секции сканирования -->
-            <h2 class="scanner-title">Сканируйте продукт</h2>
-            <p class="scanner-description">Наведите камеру на штрих-код или введите название продукта вручную</p>
+            <!-- Круглый элемент с иконкой камеры -->
+            <div class="scanner-circle">
+                <div class="scanner-circle-inner">
+                    <i data-lucide="camera" class="scanner-icon"></i>
+                </div>
+                <div class="scanner-pulse"></div>
+            </div>
 
             <!-- Секция с формами для сканирования и поиска -->
             <div class="scan-section">
@@ -47,9 +40,12 @@
                 <form id="barcode-form" method="POST" action="{{ url_for('handle_scan_bp.handle_scan') }}" enctype="multipart/form-data">
                     <div class="file-input-wrapper">
                         <!-- Кнопка для открытия выбора файла -->
-                        <button type="button" class="scan-button" id="scan-trigger">
-                            <i data-lucide="scan" class="button-icon"></i>
-                            Сканировать штрих-код
+                        <button type="button" class="scan-button primary" id="scan-trigger">
+                            <div class="button-content">
+                                <i data-lucide="scan" class="button-icon"></i>
+                                <span class="button-text">Сканировать штрих-код</span>
+                            </div>
+                            <div class="button-subtitle">Сфотографируйте штрих-код продукта</div>
                         </button>
                         <!-- Скрытый input для выбора фото с камеры или из файлов -->
                         <input type="file" id="barcode-input" name="barcode_image"
@@ -57,7 +53,11 @@
                     </div>
                 </form>
 
-                <p class="scan-hint">или</p>
+                <div class="scan-divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">или</span>
+                    <div class="divider-line"></div>
+                </div>
 
                 <!-- Форма для поиска продукта по названию -->
                 <form method="POST" action="{{ url_for('handle_search_bp.handle_search') }}" class="search-form">
@@ -66,35 +66,83 @@
                         <i data-lucide="search" class="search-icon"></i>
                         <!-- Текстовое поле для ввода названия продукта -->
                         <input type="text" name="product_name"
-                               placeholder="Введите название продукта и нажмите Enter..."
+                               placeholder="Введите название продукта..."
                                class="search-input" required>
+                        <button type="submit" class="search-button">
+                            <i data-lucide="arrow-right" class="search-button-icon"></i>
+                        </button>
+                    </div>
+                    <div class="search-hint">
+                        <i data-lucide="info" class="hint-icon"></i>
+                        <span>Например: "Крем для лица Nivea"</span>
                     </div>
                 </form>
             </div>
 
-            <!-- Информационная карточка с пояснением анализа -->
-            <div class="info-card">
-                <div class="info-header">
-                    <i data-lucide="shield" class="info-icon"></i>
-                    <span class="info-title">Как мы анализируем?</span>
+            <!-- Информационные карточки -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon-container">
+                            <i data-lucide="shield-check" class="info-icon"></i>
+                        </div>
+                        <h3 class="info-title">Научный подход</h3>
+                    </div>
+                    <p class="info-text">
+                        Анализ основан на научных исследованиях и рейтингах безопасности EWG
+                    </p>
                 </div>
-                <p class="info-text">
-                    Наша база содержит информацию о более чем 50,000 ингредиентах.
-                    Анализ основан на научных исследованиях и рейтингах безопасности EWG.
-                </p>
+
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon-container">
+                            <i data-lucide="database" class="info-icon"></i>
+                        </div>
+                        <h3 class="info-title">Большая база</h3>
+                    </div>
+                    <p class="info-text">
+                        Более 50,000 ингредиентов в нашей базе данных
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon-container">
+                            <i data-lucide="zap" class="info-icon"></i>
+                        </div>
+                        <h3 class="info-title">Быстрый анализ</h3>
+                    </div>
+                    <p class="info-text">
+                        Получите результат анализа за 30 секунд
+                    </p>
+                </div>
             </div>
 
             <!-- Форма для ручного ввода состава для анализа -->
             <div class="analysis-form">
-                <h3 class="form-title">Анализ состава</h3>
+                <div class="form-header">
+                    <h3 class="form-title">
+                        <i data-lucide="flask-conical" class="form-title-icon"></i>
+                        Анализ состава
+                    </h3>
+                    <p class="form-subtitle">Введите ингредиенты вручную для анализа</p>
+                </div>
                 <form method="POST" class="form-content">
                     <div class="form-group">
-                        <label for="composition" class="form-label">Введите ингредиенты через запятую:</label>
-                        <textarea name="composition" id="composition" rows="4" class="form-input" required></textarea>
+                        <label for="composition" class="form-label">
+                            <i data-lucide="list" class="label-icon"></i>
+                            Список ингредиентов
+                        </label>
+                        <textarea name="composition" id="composition" rows="4" class="form-input" 
+                                  placeholder="Введите ингредиенты через запятую, например: Aqua, Glycerin, Hyaluronic Acid..." required></textarea>
+                        <div class="form-hint">
+                            <i data-lucide="info" class="hint-icon"></i>
+                            <span>Разделяйте ингредиенты запятыми для лучшего анализа</span>
+                        </div>
                     </div>
                     <button type="submit" class="analyze-button">
                         <i data-lucide="search" class="button-icon"></i>
-                        Проанализировать состав
+                        <span>Проанализировать состав</span>
                     </button>
                 </form>
             </div>
@@ -102,57 +150,104 @@
     </main>
 </div>
 
-<!-- Стили для скрытого input выбора файла (чтобы показать кастомную кнопку) -->
-<style>
-.file-input-hidden {
-    position: absolute;
-    left: -9999px; /* Прячем input за пределы экрана */
-    width: 0;
-    height: 0;
-    opacity: 0;
-    overflow: hidden;
-    z-index: -1;
-}
-</style>
-
 <!-- Скрипт для инициализации иконок lucide и управления загрузкой файла -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons(); // Инициализируем иконки lucide
 
+    const scanTrigger = document.getElementById('scan-trigger');
+    const barcodeInput = document.getElementById('barcode-input');
+    const barcodeForm = document.getElementById('barcode-form');
+
     // Клик по кнопке открывает скрытый input выбора файла
-    document.getElementById('scan-trigger').addEventListener('click', function() {
-        document.getElementById('barcode-input').click();
+    scanTrigger.addEventListener('click', function() {
+        barcodeInput.click();
     });
 
     // При выборе файла автоматически отправляем форму
-    document.getElementById('barcode-input').addEventListener('change', function() {
+    barcodeInput.addEventListener('change', function() {
         if (this.files.length > 0) {
-            document.getElementById('barcode-form').submit();
+            // Показываем индикатор загрузки
+            const buttonContent = scanTrigger.querySelector('.button-content');
+            const originalContent = buttonContent.innerHTML;
+            buttonContent.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span class="button-text">Обработка...</span>';
+            scanTrigger.disabled = true;
+            
+            // Отправляем форму
+            barcodeForm.submit();
         }
     });
+
+    // Анимация для кнопки сканирования
+    scanTrigger.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px)';
+    });
+
+    scanTrigger.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
+
+    // Анимация для поля поиска
+    const searchInput = document.querySelector('.search-input');
+    const searchContainer = document.querySelector('.search-container');
+    
+    searchInput.addEventListener('focus', function() {
+        searchContainer.style.transform = 'scale(1.02)';
+        searchContainer.style.boxShadow = '0 8px 25px rgba(95, 114, 96, 0.15)';
+    });
+
+    searchInput.addEventListener('blur', function() {
+        searchContainer.style.transform = 'scale(1)';
+        searchContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+    });
+
+    // Анимация для кнопки анализа
+    const analyzeButton = document.querySelector('.analyze-button');
+    analyzeButton.addEventListener('click', function(e) {
+        const form = this.closest('form');
+        const composition = form.querySelector('#composition').value.trim();
+        
+        if (!composition) {
+            e.preventDefault();
+            showNotification('Пожалуйста, введите состав для анализа', 'error');
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Анализируем...</span>';
+        this.disabled = true;
+    });
+
+    // Функция для показа уведомлений
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="notification-icon"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        lucide.createIcons();
+        
+        // Анимация появления
+        setTimeout(() => notification.classList.add('show'), 100);
+        
+        // Автоматическое скрытие
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
 });
 </script>
 
 <!-- Всплывающий алерт -->
 {% if alert_message %}
-    <div id="alert-box" class="alert alert-{{ alert_type }}" role="alert" style="
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1050;
-      background: linear-gradient(135deg, var(--sage-600), var(--emerald-600));
-      color: white;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 10px 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(15, 70, 40, 0.25);
-      max-width: 320px;
-      user-select: none;
-      cursor: default;">
-      {{ alert_message }}
+    <div id="alert-box" class="alert alert-{{ alert_type }}" role="alert">
+        <i data-lucide="{{ 'check-circle' if alert_type == 'success' else 'alert-circle' }}" class="alert-icon"></i>
+        <span class="alert-message">{{ alert_message }}</span>
     </div>
 
     <script>
@@ -160,8 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         const alertBox = document.getElementById('alert-box');
         if (alertBox) {
-          alertBox.style.transition = 'opacity 0.5s ease-out';
-          alertBox.style.opacity = '0';
+          alertBox.classList.add('fade-out');
           setTimeout(() => alertBox.remove(), 500);
         }
       }, 3000);

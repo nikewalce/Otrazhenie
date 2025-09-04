@@ -267,6 +267,11 @@ class OtrazhenieDB(Database):
         """Возвращает пользователя по username"""
         with self.get_session() as session:
             return session.query(User).filter(User.username == username).first()
+    
+    def get_user_by_id(self, user_id: int):
+        """Возвращает пользователя по ID"""
+        with self.get_session() as session:
+            return session.query(User).filter(User.id == user_id).first()
 
     def create_user(self, username: str, email: str, password: str):
         """Создаёт нового пользователя"""

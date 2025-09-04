@@ -1,43 +1,128 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
 <div class="app-container">
-    <div class="analysis-form">
-        <h2 class="form-title">Вход в аккаунт</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="info-text" style="color: {% if category == 'error' %}var(--rose-500){% else %}var(--emerald-600){% endif %};">
-                {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <form method="POST">
-            <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input class="form-login" type="email" id="email" name="email" required>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon-container">
+                    <i data-lucide="log-in" class="auth-icon"></i>
+                </div>
+                <h2 class="auth-title">Вход в аккаунт</h2>
+                <p class="auth-subtitle">Войдите в свой аккаунт для продолжения</p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="password">Пароль</label>
-                <input class="form-login" type="password" id="password" name="password" required>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="auth-messages">
+                  {% for category, message in messages %}
+                    <div class="auth-message {{ category }}">
+                        <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="message-icon"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        <i data-lucide="mail" class="label-icon"></i>
+                        Email
+                    </label>
+                    <input class="form-input" type="email" id="email" name="email" 
+                           placeholder="Введите ваш email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <i data-lucide="lock" class="label-icon"></i>
+                        Пароль
+                    </label>
+                    <div class="password-container">
+                        <input class="form-input" type="password" id="password" name="password" 
+                               placeholder="Введите пароль" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i data-lucide="eye" class="password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="auth-button" type="submit">
+                    <i data-lucide="log-in" class="button-icon"></i>
+                    <span>Войти</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p class="auth-link-text">
+                    Нет аккаунта? 
+                    <a href="{{ url_for('auth_bp.auth_register') }}" class="auth-link">
+                        Зарегистрироваться
+                    </a>
+                </p>
             </div>
-
-            <button class="analyze-button" type="submit">Войти</button>
-        </form>
-
-        <p style="text-align:center; margin-top: 12px;">
-            Нет аккаунта? <a href="{{ url_for('auth_bp.auth_register') }}">Зарегистрироваться</a>
-        </p>
+        </div>
     </div>
 </div>
-</body>
-</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    // Анимация для кнопки входа
+    const authButton = document.querySelector('.auth-button');
+    authButton.addEventListener('click', function(e) {
+        const form = this.closest('form');
+        const email = form.querySelector('#email').value.trim();
+        const password = form.querySelector('#password').value.trim();
+        
+        if (!email || !password) {
+            e.preventDefault();
+            showNotification('Пожалуйста, заполните все поля', 'error');
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Вход...</span>';
+        this.disabled = true;
+    });
+
+    // Функция для показа уведомлений
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="notification-icon"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        lucide.createIcons();
+        
+        setTimeout(() => notification.classList.add('show'), 100);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.querySelector('.password-icon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.setAttribute('data-lucide', 'eye');
+    }
+    
+    lucide.createIcons();
+}
+</script>
+{% endblock %}

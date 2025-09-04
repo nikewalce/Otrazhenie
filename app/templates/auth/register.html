@@ -2,52 +2,168 @@
 
 {% block content %}
 <div class="app-container">
-  <div class="main-content">
-    <form class="analysis-form" method="POST" action="{{ url_for('auth_bp.auth_register') }}">
-      <div class="product-header">
-        <div class="product-info">
-          <h2 class="form-title">Регистрация</h2>
-          <p class="section-subtitle">Создайте аккаунт, чтобы начать использовать приложение</p>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon-container">
+                    <i data-lucide="user-plus" class="auth-icon"></i>
+                </div>
+                <h2 class="auth-title">Регистрация</h2>
+                <p class="auth-subtitle">Создайте аккаунт, чтобы начать использовать приложение</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="auth-messages">
+                  {% for category, message in messages %}
+                    <div class="auth-message {{ category }}">
+                        <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="message-icon"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('auth_bp.auth_register') }}" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        <i data-lucide="user" class="label-icon"></i>
+                        Имя пользователя
+                    </label>
+                    <input class="form-input" type="text" id="username" name="username" 
+                           placeholder="Введите имя пользователя" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        <i data-lucide="mail" class="label-icon"></i>
+                        Электронная почта
+                    </label>
+                    <input class="form-input" type="email" id="email" name="email" 
+                           placeholder="Введите email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <i data-lucide="lock" class="label-icon"></i>
+                        Пароль
+                    </label>
+                    <div class="password-container">
+                        <input class="form-input" type="password" id="password" name="password" 
+                               placeholder="Введите пароль" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <i data-lucide="eye" class="password-icon"></i>
+                        </button>
+                    </div>
+                    <div class="form-hint">
+                        <i data-lucide="info" class="hint-icon"></i>
+                        <span>Пароль должен содержать минимум 6 символов</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">
+                        <i data-lucide="lock" class="label-icon"></i>
+                        Подтвердите пароль
+                    </label>
+                    <div class="password-container">
+                        <input class="form-input" type="password" id="confirm_password" name="confirm_password" 
+                               placeholder="Повторите пароль" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                            <i data-lucide="eye" class="password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="auth-button" type="submit">
+                    <i data-lucide="user-plus" class="button-icon"></i>
+                    <span>Зарегистрироваться</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p class="auth-link-text">
+                    Уже есть аккаунт? 
+                    <a href="{{ url_for('auth_bp.auth_login') }}" class="auth-link">
+                        Войти
+                    </a>
+                </p>
+            </div>
         </div>
-      </div>
-
-
-        <!-- Username -->
-        <div class="form-group-login">
-          <label class="info-label" for="username">Имя пользователя</label>
-          <input class="form-login" type="text" id="username" name="username" placeholder="Введите имя пользователя" required>
-        </div>
-
-        <!-- Email -->
-        <div class="form-group-login">
-          <label class="info-label" for="email">Электронная почта</label>
-          <input class="form-login" type="email" id="email" name="email" placeholder="Введите email" required>
-        </div>
-
-        <!-- Password -->
-        <div class="form-group-login">
-          <label class="info-label" for="password">Пароль</label>
-          <input class="form-login" type="password" id="password" name="password" placeholder="Введите пароль" required>
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="form-group-login">
-          <label class="info-label" for="confirm_password">Подтвердите пароль</label>
-          <input class="form-login" type="password" id="confirm_password" name="confirm_password" placeholder="Повторите пароль" required>
-        </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="analyze-button">
-          Зарегистрироваться
-        </button>
-
-        <!-- Link to login -->
-        <p class="text-center" style="margin-top:1rem;">
-          Уже есть аккаунт? <a href="{{ url_for('auth_bp.auth_login') }}" style="color: var(--emerald-500); text-decoration: none;">Войти</a>
-        </p>
-
-    </form>
-  </div>
+    </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    // Анимация для кнопки регистрации
+    const authButton = document.querySelector('.auth-button');
+    authButton.addEventListener('click', function(e) {
+        const form = this.closest('form');
+        const username = form.querySelector('#username').value.trim();
+        const email = form.querySelector('#email').value.trim();
+        const password = form.querySelector('#password').value.trim();
+        const confirmPassword = form.querySelector('#confirm_password').value.trim();
+        
+        if (!username || !email || !password || !confirmPassword) {
+            e.preventDefault();
+            showNotification('Пожалуйста, заполните все поля', 'error');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            showNotification('Пароли не совпадают', 'error');
+            return;
+        }
+
+        if (password.length < 6) {
+            e.preventDefault();
+            showNotification('Пароль должен содержать минимум 6 символов', 'error');
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Регистрация...</span>';
+        this.disabled = true;
+    });
+
+    // Функция для показа уведомлений
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="notification-icon"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        lucide.createIcons();
+        
+        setTimeout(() => notification.classList.add('show'), 100);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const passwordIcon = passwordInput.parentElement.querySelector('.password-icon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.setAttribute('data-lucide', 'eye');
+    }
+    
+    lucide.createIcons();
+}
+</script>
 {% endblock %}

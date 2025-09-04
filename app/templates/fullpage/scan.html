@@ -1,0 +1,224 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}Сканирование - Otrazhenie{% endblock %}
+{% block description %}Сканируйте штрих-код косметического продукта для анализа состава{% endblock %}
+
+{% block content %}
+<div class="scan-container">
+    <div class="scan-header">
+        <div class="scan-header-content">
+            <h1 class="scan-title">
+                <i data-lucide="scan-line" class="scan-title-icon"></i>
+                Сканирование продукта
+            </h1>
+            <p class="scan-subtitle">
+                Сфотографируйте штрих-код или загрузите изображение для анализа состава
+            </p>
+        </div>
+    </div>
+
+    <div class="scan-content">
+        <div class="scan-methods">
+            <!-- Метод 1: Загрузка файла -->
+            <div class="scan-method-card">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i data-lucide="upload" class="method-icon-svg"></i>
+                    </div>
+                    <h3 class="method-title">Загрузить изображение</h3>
+                    <p class="method-description">
+                        Выберите файл с изображением штрих-кода с вашего устройства
+                    </p>
+                </div>
+                
+                <form action="{{ url_for('handle_scan_bp.handle_scan') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="upload-placeholder">
+                            <i data-lucide="image" class="upload-icon"></i>
+                            <p class="upload-text">Нажмите для выбора файла</p>
+                            <p class="upload-hint">или перетащите изображение сюда</p>
+                        </div>
+                        <input type="file" name="barcode_image" id="barcodeImage" accept="image/*" class="file-input" required>
+                    </div>
+                    
+                    <div class="upload-preview" id="uploadPreview" style="display: none;">
+                        <img id="previewImage" class="preview-image" alt="Предварительный просмотр">
+                        <button type="button" class="remove-file" onclick="removeFile()">
+                            <i data-lucide="x" class="remove-icon"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="scan-button" id="scanButton" disabled>
+                        <i data-lucide="scan-line" class="button-icon"></i>
+                        <span>Сканировать</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Метод 2: Ручной ввод -->
+            <div class="scan-method-card">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i data-lucide="keyboard" class="method-icon-svg"></i>
+                    </div>
+                    <h3 class="method-title">Ручной ввод</h3>
+                    <p class="method-description">
+                        Введите название продукта или состав вручную для анализа
+                    </p>
+                </div>
+                
+                <form action="{{ url_for('results_bp.results') }}" method="POST" class="manual-form">
+                    <div class="input-group">
+                        <label for="composition" class="input-label">Состав продукта</label>
+                        <textarea 
+                            name="composition" 
+                            id="composition" 
+                            class="composition-input" 
+                            placeholder="Введите ингредиенты через запятую, например: aqua, glycerin, hyaluronic acid"
+                            rows="4"
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <button type="submit" class="analyze-button">
+                        <i data-lucide="flask-conical" class="button-icon"></i>
+                        <span>Анализировать</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Инструкции по сканированию -->
+        <div class="scan-instructions">
+            <div class="instructions-header">
+                <h3 class="instructions-title">
+                    <i data-lucide="info" class="instructions-icon"></i>
+                    Как правильно сканировать
+                </h3>
+            </div>
+            
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <div class="instruction-number">1</div>
+                    <div class="instruction-content">
+                        <h4>Подготовьте штрих-код</h4>
+                        <p>Убедитесь, что штрих-код хорошо освещен и не поврежден</p>
+                    </div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="instruction-number">2</div>
+                    <div class="instruction-content">
+                        <h4>Сделайте фото</h4>
+                        <p>Сфотографируйте штрих-код крупным планом, избегая бликов</p>
+                    </div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="instruction-number">3</div>
+                    <div class="instruction-content">
+                        <h4>Загрузите изображение</h4>
+                        <p>Выберите файл или перетащите изображение в область загрузки</p>
+                    </div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="instruction-number">4</div>
+                    <div class="instruction-content">
+                        <h4>Получите результат</h4>
+                        <p>Наша система проанализирует состав и даст рекомендации</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Поддерживаемые форматы -->
+        <div class="supported-formats">
+            <h3 class="formats-title">Поддерживаемые форматы</h3>
+            <div class="formats-list">
+                <div class="format-item">
+                    <i data-lucide="barcode" class="format-icon"></i>
+                    <span>Штрих-коды (EAN, UPC)</span>
+                </div>
+                <div class="format-item">
+                    <i data-lucide="qr-code" class="format-icon"></i>
+                    <span>QR-коды</span>
+                </div>
+                <div class="format-item">
+                    <i data-lucide="image" class="format-icon"></i>
+                    <span>Изображения (JPG, PNG)</span>
+                </div>
+                <div class="format-item">
+                    <i data-lucide="file-text" class="format-icon"></i>
+                    <span>Текстовый ввод</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('barcodeImage');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const previewImage = document.getElementById('previewImage');
+    const scanButton = document.getElementById('scanButton');
+    
+    // Drag and drop функциональность
+    fileUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.add('drag-over');
+    });
+    
+    fileUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.remove('drag-over');
+    });
+    
+    fileUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+        }
+    });
+    
+    // Клик по области загрузки
+    fileUploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    // Обработка выбора файла
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+    
+    function handleFileSelect(file) {
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                fileUploadArea.style.display = 'none';
+                uploadPreview.style.display = 'block';
+                scanButton.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // Удаление файла
+    window.removeFile = function() {
+        fileInput.value = '';
+        uploadPreview.style.display = 'none';
+        fileUploadArea.style.display = 'block';
+        scanButton.disabled = true;
+    };
+});
+</script>
+{% endblock %}

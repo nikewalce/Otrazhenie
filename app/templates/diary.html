@@ -2,37 +2,100 @@
 
 {% block content %}
 <div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-content">
-            <div class="logo-container">
-                <h1 class="app-logo">Otrazhenie</h1>
-                <p class="app-subtitle">Анализ косметики</p>
-            </div>
-            <div class="badge-container">
-                <span class="product-badge">Продуктов: 24</span>
-            </div>
-        </div>
-    </header>
-
     <!-- Основной контент -->
     <main class="main-content">
         <div class="diary-section">
-            <h2 class="section-title">Косметический дневник</h2>
-            <p class="section-subtitle">История ваших сканирований и анализов</p>
+            <div class="diary-header">
+                <h2 class="section-title">
+                    <i data-lucide="book-open" class="diary-icon"></i>
+                    Косметический дневник
+                </h2>
+                <p class="section-subtitle">История ваших сканирований и анализов</p>
+            </div>
+
+            <!-- Статистика дневника -->
+            <div class="diary-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="scan-line" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number">24</span>
+                        <span class="stat-label">Проанализировано</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="shield-check" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number">18</span>
+                        <span class="stat-label">Безопасных</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="calendar" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">За неделю</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтры -->
+            <div class="diary-filters">
+                <div class="filter-group">
+                    <button class="filter-button active" data-filter="all">
+                        <i data-lucide="grid-3x3" class="filter-icon"></i>
+                        Все
+                    </button>
+                    <button class="filter-button" data-filter="safe">
+                        <i data-lucide="shield-check" class="filter-icon"></i>
+                        Безопасные
+                    </button>
+                    <button class="filter-button" data-filter="moderate">
+                        <i data-lucide="alert-triangle" class="filter-icon"></i>
+                        Умеренно
+                    </button>
+                    <button class="filter-button" data-filter="risk">
+                        <i data-lucide="alert-circle" class="filter-icon"></i>
+                        Риск
+                    </button>
+                </div>
+            </div>
             
             {% for product in products %}
-            <div class="product-card">
+            <div class="product-card" data-rating="{{ product.rating }}">
                 <div class="product-header">
+                    <div class="product-image-container">
+                        <div class="product-image-placeholder">
+                            <i data-lucide="package" class="product-placeholder-icon"></i>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h3 class="product-name">{{ product.name }}</h3>
                         <p class="product-brand">{{ product.brand }}</p>
+                        <div class="product-date">
+                            <i data-lucide="clock" class="date-icon"></i>
+                            <span>2 дня назад</span>
+                        </div>
                     </div>
-                    <span class="rating-badge {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}">
-                        {% if product.rating == 'safe' %}Безопасно
-                        {% elif product.rating == 'moderate' %}Умеренно
-                        {% else %}Риск{% endif %}
-                    </span>
+                    <div class="product-rating">
+                        <span class="rating-badge {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}">
+                            {% if product.rating == 'safe' %}
+                                <i data-lucide="shield-check" class="rating-icon"></i>
+                                Безопасно
+                            {% elif product.rating == 'moderate' %}
+                                <i data-lucide="alert-triangle" class="rating-icon"></i>
+                                Умеренно
+                            {% else %}
+                                <i data-lucide="alert-circle" class="rating-icon"></i>
+                                Риск
+                            {% endif %}
+                        </span>
+                    </div>
                 </div>
                 
                 <div class="product-stats">
@@ -51,8 +114,14 @@
                 </div>
                 
                 <div class="product-actions">
-                    <button class="outline-button">Подробнее</button>
-                    <button class="primary-button">В рутину</button>
+                    <button class="outline-button">
+                        <i data-lucide="eye" class="action-icon"></i>
+                        Подробнее
+                    </button>
+                    <button class="primary-button">
+                        <i data-lucide="plus" class="action-icon"></i>
+                        В рутину
+                    </button>
                 </div>
             </div>
             {% endfor %}

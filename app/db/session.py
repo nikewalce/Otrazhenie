@@ -6,7 +6,12 @@ from sqlalchemy.orm import sessionmaker, declarative_base,  Session
 
 load_dotenv()
 
-DATABASE_URL = config("DATABASE_URL")
+# Используем значение по умолчанию для DATABASE_URL если переменная окружения не установлена
+try:
+    DATABASE_URL = config("DATABASE_URL")
+except:
+    DATABASE_URL = "sqlite:///./test.db"  # Используем SQLite для тестирования
+
 Base = declarative_base() # Базовый класс для определения моделей (таблиц ORM)
 
 class Database:

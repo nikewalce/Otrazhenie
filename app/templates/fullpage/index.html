@@ -1,0 +1,217 @@
+{% extends "fullpage/base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">
+                <span class="hero-title-main">Анализ косметики</span>
+                <span class="hero-title-sub">за 30 секунд</span>
+            </h1>
+            <p class="hero-description">
+                Узнайте правду о составе вашей косметики. Сканируйте штрих-код, 
+                анализируйте ингредиенты и получайте персонализированные рекомендации 
+                для здоровой кожи.
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">50,000+</span>
+                    <span class="stat-label">Ингредиентов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Точность</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">30 сек</span>
+                    <span class="stat-label">Анализ</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="scanner-demo">
+                <div class="scanner-circle">
+                    <div class="scanner-inner">
+                        <i data-lucide="scan-line" class="scanner-icon"></i>
+                    </div>
+                    <div class="scanner-pulse"></div>
+                </div>
+                <div class="demo-products">
+                    <div class="demo-product safe">
+                        <i data-lucide="shield-check" class="demo-icon"></i>
+                        <span>Безопасно</span>
+                    </div>
+                    <div class="demo-product moderate">
+                        <i data-lucide="alert-triangle" class="demo-icon"></i>
+                        <span>Спорно</span>
+                    </div>
+                    <div class="demo-product risk">
+                        <i data-lucide="alert-circle" class="demo-icon"></i>
+                        <span>Риск</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="section-header">
+        <h2 class="section-title">Как это работает</h2>
+        <p class="section-subtitle">Простой и быстрый анализ состава косметики</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i data-lucide="camera" class="feature-icon-svg"></i>
+            </div>
+            <h3 class="feature-title">Сканирование</h3>
+            <p class="feature-description">
+                Сфотографируйте штрих-код продукта или введите название вручную
+            </p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i data-lucide="flask-conical" class="feature-icon-svg"></i>
+            </div>
+            <h3 class="feature-title">Анализ</h3>
+            <p class="feature-description">
+                Наша система анализирует каждый ингредиент на основе научных данных
+            </p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i data-lucide="shield-check" class="feature-icon-svg"></i>
+            </div>
+            <h3 class="feature-title">Результат</h3>
+            <p class="feature-description">
+                Получите детальный отчет о безопасности и рекомендации
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <div class="cta-content">
+        <h2 class="cta-title">Начните анализ прямо сейчас</h2>
+        <p class="cta-description">
+            Загрузите фото штрих-кода или введите название продукта
+        </p>
+        
+        <div class="cta-actions">
+            <form id="barcode-form" method="POST" action="{{ url_for('handle_scan_bp.handle_scan') }}" enctype="multipart/form-data" class="scan-form">
+                <button type="button" class="cta-button primary" id="scan-trigger">
+                    <i data-lucide="camera" class="button-icon"></i>
+                    <span>Сканировать штрих-код</span>
+                </button>
+                <input type="file" id="barcode-input" name="barcode_image" accept="image/*" capture="environment" class="file-input-hidden">
+            </form>
+            <a href="{{ url_for('handle_scan_bp.handle_scan') }}" class="cta-button secondary" style="margin-left:12px;">
+                <i data-lucide="scan-line" class="button-icon"></i>
+                <span>Открыть сканер</span>
+            </a>
+            
+            <div class="cta-divider">
+                <span>или</span>
+            </div>
+            
+            <form method="POST" action="{{ url_for('handle_search_bp.handle_search') }}" class="search-form">
+                <div class="search-container">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" name="product_name" placeholder="Введите название продукта..." class="search-input" required>
+                    <button type="submit" class="search-button">
+                        <i data-lucide="arrow-right" class="search-button-icon"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="manual-analysis-section">
+    <div class="manual-content">
+        <div class="manual-header">
+            <h3 class="manual-title">
+                <i data-lucide="edit-3" class="manual-icon"></i>
+                Анализ состава вручную
+            </h3>
+            <p class="manual-description">
+                Введите список ингредиентов для детального анализа
+            </p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('results_bp.results') }}" class="manual-form">
+            <div class="form-group">
+                <label for="composition" class="form-label">
+                    <i data-lucide="list" class="label-icon"></i>
+                    Список ингредиентов
+                </label>
+                <textarea name="composition" id="composition" rows="4" class="form-input" 
+                          placeholder="Введите ингредиенты через запятую, например: Aqua, Glycerin, Hyaluronic Acid..." required></textarea>
+                <div class="form-hint">
+                    <i data-lucide="info" class="hint-icon"></i>
+                    <span>Разделяйте ингредиенты запятыми для лучшего анализа</span>
+                </div>
+            </div>
+            <button type="submit" class="analyze-button">
+                <i data-lucide="search" class="button-icon"></i>
+                <span>Проанализировать состав</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    const scanTrigger = document.getElementById('scan-trigger');
+    const barcodeInput = document.getElementById('barcode-input');
+    const barcodeForm = document.getElementById('barcode-form');
+
+    // Сканирование штрих-кода
+    scanTrigger.addEventListener('click', function() {
+        barcodeInput.click();
+    });
+
+    barcodeInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const originalContent = scanTrigger.innerHTML;
+            scanTrigger.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Обработка...</span>';
+            scanTrigger.disabled = true;
+            barcodeForm.submit();
+        }
+    });
+
+    // Анимация для кнопки анализа
+    const analyzeButton = document.querySelector('.analyze-button');
+    analyzeButton.addEventListener('click', function(e) {
+    const form = this.closest('form');
+    const composition = form.querySelector('#composition').value.trim();
+
+    if (!composition) {
+        e.preventDefault();
+        showNotification('Пожалуйста, введите состав для анализа', 'error');
+        return;
+    }
+
+    // Быстро меняем кнопку и позволяем форме отправиться
+    const originalContent = this.innerHTML;
+    this.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Анализируем...</span>';
+
+    // Небольшая задержка для отображения анимации
+    setTimeout(() => {
+        // Форма отправится автоматически
+    }, 50);
+    });
+
+    searchInput.addEventListener('blur', function() {
+        searchContainer.style.transform = 'scale(1)';
+        searchContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+    });
+});
+</script>
+{% endblock %}

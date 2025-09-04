@@ -10,4 +10,5 @@ def recommendations():
     """
     Рендерит страницу рекомендаций.
     """
-    return render_template("recommendations.html", active_tab='recommendations')
+    #return render_template("recommendations.html", active_tab='recommendations')
+    return render_template("fullpage/recommendations.html", active_tab='recommendations')

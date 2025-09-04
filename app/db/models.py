@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boo
 from app.db.session import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
+from flask_login import UserMixin
 
 class ProductIngredient(Base):
     """Класс для таблицы с ингредиентами"""
@@ -122,7 +123,7 @@ class Product(Base):
         }
 
 
-class User(Base):
+class User(Base, UserMixin):
     """Класс пользователя"""
     __tablename__ = "users"
 
@@ -153,6 +154,20 @@ class User(Base):
 
     def __repr__(self):
         return f"<User {self.username}>"
+    
+    def get_id(self):
+        """Возвращает ID пользователя как строку (требуется для Flask-Login)"""
+        return str(self.id)
+    
+    @property
+    def is_authenticated(self):
+        """Проверяет, аутентифицирован ли пользователь"""
+        return True
+    
+    @property
+    def is_anonymous(self):
+        """Проверяет, является ли пользователь анонимным"""
+        return False
 
 
 class Profile(Base):

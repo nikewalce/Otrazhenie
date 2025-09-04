@@ -1,0 +1,38 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}Вход в аккаунт - Otrazhenie{% endblock %}
+{% block description %}Войдите в аккаунт, чтобы сохранять результаты и настройки{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="auth-title"><i data-lucide="log-in" class="title-icon"></i>Вход</h1>
+            <p class="auth-subtitle">Рады видеть вас снова</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth_bp.auth_login') }}" class="auth-form">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required />
+            </div>
+
+            <button type="submit" class="action-button primary">
+                <i data-lucide="log-in" class="button-icon"></i>
+                <span>Войти</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <span>Нет аккаунта?</span>
+            <a href="{{ url_for('auth_bp.auth_register') }}" class="link">Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

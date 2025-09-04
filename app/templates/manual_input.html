@@ -2,19 +2,127 @@
 
 {% block content %}
 <div class="app-container">
-    <!-- ... header ... -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h1 class="app-logo">Otrazhenie</h1>
+                <p class="app-subtitle">Ручной ввод состава</p>
+            </div>
+        </div>
+    </header>
     
     <main class="main-content">
-        <div class="manual-input-section">
-            <h2>Продукт "{{ product_name }}" не найден</h2>
-            <p>Введите состав вручную:</p>
-            
-            <form method="POST" action="{{ url_for('analyze_composition') }}">
-                <input type="hidden" name="product_name" value="{{ product_name }}">
-                <textarea name="composition" class="form-input" rows="4" required></textarea>
-                <button type="submit" class="analyze-button">Анализировать</button>
-            </form>
+        <div class="manual-input-container">
+            <div class="manual-input-header">
+                <div class="manual-input-icon">
+                    <i data-lucide="edit-3" class="header-icon"></i>
+                </div>
+                <h2 class="manual-input-title">Продукт не найден</h2>
+                <p class="manual-input-subtitle">Продукт "{{ product_name }}" не найден в базе данных</p>
+            </div>
+
+            <div class="manual-input-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i data-lucide="flask-conical" class="card-icon"></i>
+                        Введите состав вручную
+                    </h3>
+                    <p class="card-subtitle">Укажите ингредиенты продукта для анализа безопасности</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('analyze_composition') }}" class="manual-form">
+                    <input type="hidden" name="product_name" value="{{ product_name }}">
+                    
+                    <div class="form-group">
+                        <label for="composition" class="form-label">
+                            <i data-lucide="list" class="label-icon"></i>
+                            Список ингредиентов
+                        </label>
+                        <textarea name="composition" id="composition" class="form-input" rows="6" 
+                                  placeholder="Введите ингредиенты через запятую, например: Aqua, Glycerin, Hyaluronic Acid, Niacinamide..." required></textarea>
+                        <div class="form-hint">
+                            <i data-lucide="info" class="hint-icon"></i>
+                            <span>Разделяйте ингредиенты запятыми для лучшего анализа</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('index_bp.index') }}" class="back-button">
+                            <i data-lucide="arrow-left" class="button-icon"></i>
+                            <span>Назад</span>
+                        </a>
+                        <button type="submit" class="analyze-button">
+                            <i data-lucide="search" class="button-icon"></i>
+                            <span>Анализировать состав</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="help-section">
+                <h4 class="help-title">
+                    <i data-lucide="help-circle" class="help-icon"></i>
+                    Как найти состав продукта?
+                </h4>
+                <div class="help-tips">
+                    <div class="help-tip">
+                        <i data-lucide="package" class="tip-icon"></i>
+                        <span>Посмотрите на упаковку продукта</span>
+                    </div>
+                    <div class="help-tip">
+                        <i data-lucide="search" class="tip-icon"></i>
+                        <span>Найдите список INCI на официальном сайте</span>
+                    </div>
+                    <div class="help-tip">
+                        <i data-lucide="smartphone" class="tip-icon"></i>
+                        <span>Используйте мобильное приложение бренда</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    // Анимация для кнопки анализа
+    const analyzeButton = document.querySelector('.analyze-button');
+    analyzeButton.addEventListener('click', function(e) {
+        const form = this.closest('form');
+        const composition = form.querySelector('#composition').value.trim();
+        
+        if (!composition) {
+            e.preventDefault();
+            showNotification('Пожалуйста, введите состав продукта', 'error');
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i><span>Анализируем...</span>';
+        this.disabled = true;
+    });
+
+    // Функция для показа уведомлений
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="notification-icon"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        lucide.createIcons();
+        
+        setTimeout(() => notification.classList.add('show'), 100);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
 {% endblock %}

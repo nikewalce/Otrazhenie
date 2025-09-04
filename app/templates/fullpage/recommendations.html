@@ -1,0 +1,96 @@
+{% extends "fullpage/base.html" %}
+
+{% block content %}
+<div class="recommendations-page">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1 class="page-title">
+                <i data-lucide="lightbulb" class="page-icon"></i>
+                Рекомендации
+            </h1>
+            <p class="page-subtitle">Персонализированные советы для вашей кожи</p>
+        </div>
+    </div>
+
+    <!-- Главная рекомендация -->
+    <div class="main-recommendation">
+        <div class="recommendation-card">
+            <div class="recommendation-header">
+                <i data-lucide="leaf" class="recommendation-icon"></i>
+                <h3>Ваша идеальная рутина</h3>
+            </div>
+            <p class="recommendation-text">
+                На основе анализа 12 продуктов мы подобрали оптимальную рутину для комбинированной кожи
+            </p>
+            <button class="recommendation-button">Посмотреть рутину</button>
+        </div>
+    </div>
+
+    <!-- Безопасные аналоги -->
+    <div class="safe-alternatives">
+        <h3 class="alternatives-title">
+            <i data-lucide="shield-check" class="section-icon"></i>
+            Безопасные аналоги
+        </h3>
+        
+        <div class="alternatives-grid">
+            <div class="alternative-item">
+                <div class="alternative-icon">
+                    <i data-lucide="droplets" class="product-icon"></i>
+                </div>
+                <div class="alternative-info">
+                    <h4>Сыворотка с гиалуроновой кислотой</h4>
+                    <p class="alternative-price">от 890 ₽</p>
+                    <p class="alternative-description">Интенсивное увлажнение для комбинированной кожи</p>
+                </div>
+                <div class="alternative-rating">
+                    <span class="rating-score">9.2</span>
+                    <span class="rating-max">/10</span>
+                </div>
+            </div>
+            
+            <div class="alternative-item">
+                <div class="alternative-icon">
+                    <i data-lucide="sparkles" class="product-icon"></i>
+                </div>
+                <div class="alternative-info">
+                    <h4>Увлажняющий крем без парабенов</h4>
+                    <p class="alternative-price">от 1 290 ₽</p>
+                    <p class="alternative-description">Натуральные компоненты для чувствительной кожи</p>
+                </div>
+                <div class="alternative-rating">
+                    <span class="rating-score">9.5</span>
+                    <span class="rating-max">/10</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Дополнительные советы -->
+    <div class="additional-tips">
+        <h3 class="tips-title">
+            <i data-lucide="lightbulb" class="section-icon"></i>
+            Полезные советы
+        </h3>
+        
+        <div class="tips-grid">
+            <div class="tip-item">
+                <i data-lucide="sun" class="tip-icon"></i>
+                <p>Используйте SPF 30+ каждый день, даже в пасмурную погоду</p>
+            </div>
+            
+            <div class="tip-item">
+                <i data-lucide="droplet" class="tip-icon"></i>
+                <p>Пейте не менее 2 литров воды в день для увлажнения кожи</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+});
+</script>
+{% endblock %}

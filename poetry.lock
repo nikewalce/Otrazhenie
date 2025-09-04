@@ -372,6 +372,22 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flask-login"
+version = "0.6.3"
+description = "User authentication and session management for Flask."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "Flask-Login-0.6.3.tar.gz", hash = "sha256:5e23d14a607ef12806c699590b89d0f0e0d67baeec599d75947bf9c147330333"},
+    {file = "Flask_Login-0.6.3-py3-none-any.whl", hash = "sha256:849b25b82a436bf830a054e74214074af59097171562ab10bfa999e6b78aae5d"},
+]
+
+[package.dependencies]
+Flask = ">=1.0.4"
+Werkzeug = ">=1.0.1"
+
+[[package]]
 name = "flask-wtf"
 version = "1.2.2"
 description = "Form rendering, validation, and CSRF protection for Flask with WTForms."
@@ -1283,4 +1299,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "79d4c0d539635a79146b6e1d95539fa77fc72b5c37d5eb5f0b547b4f4092a981"
+content-hash = "45c87ec3696f5bc98961dd11d6a03cdce5ab0ec2fc797ea551bb4bf3eac0c40e"

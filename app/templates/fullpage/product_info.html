@@ -1,0 +1,104 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}{{ product.name or 'Продукт' }} - информация{% endblock %}
+{% block description %}Информация о продукте по штрих-коду и быстрый переход к анализу состава{% endblock %}
+
+{% block content %}
+<div class="product-info-fullpage">
+    <div class="product-header">
+        <a href="{{ url_for('index_bp.index') }}" class="action-button secondary">
+            <i data-lucide="arrow-left" class="button-icon"></i>
+            <span>На главную</span>
+        </a>
+        <div class="product-title">
+            <h1>
+                <i data-lucide="package" class="title-icon"></i>
+                {{ product.name or 'Неизвестный продукт' }}
+            </h1>
+            {% if product.brand %}
+            <div class="product-brand">
+                <i data-lucide="factory" class="brand-icon"></i>
+                <span>{{ product.brand }}</span>
+            </div>
+            {% endif %}
+            <div class="product-barcode">
+                <i data-lucide="barcode" class="barcode-icon"></i>
+                <span>{{ product.barcode }}</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('handle_scan_bp.handle_scan') }}" class="action-button tertiary">
+                <i data-lucide="scan-line" class="button-icon"></i>
+                <span>Сканировать другой</span>
+            </a>
+            {% if product.ingredients %}
+            <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button primary">
+                <i data-lucide="flask-conical" class="button-icon"></i>
+                <span>Анализировать состав</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="product-content">
+        <div class="product-left">
+            <div class="image-card">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image"/>
+                {% else %}
+                <div class="image-placeholder">
+                    <i data-lucide="image-off"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="product-right">
+            {% if product.category %}
+            <div class="info-row">
+                <span class="info-label">Категория</span>
+                <span class="info-value">{{ product.category }}</span>
+            </div>
+            {% endif %}
+
+            {% if product.additional_info %}
+            <div class="additional-info">
+                {% for key, value in product.additional_info.items() %}
+                <div class="info-row">
+                    <span class="info-label">{{ key }}</span>
+                    <span class="info-value">{{ value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="composition-block">
+                <div class="block-header">
+                    <h2>
+                        <i data-lucide="list"></i>
+                        Состав
+                    </h2>
+                </div>
+                {% if product.ingredients %}
+                <div class="composition-text">{{ product.ingredients }}</div>
+                <div class="block-actions">
+                    <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button primary">
+                        <i data-lucide="search" class="button-icon"></i>
+                        <span>Проанализировать</span>
+                    </a>
+                </div>
+                {% else %}
+                <form method="POST" action="{{ url_for('results_bp.results') }}" class="manual-form-inline">
+                    <textarea name="composition" rows="3" placeholder="Введите состав через запятую" required></textarea>
+                    <button type="submit" class="action-button primary">
+                        <i data-lucide="search" class="button-icon"></i>
+                        <span>Проанализировать</span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

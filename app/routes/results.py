@@ -19,6 +19,29 @@ def load_ingredients_database():
     except FileNotFoundError:
         print("Warning: Ingredients database not found!")
 
+
+def analyze_composition(composition: str):
+    """
+    Возвращает список словарей с данными по каждому ингредиенту из строки состава.
+    Если ингредиент отсутствует в БД — заполняем placeholder-значениями.
+    """
+    normalized_ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
+    db_data = load_ingredients_database() or {}
+    analysis_result = []
+    for ingredient_name in normalized_ingredients:
+        analysis_result.append(
+            db_data.get(
+                ingredient_name,
+                {
+                    "name": ingredient_name,
+                    "function": "Неизвестно",
+                    "safety_score": "?",
+                    "description": "Не найден в базе данных",
+                },
+            )
+        )
+    return analysis_result
+
 @results_bp.route("/results", methods=['GET', 'POST'], endpoint='results')
 def results_page():
     """
@@ -32,19 +55,9 @@ def results_page():
             or ""  # если нигде нет — пустая строка
     )
 
-    ingredients = [i.strip().lower() for i in composition.split(",") if i.strip()]
-    analysis = []
-    db_data = load_ingredients_database()
-    for name in ingredients:
-        data = db_data.get(name, {
-            'name': name,
-            'function': 'Неизвестно',
-            'safety_score': '?',
-            'description': 'Не найден в базе данных'
-        })
-        analysis.append(data)
-
-    return render_template("results.html",
+    analysis = analyze_composition(composition)
+    #return render_template("results.html",
+    return render_template("fullpage/results.html",
                            composition=composition,
                            analysis=analysis,
                            active_tab='scanner')
@@ -73,3 +86,27 @@ def add_unknown():
         description=description,
     )
     return jsonify(success=True, message=f"{name} добавлен")
+
+
+@results_bp.route("/ingredient/<string:name>", methods=['GET'], endpoint='ingredient_detail')
+def ingredient_detail(name: str):
+    """
+    Детальная страница ингредиента: описание, функция, рейтинг безопасности.
+    """
+    db_data = load_ingredients_database() or {}
+    key = (name or "").strip().lower()
+    data = db_data.get(
+        key,
+        {
+            "name": name,
+            "function": "Неизвестно",
+            "safety_score": "?",
+            "description": "Не найден в базе данных",
+        },
+    )
+    # Рендерим fullpage-шаблон с деталями
+    return render_template(
+        "fullpage/ingredient_detail.html",
+        ingredient=data,
+        active_tab='scanner'
+    )

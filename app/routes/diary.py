@@ -30,5 +30,6 @@ def diary():
             "risk_ingredients": 2
         }
     ]
-    return render_template("diary.html", products=mock_products, active_tab='diary')
+    #return render_template("diary.html", products=mock_products, active_tab='diary')
+    return render_template("fullpage/diary.html", products=mock_products, active_tab='diary')
 

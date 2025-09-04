@@ -1,0 +1,268 @@
+{% extends "fullpage/base.html" %}
+
+{% block content %}
+<div class="profile-page">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1 class="page-title">
+                <i data-lucide="user" class="page-icon"></i>
+                Профиль пользователя
+            </h1>
+            <p class="page-subtitle">Управляйте настройками и предпочтениями</p>
+        </div>
+    </div>
+
+    <!-- Основной контент профиля -->
+    <div class="profile-content">
+        <div class="profile-grid">
+            <!-- Левая колонка - основная информация -->
+            <div class="profile-main">
+                <!-- Аватар и основная информация -->
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-section">
+                            <div class="avatar-container">
+                                <div class="avatar-circle">
+                                    <i data-lucide="user" class="avatar-icon"></i>
+                                </div>
+                                <button class="avatar-edit" onclick="editAvatar()">
+                                    <i data-lucide="camera" class="edit-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <!--
+                            <h2 class="profile-name">Елизавета Ланговая</h2>
+                            <p class="profile-email">elizaveta@example.com</p>
+                            -->
+                            <h2 class="profile-name">{{ current_user.username }}</h2>
+                            <p class="profile-email">{{ current_user.email }}</p>
+                            <div class="profile-badges">
+                                <span class="badge premium">
+                                    <i data-lucide="crown" class="badge-icon"></i>
+                                    Premium
+                                </span>
+                                <span class="badge verified">
+                                    <i data-lucide="check-circle" class="badge-icon"></i>
+                                    Подтвержден
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Информация о типе кожи -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i data-lucide="heart" class="card-icon"></i>
+                            Тип кожи и цели
+                        </h3>
+                        <button class="edit-button" onclick="editSkinType()">
+                            <i data-lucide="edit-3" class="edit-icon"></i>
+                        </button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Тип кожи:</span>
+                            <span class="info-value">Комбинированная</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Основная цель:</span>
+                            <span class="info-value">Увлажнение</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Чувствительность:</span>
+                            <span class="info-value">Средняя</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Возраст:</span>
+                            <span class="info-value">25-30 лет</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ингредиенты для исключения -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i data-lucide="shield-x" class="card-icon"></i>
+                            Избегаемые ингредиенты
+                        </h3>
+                        <button class="edit-button" onclick="editIngredients()">
+                            <i data-lucide="plus" class="edit-icon"></i>
+                        </button>
+                    </div>
+                    <div class="ingredients-list">
+                        <span class="ingredient-badge">Парабены</span>
+                        <span class="ingredient-badge">Сульфаты</span>
+                        <span class="ingredient-badge">Спирт</span>
+                        <span class="ingredient-badge">Минеральные масла</span>
+                        <span class="ingredient-badge">Синтетические отдушки</span>
+                        <span class="ingredient-badge">Формальдегид</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка - статистика и настройки -->
+            <div class="profile-sidebar">
+                <!-- Статистика -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i data-lucide="bar-chart-3" class="card-icon"></i>
+                            Статистика
+                        </h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i data-lucide="scan-line" class="stat-icon-svg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">24</span>
+                                <span class="stat-label">Проанализировано</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i data-lucide="shield-check" class="stat-icon-svg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">18</span>
+                                <span class="stat-label">Безопасных</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i data-lucide="calendar" class="stat-icon-svg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">7</span>
+                                <span class="stat-label">За неделю</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i data-lucide="star" class="stat-icon-svg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">4.8</span>
+                                <span class="stat-label">Рейтинг</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Настройки профиля -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i data-lucide="settings" class="card-icon"></i>
+                            Настройки
+                        </h3>
+                    </div>
+                    <div class="settings-list">
+                        <button class="setting-button" onclick="openSettings('notifications')">
+                            <div class="setting-content">
+                                <i data-lucide="bell" class="setting-icon"></i>
+                                <span class="setting-text">Уведомления</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="arrow-icon"></i>
+                        </button>
+                        <button class="setting-button" onclick="openSettings('privacy')">
+                            <div class="setting-content">
+                                <i data-lucide="lock" class="setting-icon"></i>
+                                <span class="setting-text">Конфиденциальность</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="arrow-icon"></i>
+                        </button>
+                        <button class="setting-button" onclick="openSettings('account')">
+                            <div class="setting-content">
+                                <i data-lucide="user-cog" class="setting-icon"></i>
+                                <span class="setting-text">Аккаунт</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="arrow-icon"></i>
+                        </button>
+                        <button class="setting-button" onclick="openSettings('help')">
+                            <div class="setting-content">
+                                <i data-lucide="help-circle" class="setting-icon"></i>
+                                <span class="setting-text">Помощь</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="arrow-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Действия -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i data-lucide="zap" class="card-icon"></i>
+                            Быстрые действия
+                        </h3>
+                    </div>
+                    <div class="actions-list">
+                        <button class="action-button primary" onclick="startAnalysis()">
+                            <i data-lucide="scan-line" class="action-icon"></i>
+                            <span>Новый анализ</span>
+                        </button>
+                        <button class="action-button secondary" onclick="viewDiary()">
+                            <i data-lucide="book-open" class="action-icon"></i>
+                            <span>Открыть дневник</span>
+                        </button>
+                        <button class="action-button secondary" onclick="getRecommendations()">
+                            <i data-lucide="lightbulb" class="action-icon"></i>
+                            <span>Рекомендации</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+});
+
+// Функции для редактирования профиля
+function editAvatar() {
+    showNotification('Функция редактирования аватара будет добавлена', 'info');
+}
+
+function editSkinType() {
+    showNotification('Функция редактирования типа кожи будет добавлена', 'info');
+}
+
+function editIngredients() {
+    showNotification('Функция редактирования ингредиентов будет добавлена', 'info');
+}
+
+// Функции для настроек
+function openSettings(type) {
+    const settings = {
+        'notifications': 'Настройки уведомлений',
+        'privacy': 'Настройки конфиденциальности',
+        'account': 'Настройки аккаунта',
+        'help': 'Центр помощи'
+    };
+    showNotification(`Открытие: ${settings[type]}`, 'info');
+}
+
+// Функции быстрых действий
+function startAnalysis() {
+    window.location.href = "{{ url_for('index_bp.index') }}";
+}
+
+function viewDiary() {
+    window.location.href = "{{ url_for('diary_bp.diary') }}";
+}
+
+function getRecommendations() {
+    window.location.href = "{{ url_for('recommendations_bp.recommendations') }}";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Otrazhenie - Анализ косметики{% endblock %}</title>
+    <meta name="description" content="{% block description %}Узнайте правду о вашей косметике за 30 секунд. Сканируйте состав, получайте персонализированные рекомендации и ведите косметический дневник.{% endblock %}" />
+    <meta name="author" content="Otrazhenie Team" />
+    <meta name="keywords" content="косметика, анализ состава, ингредиенты, безопасность, уход за кожей" />
+
+    <meta property="og:title" content="{% block og_title %}Otrazhenie - Анализ состава косметики{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}Узнайте правду о вашей косметике за 30 секунд. Персонализированные рекомендации для здоровья вашей кожи.{% endblock %}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4fe7e4a2-3f34-4a59-982a-76f36a339a8b/id-preview-89c932d0--10458f09-16bb-4f43-a802-3394cb4ab373.lovable.app-1751280969964.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@otrazhenie_app" />
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4fe7e4a2-3f34-4a59-982a-76f36a339a8b/id-preview-89c932d0--10458f09-16bb-4f43-a802-3394cb4ab373.lovable.app-1751280969964.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fullpage.css') }}">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div class="fullpage-container">
+        <!-- Верхняя навигация -->
+        <header class="top-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i data-lucide="shield-check" class="logo-svg"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="app-logo">Otrazhenie</h1>
+                        <p class="app-subtitle">Анализ косметики</p>
+                    </div>
+                </div>
+                
+                <nav class="top-nav">
+                    <a href="{{ url_for('index_bp.index') }}" class="nav-link" data-page="index">
+                        <i data-lucide="home" class="nav-icon"></i>
+                        <span class="nav-text">Главная</span>
+                    </a>
+                    <a href="{{ url_for('diary_bp.diary') }}" class="nav-link" data-page="diary">
+                        <i data-lucide="book-open" class="nav-icon"></i>
+                        <span class="nav-text">Дневник</span>
+                    </a>
+                    <a href="{{ url_for('recommendations_bp.recommendations') }}" class="nav-link" data-page="recommendations">
+                        <i data-lucide="lightbulb" class="nav-icon"></i>
+                        <span class="nav-text">Рекомендации</span>
+                    </a>
+                    <a href="{{ url_for('profile_bp.profile') }}" class="nav-link" data-page="profile">
+                        <i data-lucide="user" class="nav-icon"></i>
+                        <span class="nav-text">Профиль</span>
+                    </a>
+                </nav>
+
+                <div class="header-actions">
+                    {% if current_user.is_authenticated %}
+                        <div class="user-menu">
+                            <button class="user-button" onclick="toggleUserMenu()">
+                                <div class="user-avatar">
+                                    <i data-lucide="user" class="avatar-icon"></i>
+                                </div>
+                                <span class="user-name">{{ current_user.username }}</span>
+                                <i data-lucide="chevron-down" class="chevron-icon"></i>
+                            </button>
+                            <div class="user-dropdown" id="userDropdown">
+                                <a href="{{ url_for('profile_bp.profile') }}" class="dropdown-item">
+                                    <i data-lucide="user" class="dropdown-icon"></i>
+                                    <span>Профиль</span>
+                                </a>
+                                <a href="{{ url_for('auth_bp.auth_logout') }}" class="dropdown-item logout">
+                                    <i data-lucide="log-out" class="dropdown-icon"></i>
+                                    <span>Выйти</span>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="auth-buttons">
+                            <a href="{{ url_for('auth_bp.auth_login') }}" class="auth-button login">
+                                <i data-lucide="log-in" class="button-icon"></i>
+                                <span>Войти</span>
+                            </a>
+                            <a href="{{ url_for('auth_bp.auth_register') }}" class="auth-button register">
+                                <i data-lucide="user-plus" class="button-icon"></i>
+                                <span>Регистрация</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Мобильное меню -->
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="menu-icon"></i>
+                </button>
+            </div>
+
+            <!-- Мобильная навигация -->
+            <div class="mobile-nav" id="mobileNav">
+                <div class="mobile-nav-content">
+                    <a href="{{ url_for('index_bp.index') }}" class="mobile-nav-link">
+                        <i data-lucide="home" class="mobile-nav-icon"></i>
+                        <span>Главная</span>
+                    </a>
+                    <a href="{{ url_for('diary_bp.diary') }}" class="mobile-nav-link">
+                        <i data-lucide="book-open" class="mobile-nav-icon"></i>
+                        <span>Дневник</span>
+                    </a>
+                    <a href="{{ url_for('recommendations_bp.recommendations') }}" class="mobile-nav-link">
+                        <i data-lucide="lightbulb" class="mobile-nav-icon"></i>
+                        <span>Рекомендации</span>
+                    </a>
+                    <a href="{{ url_for('profile_bp.profile') }}" class="mobile-nav-link">
+                        <i data-lucide="user" class="mobile-nav-icon"></i>
+                        <span>Профиль</span>
+                    </a>
+                    {% if not current_user.is_authenticated %}
+                        <div class="mobile-auth">
+                            <a href="{{ url_for('auth_bp.auth_login') }}" class="mobile-auth-link">
+                                <i data-lucide="log-in" class="mobile-auth-icon"></i>
+                                <span>Войти</span>
+                            </a>
+                            <a href="{{ url_for('auth_bp.auth_register') }}" class="mobile-auth-link">
+                                <i data-lucide="user-plus" class="mobile-auth-icon"></i>
+                                <span>Регистрация</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Футер -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">Otrazhenie</h4>
+                    <p class="footer-description">Анализ безопасности косметических продуктов</p>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-subtitle">Навигация</h5>
+                    <div class="footer-links">
+                        <a href="{{ url_for('index_bp.index') }}" class="footer-link">Главная</a>
+                        <a href="{{ url_for('diary_bp.diary') }}" class="footer-link">Дневник</a>
+                        <a href="{{ url_for('recommendations_bp.recommendations') }}" class="footer-link">Рекомендации</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-subtitle">Поддержка</h5>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Помощь</a>
+                        <a href="#" class="footer-link">Контакты</a>
+                        <a href="#" class="footer-link">О нас</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 Otrazhenie. Все права защищены.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация иконок Lucide
+        lucide.createIcons();
+
+        // Функции для мобильного меню
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            mobileNav.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            
+            // Анимация иконки
+            const menuIcon = menuToggle.querySelector('.menu-icon');
+            if (mobileNav.classList.contains('active')) {
+                menuIcon.setAttribute('data-lucide', 'x');
+            } else {
+                menuIcon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        }
+
+        // Функции для пользовательского меню
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Закрытие выпадающих меню при клике вне их
+        document.addEventListener('click', function(e) {
+            const userMenu = document.querySelector('.user-menu');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (userMenu && !userMenu.contains(e.target)) {
+                document.getElementById('userDropdown').classList.remove('active');
+            }
+            
+            if (mobileNav && !mobileNav.contains(e.target) && !e.target.closest('.mobile-menu-toggle')) {
+                mobileNav.classList.remove('active');
+                const menuToggle = document.querySelector('.mobile-menu-toggle');
+                menuToggle.classList.remove('active');
+                const menuIcon = menuToggle.querySelector('.menu-icon');
+                menuIcon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            }
+        });
+
+        // Подсветка активной страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Функция для показа уведомлений (глобальная)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="notification-icon"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            lucide.createIcons();
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

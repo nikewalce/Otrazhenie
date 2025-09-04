@@ -1,0 +1,39 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}Ингредиент: {{ ingredient.name }} - Otrazhenie{% endblock %}
+{% block description %}Детальный разбор ингредиента {{ ingredient.name }}{% endblock %}
+
+{% block content %}
+<div class="ingredient-detail-container">
+    <div class="ingredient-detail-header">
+        <a href="{{ url_for('results_bp.results') }}" class="action-button secondary">
+            <i data-lucide="arrow-left" class="button-icon"></i>
+            <span>К результатам</span>
+        </a>
+        <h1 class="ingredient-title">
+            <i data-lucide="atom" class="ingredient-title-icon"></i>
+            {{ ingredient.name | capitalize }}
+        </h1>
+    </div>
+
+    <div class="ingredient-detail-card">
+        <div class="ingredient-meta">
+            <div class="meta-item">
+                <span class="meta-label">Функция</span>
+                <span class="meta-value">{{ ingredient.function }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Оценка безопасности</span>
+                <span class="meta-value safety-{{ ingredient.safety_score }}">{{ ingredient.safety_score }}</span>
+            </div>
+        </div>
+
+        <div class="ingredient-description">
+            <h2>Описание</h2>
+            <p>{{ ingredient.description }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,422 @@
+{% extends "fullpage/base.html" %}
+
+{% block title %}Результаты анализа - Otrazhenie{% endblock %}
+{% block description %}Анализ состава косметического продукта с рекомендациями по безопасности{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <div class="results-header-content">
+            <h1 class="results-title">
+                <i data-lucide="flask-conical" class="results-title-icon"></i>
+                Результаты анализа
+            </h1>
+            <p class="results-subtitle">
+                Детальный анализ состава и рекомендации по безопасности
+            </p>
+        </div>
+        
+        <div class="results-actions">
+            <a href="{{ url_for('index_bp.index') }}" class="action-button secondary">
+                <i data-lucide="arrow-left" class="button-icon"></i>
+                <span>Новый анализ</span>
+            </a>
+            <button class="action-button primary" onclick="saveToDiary()">
+                <i data-lucide="bookmark-plus" class="button-icon"></i>
+                <span>Сохранить в дневник</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="results-content">
+        <!-- Общая информация о продукте -->
+        <div class="product-summary">
+            <div class="summary-header">
+                <h2 class="summary-title">Общая оценка</h2>
+                <div class="summary-score" id="overallScore">
+                    <span class="score-number">-</span>
+                    <span class="score-label">Безопасность</span>
+                </div>
+            </div>
+            
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-icon safe">
+                        <i data-lucide="shield-check" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="safeCount">0</span>
+                        <span class="stat-label">Безопасные</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon moderate">
+                        <i data-lucide="alert-triangle" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="moderateCount">0</span>
+                        <span class="stat-label">Спорные</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon risk">
+                        <i data-lucide="alert-circle" class="stat-icon-svg"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="riskCount">0</span>
+                        <span class="stat-label">Риск</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Состав продукта -->
+        <div class="composition-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i data-lucide="list" class="section-icon"></i>
+                    Состав продукта
+                </h2>
+                <div class="composition-text">
+                    <strong>Анализируемый состав:</strong>
+                    <span class="composition-content">{{ composition }}</span>
+                </div>
+            </div>
+            
+            <div class="ingredients-grid" id="ingredientsGrid">
+                {% for ingredient in analysis %}
+                <div class="ingredient-card" data-safety="{{ ingredient.safety_score }}">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name"><a href="{{ url_for('results_bp.ingredient_detail', name=ingredient.name) }}">{{ ingredient.name }}</a></div>
+                                                 <div class="safety-badge {% if ingredient.safety_score == '?' %}safety-unknown{% else %}safety-{{ ingredient.safety_score|string|replace('.', '-') }}{% endif %}">
+                             {% if ingredient.safety_score == '?' %}
+                                 <i data-lucide="help-circle" class="badge-icon"></i>
+                                 <span>Неизвестно</span>
+                             {% elif ingredient.safety_score <= 3 %}
+                                 <i data-lucide="shield-check" class="badge-icon"></i>
+                                 <span>Безопасно</span>
+                             {% elif ingredient.safety_score <= 6 %}
+                                 <i data-lucide="alert-triangle" class="badge-icon"></i>
+                                 <span>Спорно</span>
+                             {% else %}
+                                 <i data-lucide="alert-circle" class="badge-icon"></i>
+                                 <span>Риск</span>
+                             {% endif %}
+                         </div>
+                    </div>
+                    
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Функция:</span>
+                            <span class="detail-value">{{ ingredient.function }}</span>
+                        </div>
+                        
+                        {% if ingredient.safety_score != '?' %}
+                        <div class="detail-item">
+                            <span class="detail-label">Оценка безопасности:</span>
+                            <span class="detail-value safety-score-{{ ingredient.safety_score|string|replace('.', '-') }}">
+                                {{ ingredient.safety_score }}/10
+                            </span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if ingredient.description %}
+                        <div class="detail-item">
+                            <span class="detail-label">Описание:</span>
+                            <span class="detail-value">{{ ingredient.description }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if ingredient.safety_score == '?' %}
+                    <div class="unknown-ingredient">
+                        <p class="unknown-text">Этот ингредиент не найден в нашей базе данных</p>
+                        <button class="add-ingredient-btn" onclick="addIngredient('{{ ingredient.name }}')">
+                            <i data-lucide="plus" class="button-icon"></i>
+                            <span>Добавить в базу</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Рекомендации -->
+        <div class="recommendations-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i data-lucide="lightbulb" class="section-icon"></i>
+                    Рекомендации
+                </h2>
+            </div>
+            
+            <div class="recommendations-grid" id="recommendationsGrid">
+                <!-- Рекомендации будут добавляться динамически -->
+            </div>
+        </div>
+
+        <!-- Дополнительные действия -->
+        <div class="additional-actions">
+            <div class="action-card">
+                <div class="action-icon">
+                    <i data-lucide="share-2" class="action-icon-svg"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Поделиться результатом</h3>
+                    <p>Отправьте анализ друзьям или сохраните для себя</p>
+                    <button class="share-button" onclick="shareResults()">
+                        <i data-lucide="share" class="button-icon"></i>
+                        <span>Поделиться</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">
+                    <i data-lucide="download" class="action-icon-svg"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Скачать отчет</h3>
+                    <p>Сохраните результаты анализа в PDF формате</p>
+                    <button class="download-button" onclick="downloadReport()">
+                        <i data-lucide="file-text" class="button-icon"></i>
+                        <span>Скачать PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для добавления ингредиента -->
+<div class="modal" id="addIngredientModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Добавить ингредиент в базу</h3>
+            <button class="modal-close" onclick="closeModal()">
+                <i data-lucide="x" class="close-icon"></i>
+            </button>
+        </div>
+        
+        <form class="add-ingredient-form" id="addIngredientForm">
+            <div class="form-group">
+                <label for="ingredientName">Название ингредиента</label>
+                <input type="text" id="ingredientName" name="name" required readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="functionRu">Функция (русский)</label>
+                <input type="text" id="functionRu" name="function_ru" placeholder="Например: Увлажнитель">
+            </div>
+            
+            <div class="form-group">
+                <label for="functionEn">Функция (английский)</label>
+                <input type="text" id="functionEn" name="function_en" placeholder="Например: Humectant">
+            </div>
+            
+            <div class="form-group">
+                <label for="safetyScore">Оценка безопасности (1-10)</label>
+                <select id="safetyScore" name="safety_score" required>
+                    <option value="">Выберите оценку</option>
+                    <option value="1">1 - Очень безопасно</option>
+                    <option value="2">2 - Безопасно</option>
+                    <option value="3">3 - Безопасно</option>
+                    <option value="4">4 - Умеренно безопасно</option>
+                    <option value="5">5 - Нейтрально</option>
+                    <option value="6">6 - Умеренно рискованно</option>
+                    <option value="7">7 - Рискованно</option>
+                    <option value="8">8 - Очень рискованно</option>
+                    <option value="9">9 - Опасно</option>
+                    <option value="10">10 - Очень опасно</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" name="description" rows="3" placeholder="Дополнительная информация об ингредиенте"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="cancel-button" onclick="closeModal()">Отмена</button>
+                <button type="submit" class="submit-button">Добавить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    calculateStats();
+    generateRecommendations();
+});
+
+function calculateStats() {
+    const ingredients = document.querySelectorAll('.ingredient-card');
+    let safeCount = 0, moderateCount = 0, riskCount = 0;
+    let totalScore = 0, scoredCount = 0;
+    
+    ingredients.forEach(card => {
+        const safety = card.dataset.safety;
+        if (safety !== '?') {
+            const score = parseFloat(safety);
+            if (score <= 3) safeCount++;
+            else if (score <= 6) moderateCount++;
+            else riskCount++;
+            
+            totalScore += score;
+            scoredCount++;
+        }
+    });
+    
+    // Обновляем счетчики
+    document.getElementById('safeCount').textContent = safeCount;
+    document.getElementById('moderateCount').textContent = moderateCount;
+    document.getElementById('riskCount').textContent = riskCount;
+    
+    // Общая оценка
+    if (scoredCount > 0) {
+        const averageScore = (totalScore / scoredCount).toFixed(1);
+        const overallScore = document.getElementById('overallScore');
+        overallScore.querySelector('.score-number').textContent = averageScore;
+        
+        // Цветовая индикация
+        if (averageScore <= 3) {
+            overallScore.className = 'summary-score safe';
+        } else if (averageScore <= 6) {
+            overallScore.className = 'summary-score moderate';
+        } else {
+            overallScore.className = 'summary-score risk';
+        }
+    }
+}
+
+function generateRecommendations() {
+    const recommendationsGrid = document.getElementById('recommendationsGrid');
+    const ingredients = document.querySelectorAll('.ingredient-card');
+    
+    let recommendations = [];
+    
+    ingredients.forEach(card => {
+        const safety = card.dataset.safety;
+        if (safety !== '?') {
+            const score = parseFloat(safety);
+            const name = card.querySelector('.ingredient-name').textContent;
+            
+            if (score >= 7) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Высокий риск',
+                    message: `Ингредиент "${name}" имеет высокую оценку риска (${score}/10). Рекомендуется избегать или использовать с осторожностью.`
+                });
+            } else if (score >= 5) {
+                recommendations.push({
+                    type: 'info',
+                    title: 'Умеренный риск',
+                    message: `Ингредиент "${name}" имеет умеренную оценку риска (${score}/10). Используйте в соответствии с инструкциями.`
+                });
+            }
+        }
+    });
+    
+    // Добавляем общие рекомендации
+    if (recommendations.length === 0) {
+        recommendations.push({
+            type: 'success',
+            title: 'Отличный выбор!',
+            message: 'Все проанализированные ингредиенты имеют низкую оценку риска. Продукт безопасен для использования.'
+        });
+    }
+    
+    // Отображаем рекомендации
+    recommendationsGrid.innerHTML = recommendations.map(rec => `
+        <div class="recommendation-card ${rec.type}">
+            <div class="recommendation-icon">
+                <i data-lucide="${rec.type === 'success' ? 'check-circle' : rec.type === 'warning' ? 'alert-triangle' : 'info'}" class="rec-icon-svg"></i>
+            </div>
+            <div class="recommendation-content">
+                <h4 class="recommendation-title">${rec.title}</h4>
+                <p class="recommendation-message">${rec.message}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    // Инициализируем иконки
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+function addIngredient(name) {
+    document.getElementById('ingredientName').value = name;
+    document.getElementById('addIngredientModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('addIngredientModal').style.display = 'none';
+}
+
+// Обработка формы добавления ингредиента
+document.getElementById('addIngredientForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    fetch('{{ url_for("results_bp.add_unknown") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showNotification(result.message, 'success');
+            closeModal();
+            // Обновляем страницу для отображения нового ингредиента
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showNotification(result.message, 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Ошибка при добавлении ингредиента', 'error');
+        console.error('Error:', error);
+    });
+});
+
+function saveToDiary() {
+    showNotification('Функция сохранения в дневник будет доступна в ближайшее время', 'info');
+}
+
+function shareResults() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Результаты анализа косметики',
+            text: 'Посмотрите результаты анализа состава косметического продукта',
+            url: window.location.href
+        });
+    } else {
+        // Fallback для браузеров без поддержки Web Share API
+        navigator.clipboard.writeText(window.location.href);
+        showNotification('Ссылка скопирована в буфер обмена', 'success');
+    }
+}
+
+function downloadReport() {
+    showNotification('Функция скачивания отчета будет доступна в ближайшее время', 'info');
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('addIngredientModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+</script>
+{% endblock %}

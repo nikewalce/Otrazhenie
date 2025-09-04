@@ -17,102 +17,138 @@
 
     <!-- Основной контент -->
     <main class="main-content">
-        <div class="product-card">
-            <!-- Блок с основной информацией -->
-            <div class="product-header">
-                {% if product.image_url %}
-                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
-                {% else %}
-                <div class="product-image-placeholder">
-                    <i data-lucide="package" class="placeholder-icon"></i>
+        <div class="product-info-container">
+            <!-- Заголовок страницы -->
+            <div class="product-info-header">
+                <h2 class="product-info-title">
+                    <i data-lucide="package" class="product-info-icon"></i>
+                    Информация о продукте
+                </h2>
+            </div>
+
+            <div class="product-card">
+                <!-- Блок с основной информацией -->
+                <div class="product-header">
+                    <div class="product-image-section">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                        <div class="product-image-placeholder">
+                            <i data-lucide="package" class="placeholder-icon"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-info">
+                        <div class="info-block">
+                            <div class="info-header">
+                                <i data-lucide="info" class="info-block-icon"></i>
+                                <span class="info-label">Название</span>
+                            </div>
+                            <div class="info-value">{{ product.name }}</div>
+                        </div>
+
+                        <div class="info-block">
+                            <div class="info-header">
+                                <i data-lucide="factory" class="info-block-icon"></i>
+                                <span class="info-label">Бренд</span>
+                            </div>
+                            <div class="info-value">{{ product.brand or 'Бренд не указан' }}</div>
+                        </div>
+
+                        {% if product.category %}
+                        <div class="info-block">
+                            <div class="info-header">
+                                <i data-lucide="tag" class="info-block-icon"></i>
+                                <span class="info-label">Категория</span>
+                            </div>
+                            <div class="info-value">{{ product.category }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% endif %}
 
-                <div class="product-info">
-                    <div class="info-block">
-                        <span class="info-label">Название</span>
-                        <div class="product-category">
-                            <i data-lucide="info"></i>
-                            <span>{{ product.name }}</span>
-                        </div>
-                    </div>
+                <!-- Блок с составом -->
+                <div class="product-section">
+                    <h3 class="section-title">
+                        <i data-lucide="flask-conical" class="section-icon"></i>
+                        <span>Состав продукта</span>
+                    </h3>
 
-                    <div class="info-block">
-                        <span class="info-label">Бренд</span>
-                        <div class="product-category">
-                            <i data-lucide="factory"></i>
-                            <span>{{ product.brand or 'Бренд не указан' }}</span>
+                    {% if product.ingredients %}
+                        <div class="composition-card">
+                            <div class="composition-content">
+                                <p class="composition-text">{{ product.ingredients }}</p>
+                            </div>
+                            <div class="composition-actions">
+                                <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="analyze-button">
+                                    <i data-lucide="search" class="button-icon"></i>
+                                    <span>Анализировать состав</span>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-
-                    {% if product.category %}
-                    <div class="info-block">
-                        <span class="info-label">Категория</span>
-                        <div class="product-category">
-                            <i data-lucide="tag"></i>
-                            <span>{{ product.category }}</span>
+                    {% else %}
+                        <!-- Форма для ручного ввода состава для анализа -->
+                        <div class="analysis-form">
+                            <div class="form-header">
+                                <h3 class="form-title">
+                                    <i data-lucide="edit-3" class="form-title-icon"></i>
+                                    Состав не указан
+                                </h3>
+                                <p class="form-subtitle">Введите состав продукта для анализа</p>
+                            </div>
+                            <form method="POST" class="form-content" action="{{ url_for('results_bp.results') }}">
+                                <div class="form-group">
+                                    <label for="composition" class="form-label">
+                                        <i data-lucide="list" class="label-icon"></i>
+                                        Список ингредиентов
+                                    </label>
+                                    <textarea name="composition" id="composition" rows="4" class="form-input" 
+                                              placeholder="Введите ингредиенты через запятую, например: Aqua, Glycerin, Hyaluronic Acid..." required></textarea>
+                                    <div class="form-hint">
+                                        <i data-lucide="info" class="hint-icon"></i>
+                                        <span>Разделяйте ингредиенты запятыми для лучшего анализа</span>
+                                    </div>
+                                </div>
+                                <button type="submit" class="analyze-button">
+                                    <i data-lucide="search" class="button-icon"></i>
+                                    <span>Проанализировать состав</span>
+                                </button>
+                            </form>
                         </div>
-                    </div>
                     {% endif %}
                 </div>
-            </div>
 
-            <!-- Блок с составом -->
-            <div class="product-section">
-                <h3 class="section-title">
-                    <i data-lucide="list"></i>
-                    <span>Состав продукта</span>
-                </h3>
-
-                {% if product.ingredients %}
-                    <div class="composition-box">
-                        {{ product.ingredients }}
-                    </div>
-                    <a href="{{ url_for('results_bp.results', composition=product.ingredients) }}" class="action-button">
-                        <i data-lucide="search"></i>
-                        Анализировать состав
-                    </a>
-                {% else %}
-                    <!-- Форма для ручного ввода состава для анализа -->
-                    <div class="analysis-form">
-                        <h3 class="form-title">Состав не указан</h3>
-                        <form method="POST" class="form-content" action="{{ url_for('results_bp.results') }}">
-                            <div class="form-group">
-                                <label for="composition" class="form-label">Введите ингредиенты через запятую:</label>
-                                <textarea name="composition" id="composition" rows="4" class="form-input" required></textarea>
+                <!-- Дополнительная информация -->
+                {% if product.additional_info %}
+                <div class="product-section">
+                    <h3 class="section-title">
+                        <i data-lucide="info" class="section-icon"></i>
+                        <span>Дополнительная информация</span>
+                    </h3>
+                    {% set icons = {
+                        'Упаковка': 'package',
+                        'Вес': 'scale',
+                        'Страна': 'globe',
+                        'Объем': 'droplet',
+                        'Срок годности': 'calendar'
+                    } %}
+                    <div class="additional-info-grid">
+                      {% for key, value in product.additional_info.items() %}
+                        <div class="additional-info-item">
+                            <div class="additional-info-icon">
+                                <i data-lucide="{{ icons.get(key, 'info') }}"></i>
                             </div>
-                            <button type="submit" class="analyze-button">
-                                <i data-lucide="search" class="button-icon"></i>
-                                Проанализировать состав
-                            </button>
-                        </form>
+                            <div class="additional-info-content">
+                                <span class="additional-info-key">{{ key }}</span>
+                                <span class="additional-info-value">{{ value }}</span>
+                            </div>
+                        </div>
+                      {% endfor %}
                     </div>
+                </div>
                 {% endif %}
             </div>
-
-            <!-- Дополнительная информация -->
-            {% if product.additional_info %}
-            <div class="product-section">
-                <h3 class="section-title">
-                    <i data-lucide="info"></i>
-                    <span>Дополнительная информация</span>
-                </h3>
-                {% set icons = {
-                    'Упаковка': 'package',
-                    'Вес': 'scale',
-                    'Страна': 'globe'
-                } %}
-                <div class="additional-info">
-                  {% for key, value in product.additional_info.items() %}
-                    <p class="additional-info-dict">
-                        <i data-lucide="{{ icons.get(key, 'info') }}"></i>
-                        <span class="info-key">{{ key }}:</span>
-                        <span class="info-value">{{ value }}</span>
-                    </p>
-                  {% endfor %}
-                </div>
-            </div>
-            {% endif %}
         </div>
     </main>
 </div>

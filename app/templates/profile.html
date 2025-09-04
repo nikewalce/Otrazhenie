@@ -2,19 +2,6 @@
 
 {% block content %}
 <div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-content">
-            <div class="logo-container">
-                <h1 class="app-logo">Otrazhenie</h1>
-                <p class="app-subtitle">Анализ косметики</p>
-            </div>
-            <div class="badge-container">
-                <span class="product-badge">Продуктов: 24</span>
-            </div>
-        </div>
-    </header>
-
     <!-- Основной контент -->
     <main class="main-content">
         <div class="profile-section">
@@ -52,7 +39,10 @@
 
             <!-- Ингредиенты для исключения -->
             <div class="profile-card">
-                <h3 class="card-title">Избегаемые ингредиенты</h3>
+                <h3 class="card-title">
+                    <i data-lucide="shield-x" class="card-icon"></i>
+                    Избегаемые ингредиенты
+                </h3>
                 <div class="ingredients-list">
                     <span class="ingredient-badge">Парабены</span>
                     <span class="ingredient-badge">Сульфаты</span>
@@ -64,7 +54,10 @@
 
             <!-- Настройки профиля -->
             <div class="profile-card">
-                <h3 class="card-title">Настройки профиля</h3>
+                <h3 class="card-title">
+                    <i data-lucide="settings" class="card-icon"></i>
+                    Настройки профиля
+                </h3>
                 <div class="settings-list">
                     <button class="setting-button">
                         <i data-lucide="bell" class="setting-icon"></i>

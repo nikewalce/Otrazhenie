@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
@@ -16,5 +17,5 @@ def index_page():
         composition = request.form.get('composition', '')
         # после отправки формы редиректим на /results
         return redirect(url_for('results_bp.results', composition=composition))
-
-    return render_template("index.html", active_tab='scanner')
+    #return render_template("index.html", active_tab='scanner')
+    return render_template("fullpage/index.html", active_tab='scanner', current_user=current_user)

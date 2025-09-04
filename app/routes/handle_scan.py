@@ -3,6 +3,7 @@ import cv2
 import pyzbar.pyzbar as pyzbar
 import numpy as np
 from app.analyzers.qr_reader import get_cosmetic_info
+from app.routes.results import analyze_composition
 
 handle_scan_bp = Blueprint("handle_scan_bp", __name__)
 
@@ -18,15 +19,19 @@ def decode_barcode(image_data):
     barcodes = pyzbar.decode(gray)
     return barcodes[0].data.decode('utf-8') if barcodes else None
 
-@handle_scan_bp.route("/handle-scan", methods=['POST'], endpoint="handle_scan")
+@handle_scan_bp.route("/handle-scan", methods=['GET', 'POST'], endpoint="handle_scan")
 def handle_scan_page():
     """
     Обрабатывает загрузку изображения штрих-кода.
-    Проверяет наличие файла, декодирует штрих-код из изображения,
+    При GET-запросе показывает страницу сканирования.
+    При POST-запросе проверяет наличие файла, декодирует штрих-код из изображения,
     пытается получить информацию о продукте по штрих-коду.
-    Если найден — показывает страницу product_info.html с данными.
-    Если нет — возвращается обратно с сообщением об ошибке.
+    Если найден — показывает страницу results.html с данными.
+    Если нет — возвращается обратно с сообщением об ошибки.
     """
+    if request.method == 'GET':
+        return render_template("fullpage/scan.html", active_tab='scanner')
+    
     if 'barcode_image' not in request.files:
         flash("Файл не загружен", "error")
         return redirect(url_for('index_bp.index'))
@@ -46,11 +51,23 @@ def handle_scan_page():
         product_info = get_cosmetic_info(barcode_data)
 
         if product_info:
-            return render_template("product_info.html",
-                                   product=product_info,
-                                   active_tab='scanner')
+            ##return render_template("product_info.html",
+            #                       product=product_info,
+            # composition = product_info.get('ingredients', '') or ''
+            # analysis = analyze_composition(composition)
+            # return render_template("fullpage/results.html",
+            #                        composition=composition,
+            #                        analysis=analysis,
+            #                        active_tab='scanner')
+            return render_template(
+                "fullpage/product_info.html",
+                product=product_info,
+                active_tab='scanner'
+            )
         else:
-            return render_template("index.html", alert_message="Продукт с таким штрих-кодом не найден",
+            #return render_template("index.html", alert_message="Продукт с таким штрих-кодом не найден",
+            return render_template("fullpage/scan.html", 
+                                   alert_message="Продукт с таким штрих-кодом не найден",
                                    alert_type="warning")
 
     except Exception as e:
