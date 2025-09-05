@@ -22,6 +22,7 @@ def handle_search_page():
             product_info = get_cosmetic_info(input_data)
 
             if product_info:
+                #return render_template("product_info.html",
                 return render_template("fullpage/product_info.html",
                                        product=product_info,
                                        active_tab='scanner')
