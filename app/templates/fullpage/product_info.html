@@ -10,22 +10,6 @@
             <i data-lucide="arrow-left" class="button-icon"></i>
             <span>На главную</span>
         </a>
-        <div class="product-title">
-            <h1>
-                <i data-lucide="package" class="title-icon"></i>
-                {{ product.name or 'Неизвестный продукт' }}
-            </h1>
-            {% if product.brand %}
-            <div class="product-brand">
-                <i data-lucide="factory" class="brand-icon"></i>
-                <span>{{ product.brand }}</span>
-            </div>
-            {% endif %}
-            <div class="product-barcode">
-                <i data-lucide="barcode" class="barcode-icon"></i>
-                <span>{{ product.barcode }}</span>
-            </div>
-        </div>
         <div class="header-actions">
             <a href="{{ url_for('handle_scan_bp.handle_scan') }}" class="action-button tertiary">
                 <i data-lucide="scan-line" class="button-icon"></i>
@@ -41,15 +25,33 @@
     </div>
 
     <div class="product-content">
-        <div class="product-left">
-            <div class="image-card">
-                {% if product.image_url %}
-                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image"/>
-                {% else %}
-                <div class="image-placeholder">
-                    <i data-lucide="image-off"></i>
+        <div class="product-header-block">
+            <div class="product-left">
+                <div class="image-card">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image"/>
+                    {% else %}
+                    <div class="image-placeholder">
+                        <i data-lucide="image-off"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="product-title">
+                <h1>
+                    <i data-lucide="package" class="title-icon"></i>
+                    {{ product.name or 'Неизвестный продукт' }}
+                </h1>
+                {% if product.brand %}
+                <div class="product-brand">
+                    <i data-lucide="factory" class="brand-icon"></i>
+                    <span>{{ product.brand }}</span>
                 </div>
                 {% endif %}
+                <div class="product-barcode">
+                    <i data-lucide="barcode" class="barcode-icon"></i>
+                    <span>{{ product.barcode }}</span>
+                </div>
             </div>
         </div>
         <div class="product-right">
