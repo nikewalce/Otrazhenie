@@ -1,0 +1,161 @@
+{% extends "fullpage/base.html" %}
+
+{% block content %}
+<div class="diary-page">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1 class="page-title">
+                <i data-lucide="book-open" class="page-icon"></i>
+                Косметический дневник
+            </h1>
+            <p class="page-subtitle">История ваших сканирований и анализов</p>
+        </div>
+    </div>
+
+    <!-- Статистика дневника -->
+    <div class="diary-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="scan-line" class="stat-icon-svg"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">24</span>
+                <span class="stat-label">Проанализировано</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="shield-check" class="stat-icon-svg"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">18</span>
+                <span class="stat-label">Безопасных</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="calendar" class="stat-icon-svg"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">7</span>
+                <span class="stat-label">За неделю</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="diary-filters">
+        <div class="filter-group">
+            <button class="filter-button active" data-filter="all">
+                <i data-lucide="grid-3x3" class="filter-icon"></i>
+                Все
+            </button>
+            <button class="filter-button" data-filter="safe">
+                <i data-lucide="shield-check" class="filter-icon"></i>
+                Безопасные
+            </button>
+            <button class="filter-button" data-filter="moderate">
+                <i data-lucide="alert-triangle" class="filter-icon"></i>
+                Умеренно
+            </button>
+            <button class="filter-button" data-filter="risk">
+                <i data-lucide="alert-circle" class="filter-icon"></i>
+                Риск
+            </button>
+        </div>
+    </div>
+    
+    <!-- Список продуктов -->
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card" data-rating="{{ product.rating }}">
+            <div class="product-header">
+                <div class="product-image-container">
+                    <div class="product-image-placeholder">
+                        <i data-lucide="package" class="product-placeholder-icon"></i>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-brand">{{ product.brand }}</p>
+                    <div class="product-date">
+                        <i data-lucide="clock" class="date-icon"></i>
+                        <span>2 дня назад</span>
+                    </div>
+                </div>
+                <div class="product-rating">
+                    <span class="rating-badge {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}">
+                        {% if product.rating == 'safe' %}
+                            <i data-lucide="shield-check" class="rating-icon"></i>
+                            Безопасно
+                        {% elif product.rating == 'moderate' %}
+                            <i data-lucide="alert-triangle" class="rating-icon"></i>
+                            Умеренно
+                        {% else %}
+                            <i data-lucide="alert-circle" class="rating-icon"></i>
+                            Риск
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="product-stats">
+                <div class="score-container">
+                    <div class="score-value">{{ product.score }}</div>
+                    <div class="score-max">/10</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill {% if product.rating == 'safe' %}safe{% elif product.rating == 'moderate' %}moderate{% else %}risk{% endif %}" 
+                             style="width: {{ product.score * 10 }}%"></div>
+                    </div>
+                </div>
+                <div class="ingredients-count">
+                    <span>Ингредиентов</span>
+                    <strong>{{ product.ingredients }}</strong>
+                </div>
+            </div>
+            
+            <div class="product-actions">
+                <button class="outline-button">
+                    <i data-lucide="eye" class="action-icon"></i>
+                    Подробнее
+                </button>
+                <button class="primary-button">
+                    <i data-lucide="plus" class="action-icon"></i>
+                    В рутину
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    // Фильтрация продуктов
+    const filterButtons = document.querySelectorAll('.filter-button');
+    const productCards = document.querySelectorAll('.product-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Обновляем активную кнопку
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Фильтруем продукты
+            productCards.forEach(card => {
+                if (filter === 'all' || card.dataset.rating === filter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

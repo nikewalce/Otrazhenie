@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Otrazhenie - Анализ состава косметики{% endblock %}</title>
+    <meta name="description" content="{% block description %}Узнайте правду о вашей косметике за 30 секунд. Сканируйте состав, получайте персонализированные рекомендации и ведите косметический дневник.{% endblock %}" />
+    <meta name="author" content="Otrazhenie Team" />
+    <meta name="keywords" content="косметика, анализ состава, ингредиенты, безопасность, уход за кожей" />
+
+    <meta property="og:title" content="{% block og_title %}Otrazhenie - Анализ состава косметики{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}Узнайте правду о вашей косметике за 30 секунд. Персонализированные рекомендации для здоровья вашей кожи.{% endblock %}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4fe7e4a2-3f34-4a59-982a-76f36a339a8b/id-preview-89c932d0--10458f09-16bb-4f43-a802-3394cb4ab373.lovable.app-1751280969964.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@otrazhenie_app" />
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4fe7e4a2-3f34-4a59-982a-76f36a339a8b/id-preview-89c932d0--10458f09-16bb-4f43-a802-3394cb4ab373.lovable.app-1751280969964.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <!-- Навигация -->
+    <nav class="bottom-nav">
+        <div class="nav-items-container">
+            <a href="{{ url_for('index_bp.index') }}" class="nav-item {% if active_tab == 'scanner' %}active{% endif %}" data-page="scanner">
+                <div class="nav-icon-container">
+                    <i data-lucide="scan-line" class="nav-icon"></i>
+                </div>
+                <span class="nav-text">Сканер</span>
+            </a>
+            <a href="{{ url_for('diary_bp.diary') }}" class="nav-item {% if active_tab == 'diary' %}active{% endif %}" data-page="diary">
+                <div class="nav-icon-container">
+                    <i data-lucide="book-open" class="nav-icon"></i>
+                </div>
+                <span class="nav-text">Дневник</span>
+            </a>
+            <a href="{{ url_for('recommendations_bp.recommendations') }}" class="nav-item {% if active_tab == 'recommendations' %}active{% endif %}" data-page="recommendations">
+                <div class="nav-icon-container">
+                    <i data-lucide="lightbulb" class="nav-icon"></i>
+                </div>
+                <span class="nav-text">Советы</span>
+            </a>
+            <a href="{{ url_for('profile_bp.profile') }}" class="nav-item {% if active_tab == 'profile' %}active{% endif %}" data-page="profile">
+                <div class="nav-icon-container">
+                    <i data-lucide="user" class="nav-icon"></i>
+                </div>
+                <span class="nav-text">Профиль</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Инициализация иконок Lucide
+        lucide.createIcons();
+
+        // Анимации для навигации
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Убираем активный класс со всех элементов
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    // Добавляем активный класс к текущему элементу
+                    this.classList.add('active');
+                });
+
+                // Анимация при наведении
+                item.addEventListener('mouseenter', function() {
+                    const iconContainer = this.querySelector('.nav-icon-container');
+                    if (iconContainer) {
+                        iconContainer.style.transform = 'scale(1.1)';
+                    }
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    const iconContainer = this.querySelector('.nav-icon-container');
+                    if (iconContainer) {
+                        iconContainer.style.transform = 'scale(1)';
+                    }
+                });
+            });
+
+            // Подсветка активной страницы
+            const currentPath = window.location.pathname;
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Функция для показа уведомлений (глобальная)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="notification-icon"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            lucide.createIcons();
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>

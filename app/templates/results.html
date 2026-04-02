@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-container">
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="results-container">
+            <!-- Заголовок результатов -->
+            <div class="results-header">
+                <h1 class="results-title">
+                    <i data-lucide="microscope" class="results-icon"></i>
+                    Результаты анализа
+                </h1>
+                <p class="results-subtitle">Детальный анализ безопасности ингредиентов</p>
+            </div>
+
+            <!-- Состав продукта -->
+            <div class="composition-section">
+                <div class="composition-header">
+                    <h3 class="composition-title">
+                        <i data-lucide="list" class="composition-icon"></i>
+                        Анализируемый состав
+                    </h3>
+                </div>
+                <div class="composition-card">
+                    <p class="composition-text">{{ composition }}</p>
+                </div>
+            </div>
+
+            <!-- Общая статистика -->
+            <div class="analysis-summary">
+                <div class="summary-card safe">
+                    <div class="summary-icon">
+                        <i data-lucide="shield-check" class="summary-icon-svg"></i>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-number">{{ analysis|selectattr('safety_score', 'ne', '?')|selectattr('safety_score', 'lt', 4)|list|length }}</span>
+                        <span class="summary-label">Безопасных</span>
+                    </div>
+                </div>
+                <div class="summary-card moderate">
+                    <div class="summary-icon">
+                        <i data-lucide="alert-triangle" class="summary-icon-svg"></i>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-number">{{ analysis|selectattr('safety_score', 'ne', '?')|selectattr('safety_score', 'ge', 4)|selectattr('safety_score', 'lt', 8)|list|length }}</span>
+                        <span class="summary-label">Спорных</span>
+                    </div>
+                </div>
+                <div class="summary-card risk">
+                    <div class="summary-icon">
+                        <i data-lucide="alert-circle" class="summary-icon-svg"></i>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-number">{{ analysis|selectattr('safety_score', 'ne', '?')|selectattr('safety_score', 'ge', 8)|list|length }}</span>
+                        <span class="summary-label">Рискованных</span>
+                    </div>
+                </div>
+                <div class="summary-card unknown">
+                    <div class="summary-icon">
+                        <i data-lucide="help-circle" class="summary-icon-svg"></i>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-number">{{ analysis|selectattr('safety_score', 'equalto', '?')|list|length }}</span>
+                        <span class="summary-label">Неизвестных</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Детальный анализ ингредиентов -->
+            <div class="ingredients-analysis">
+                <h3 class="ingredients-title">
+                    <i data-lucide="flask-conical" class="ingredients-icon"></i>
+                    Детальный анализ ингредиентов
+                </h3>
+                
+                <div class="ingredients-grid">
+                    {% for item in analysis %}
+                        {% set score = item['safety_score'] %}
+                        {% if score == '?' %}
+                            {% set card_class = 'ingredient-card unknown' %}
+                            {% set safety_icon = 'help-circle' %}
+                            {% set safety_text = 'Неизвестно' %}
+                            {% set safety_color = 'var(--slate-500)' %}
+                        {% elif score|float >= 8 %}
+                            {% set card_class = 'ingredient-card risk' %}
+                            {% set safety_icon = 'alert-circle' %}
+                            {% set safety_text = 'Рискованный' %}
+                            {% set safety_color = 'var(--rose-500)' %}
+                        {% elif score|float >= 4 %}
+                            {% set card_class = 'ingredient-card moderate' %}
+                            {% set safety_icon = 'alert-triangle' %}
+                            {% set safety_text = 'Спорный' %}
+                            {% set safety_color = '#f59e0b' %}
+                        {% else %}
+                            {% set card_class = 'ingredient-card safe' %}
+                            {% set safety_icon = 'shield-check' %}
+                            {% set safety_text = 'Безопасный' %}
+                            {% set safety_color = 'var(--emerald-500)' %}
+                        {% endif %}
+                        
+                        <div class="{{ card_class }}">
+                            <div class="ingredient-header">
+                                <div class="ingredient-name">
+                                    <h4>{{ item['name']|capitalize }}</h4>
+                                    <p class="ingredient-function">{{ item['function'] }}</p>
+                                </div>
+                                <div class="ingredient-safety">
+                                    <div class="safety-badge" style="--safety-color: {{ safety_color }}">
+                                        <i data-lucide="{{ safety_icon }}" class="safety-icon"></i>
+                                        <span class="safety-text">{{ safety_text }}</span>
+                                        {% if score != '?' %}
+                                            <span class="safety-score">({{ score }})</span>
+                                {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ingredient-description">
+                                <p>{{ item['description'] }}</p>
+                            </div>
+                            
+                                {% if score == '?' %}
+                                <div class="ingredient-actions">
+                                    <button class="add-ingredient-btn" data-ingredient="{{ item['name'] }}">
+                                        <i data-lucide="plus" class="action-icon"></i>
+                                        Добавить информацию
+                                    </button>
+                                </div>
+                                {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Действия -->
+            <div class="results-actions">
+                <a href="{{ url_for('index_bp.index') }}" class="back-button">
+                    <i data-lucide="arrow-left" class="button-icon"></i>
+                    Новый анализ
+                </a>
+                <button class="share-button" onclick="shareResults()">
+                    <i data-lucide="share-2" class="button-icon"></i>
+                    Поделиться
+                </button>
+            </div>
+
+            <!-- Модальное окно -->
+            <div id="ingredientModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">
+                            <i data-lucide="plus-circle" class="modal-icon"></i>
+                            Добавить ингредиент
+                        </h2>
+                        <button class="close" type="button">
+                            <i data-lucide="x" class="close-icon"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="ingredientForm" class="modal-form">
+                        <input type="hidden" name="name" id="modal-name">
+
+                        <div class="form-group">
+                            <label class="form-label" for="function_ru">
+                                <i data-lucide="tag" class="label-icon"></i>
+                                Функция на русском
+                            </label>
+                            <input type="text" name="function_ru" id="function_ru" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="function_en">
+                                <i data-lucide="tag" class="label-icon"></i>
+                                Функция на английском
+                            </label>
+                            <input type="text" name="function_en" id="function_en" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="description_category">
+                                <i data-lucide="list" class="label-icon"></i>
+                                Описание функции (категории)
+                            </label>
+                            <textarea name="description_category" id="description_category" class="form-input" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="description">
+                                <i data-lucide="file-text" class="label-icon"></i>
+                                Описание ингредиента
+                            </label>
+                            <textarea name="description" id="description" class="form-input" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="safety_score">
+                                <i data-lucide="shield" class="label-icon"></i>
+                                Безопасность (0–10)
+                            </label>
+                            <input type="number" name="safety_score" id="safety_score" class="form-input" min="0" max="10" required>
+                            <div class="form-hint">0 = безопасно, 10 = очень рискованно</div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="cancel-button" onclick="closeModal()">
+                                <i data-lucide="x" class="button-icon"></i>
+                                Отмена
+                            </button>
+                            <button type="submit" class="save-button">
+                                <i data-lucide="save" class="button-icon"></i>
+                                Сохранить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const modal = document.getElementById("ingredientModal");
+                    const closeBtn = modal.querySelector(".close");
+                    const form = document.getElementById("ingredientForm");
+                    const nameInput = document.getElementById("modal-name");
+                    let activeButton = null;
+
+                    // Открытие модалки
+                    document.querySelectorAll(".add-ingredient-btn").forEach(button => {
+                        button.addEventListener("click", () => {
+                            activeButton = button;
+                            nameInput.value = button.dataset.ingredient;
+                            modal.classList.remove("hidden");
+                            document.body.style.overflow = 'hidden'; // Блокируем скролл
+                        });
+                    });
+
+                    // Закрытие модалки
+                    function closeModal() {
+                        modal.classList.add("hidden");
+                        document.body.style.overflow = 'auto'; // Восстанавливаем скролл
+                        form.reset();
+                    }
+
+                    closeBtn.onclick = closeModal;
+                    window.onclick = (e) => { 
+                        if (e.target === modal) closeModal(); 
+                    };
+
+                    // Отправка формы
+                    form.addEventListener("submit", (e) => {
+                        e.preventDefault();
+
+                        const formData = new FormData(form);
+                        const payload = Object.fromEntries(formData);
+
+                        // Показываем индикатор загрузки
+                        const submitBtn = form.querySelector('.save-button');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i data-lucide="loader-2" class="button-icon spinning"></i> Сохранение...';
+                        submitBtn.disabled = true;
+
+                        fetch("{{ url_for('results_bp.add_unknown') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(payload)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                closeModal();
+                                activeButton.innerHTML = '<i data-lucide="check" class="action-icon"></i> Добавлено';
+                                activeButton.disabled = true;
+                                activeButton.classList.add('success');
+                                
+                                // Показываем уведомление об успехе
+                                showNotification('Ингредиент успешно добавлен!', 'success');
+                            } else {
+                                showNotification('Ошибка: ' + data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            showNotification('Произошла ошибка при сохранении', 'error');
+                        })
+                        .finally(() => {
+                            // Восстанавливаем кнопку
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        });
+                    });
+
+                    // Функция для показа уведомлений
+                    function showNotification(message, type) {
+                        const notification = document.createElement('div');
+                        notification.className = `notification ${type}`;
+                        notification.innerHTML = `
+                            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="notification-icon"></i>
+                            <span>${message}</span>
+                        `;
+                        
+                        document.body.appendChild(notification);
+                        lucide.createIcons();
+                        
+                        // Анимация появления
+                        setTimeout(() => notification.classList.add('show'), 100);
+                        
+                        // Автоматическое скрытие
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                            setTimeout(() => notification.remove(), 300);
+                        }, 3000);
+                    }
+
+                    // Функция для поделиться результатами
+                    window.shareResults = function() {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'Результаты анализа косметики',
+                                text: 'Посмотрите результаты анализа состава косметики в Otrazhenie',
+                                url: window.location.href
+                            });
+                        } else {
+                            // Fallback для браузеров без поддержки Web Share API
+                            navigator.clipboard.writeText(window.location.href).then(() => {
+                                showNotification('Ссылка скопирована в буфер обмена!', 'success');
+                            });
+                        }
+                    };
+                });
+            </script>
+
+            <!-- Модальное окно -->
+        </div>
+    </main>
+</div>
+{% endblock %}
