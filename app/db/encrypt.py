@@ -1,9 +1,13 @@
-import base64, hashlib
+import base64
+import hashlib
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
+
 class EncryptData:
     """Класс для работы с шифрованием данных"""
+
     def __init__(self):
         self.ph = PasswordHasher()
 
@@ -11,7 +15,9 @@ class EncryptData:
         """Создать новый Argon2-хеш"""
         return self.ph.hash(password)
 
-    def verify_password(self, stored_hash: str, password: str) -> tuple[bool, str | None]:
+    def verify_password(
+        self, stored_hash: str, password: str
+    ) -> tuple[bool, str | None]:
         """
         Проверяет пароль.
         Возвращает (is_valid, new_hash).
@@ -35,8 +41,10 @@ class EncryptData:
                 dk = hashlib.scrypt(
                     password.encode(),
                     salt=salt,
-                    n=n, r=r, p=p,
-                    dklen=len(bytes.fromhex(hash_hex))
+                    n=n,
+                    r=r,
+                    p=p,
+                    dklen=len(bytes.fromhex(hash_hex)),
                 )
                 if dk.hex() == hash_hex:
                     # пароль верный, пересчитаем в Argon2

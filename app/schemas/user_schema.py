@@ -1,5 +1,6 @@
 import re
 
+
 class UserRegistrationSchema:
     required_fields = ["username", "email", "password"]
 

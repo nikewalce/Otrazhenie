@@ -1,11 +1,13 @@
-from flask import Blueprint, render_template,redirect, request, url_for,flash
 import cv2
-import pyzbar.pyzbar as pyzbar
 import numpy as np
+import pyzbar.pyzbar as pyzbar
+from flask import Blueprint, flash, redirect, render_template, url_for
+
 from app.analyzers.qr_reader import get_cosmetic_info
 from app.forms import ScanForm
 
 handle_scan_bp = Blueprint("handle_scan_bp", __name__)
+
 
 def decode_barcode(image_data):
     """
@@ -17,9 +19,10 @@ def decode_barcode(image_data):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     barcodes = pyzbar.decode(gray)
-    return barcodes[0].data.decode('utf-8') if barcodes else None
+    return barcodes[0].data.decode("utf-8") if barcodes else None
 
-@handle_scan_bp.route("/handle-scan", methods=['GET', 'POST'], endpoint="handle_scan")
+
+@handle_scan_bp.route("/handle-scan", methods=["GET", "POST"], endpoint="handle_scan")
 def handle_scan_page():
     """
     Обрабатывает загрузку изображения штрих-кода.
@@ -38,7 +41,7 @@ def handle_scan_page():
 
             if not barcode_data:
                 flash("Не удалось распознать штрих-код", "warning")
-                return redirect(url_for('handle_scan_bp.handle_scan'))
+                return redirect(url_for("handle_scan_bp.handle_scan"))
 
             product_info = get_cosmetic_info(barcode_data)
 
@@ -46,18 +49,14 @@ def handle_scan_page():
                 return render_template(
                     "fullpage/product_info.html",
                     product=product_info,
-                    active_tab='scanner'
+                    active_tab="scanner",
                 )
             else:
                 flash("Продукт с таким штрих-кодом не найден", "warning")
-                return redirect(url_for('handle_scan_bp.handle_scan'))
+                return redirect(url_for("handle_scan_bp.handle_scan"))
 
         except Exception as e:
             flash(f"Ошибка при обработке: {e}", "error")
-            return redirect(url_for('handle_scan_bp.handle_scan'))
+            return redirect(url_for("handle_scan_bp.handle_scan"))
 
-    return render_template(
-        "fullpage/scan.html",
-        form=form,
-        active_tab='scanner'
-    )
+    return render_template("fullpage/scan.html", form=form, active_tab="scanner")

@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template,redirect, request, url_for,flash
+from flask import Blueprint, render_template, request
+
 from app.analyzers.qr_reader import get_cosmetic_info
-from app.forms import CompositionForm, SearchForm, ScanForm
+from app.forms import CompositionForm, ScanForm, SearchForm
+
 handle_search_bp = Blueprint("handle_search_bp", __name__)
 
 
-@handle_search_bp.route("/handle-search", methods=['POST'], endpoint='handle_search')
+@handle_search_bp.route("/handle-search", methods=["POST"], endpoint="handle_search")
 def handle_search_page():
     """
     Обрабатывает поиск продукта по введенному названию или штрих-коду в форме поиска.
@@ -12,7 +14,7 @@ def handle_search_page():
     Если продукт найден — отображает product_info.html.
     Иначе — показывает предупреждение и возвращается на главную.
     """
-    input_data = request.form.get('product_name', '').strip()
+    input_data = request.form.get("product_name", "").strip()
     error_message = None
 
     if not input_data:
@@ -25,9 +27,11 @@ def handle_search_page():
         try:
             product_info = get_cosmetic_info(input_data)
             if product_info:
-                return render_template("fullpage/product_info.html",
-                                       product=product_info,
-                                       active_tab='scanner')
+                return render_template(
+                    "fullpage/product_info.html",
+                    product=product_info,
+                    active_tab="scanner",
+                )
             else:
                 error_message = "Продукт с таким штрих-кодом не найден"
         except Exception as e:
@@ -35,8 +39,10 @@ def handle_search_page():
     composition_form = CompositionForm()
     search_form = SearchForm()
     scan_form = ScanForm()
-    return render_template("fullpage/index.html",
-                           composition_form=composition_form,
-                           search_form=search_form,
-                           scan_form=scan_form,
-                           error_message=error_message)
+    return render_template(
+        "fullpage/index.html",
+        composition_form=composition_form,
+        search_form=search_form,
+        scan_form=scan_form,
+        error_message=error_message,
+    )

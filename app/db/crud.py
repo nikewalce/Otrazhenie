@@ -1,6 +1,7 @@
-from app.db.session import Database, Base
-from app.db.models import ProductIngredient, IngredientCategory, User, Product
 from app.db.encrypt import EncryptData
+from app.db.models import IngredientCategory, Product, ProductIngredient, User
+from app.db.session import Base, Database
+
 
 class OtrazhenieDB(Database):
     """Класс для работы с таблицами"""
@@ -36,7 +37,13 @@ class OtrazhenieDB(Database):
         Base.metadata.drop_all(self.engine)
         print("Таблицы удалены!")
 
-    def add_ingredient(self, name: str, category_id: int = None, safety_score: float = None, description: str = None):
+    def add_ingredient(
+        self,
+        name: str,
+        category_id: int = None,
+        safety_score: float = None,
+        description: str = None,
+    ):
         """Добавляет новый ингредиент
         :param name: название ингредиента
         :param category_id: id категории из таблицы ingredient_categories
@@ -48,10 +55,10 @@ class OtrazhenieDB(Database):
                 name=name,
                 safety_score=safety_score,
                 description=description,
-                category_id=category_id
+                category_id=category_id,
             )
             session.add(ingredient)
-            session.commit() # фиксируем изменения
+            session.commit()  # фиксируем изменения
             session.refresh(ingredient)
             return ingredient
 
@@ -83,7 +90,9 @@ class OtrazhenieDB(Database):
             print(f"- {col['name']} ({col['type']})")
         return columns
 
-    def add_category(self, name_en: str = None, name_ru: str = None, description: str = None):
+    def add_category(
+        self, name_en: str = None, name_ru: str = None, description: str = None
+    ):
         """Добавляет новую категорию ингредиентов
         :param name_en: наименование категории на английском
         :param name_ru: наименование категории на русском
@@ -91,9 +100,7 @@ class OtrazhenieDB(Database):
         """
         with self.get_session() as session:
             category = IngredientCategory(
-                name_en=name_en,
-                name_ru=name_ru,
-                description=description
+                name_en=name_en, name_ru=name_ru, description=description
             )
             session.add(category)
             session.commit()
@@ -101,16 +108,16 @@ class OtrazhenieDB(Database):
             return category
 
     def add_product(
-            self,
-            barcode: int,
-            name: str,
-            brand: str = None,
-            ingredients_text: str = None,
-            ingredients_text_ru: str = None,
-            image_url: str = None,
-            packaging: str = None,
-            quantity: int = None,
-            countries: str = None
+        self,
+        barcode: int,
+        name: str,
+        brand: str = None,
+        ingredients_text: str = None,
+        ingredients_text_ru: str = None,
+        image_url: str = None,
+        packaging: str = None,
+        quantity: int = None,
+        countries: str = None,
     ):
         """
         Добавляет новый продукт в базу.
@@ -142,14 +149,18 @@ class OtrazhenieDB(Database):
                 image_url=image_url,
                 packaging=packaging,
                 quantity=quantity,
-                countries=countries
+                countries=countries,
             )
-            ingredients_list = [item.strip() for item in ingredients_text.split(',')]
+            ingredients_list = [item.strip() for item in ingredients_text.split(",")]
             # Добавляем ингредиенты
             if ingredients_list:
                 for ing_name in ingredients_list:
                     # Ищем ингредиент в базе, если нет — создаём
-                    ingredient = session.query(ProductIngredient).filter_by(name=ing_name).first()
+                    ingredient = (
+                        session.query(ProductIngredient)
+                        .filter_by(name=ing_name)
+                        .first()
+                    )
                     if not ingredient:
                         ingredient = ProductIngredient(name=ing_name)
                         session.add(ingredient)
@@ -162,8 +173,15 @@ class OtrazhenieDB(Database):
             session.refresh(product)
             return product
 
-    def add_ingredient_with_category(self, name: str, category_name_ru: str = None, category_name_en: str = None,
-                       description_category: str = None, safety_score: float = None, description: str = None):
+    def add_ingredient_with_category(
+        self,
+        name: str,
+        category_name_ru: str = None,
+        category_name_en: str = None,
+        description_category: str = None,
+        safety_score: float = None,
+        description: str = None,
+    ):
         """Добавляет новый ингредиент с проверкой категории.
         Если категории нет — создается новая.
 
@@ -191,9 +209,9 @@ class OtrazhenieDB(Database):
                     category_id = category.id
                 else:
                     category = self.add_category(
-                        name_ru = category_name_ru,
-                        name_en = category_name_en,
-                        description = description_category
+                        name_ru=category_name_ru,
+                        name_en=category_name_en,
+                        description=description_category,
                     )
                     category_id = category.id
 
@@ -202,15 +220,25 @@ class OtrazhenieDB(Database):
                 name=name,
                 safety_score=safety_score,
                 description=description,
-                category_id=category_id
+                category_id=category_id,
             )
             return ingredient
 
-    def update_ingredient(self, ingredient_id: int, name: str = None, function: str = None,
-                          safety_score: float = None, description: str = None):
+    def update_ingredient(
+        self,
+        ingredient_id: int,
+        name: str = None,
+        function: str = None,
+        safety_score: float = None,
+        description: str = None,
+    ):
         """Обновляет данные ингредиента"""
         with self.get_session() as session:
-            ingredient = session.query(ProductIngredient).filter(ProductIngredient.id == ingredient_id).first()
+            ingredient = (
+                session.query(ProductIngredient)
+                .filter(ProductIngredient.id == ingredient_id)
+                .first()
+            )
             if not ingredient:
                 return None
             if name:
@@ -221,19 +249,22 @@ class OtrazhenieDB(Database):
                 ingredient.safety_score = safety_score
             if description:
                 ingredient.description = description
-            session.commit() # фиксируем изменения
-            session.refresh(ingredient) # обновляем объект после commit
+            session.commit()  # фиксируем изменения
+            session.refresh(ingredient)  # обновляем объект после commit
             return ingredient
-
 
     def delete_ingredient(self, ingredient_id: int):
         """Удаляет ингредиент по ID"""
         with self.get_session() as session:
-            ingredient = session.query(ProductIngredient).filter(ProductIngredient.id == ingredient_id).first()
+            ingredient = (
+                session.query(ProductIngredient)
+                .filter(ProductIngredient.id == ingredient_id)
+                .first()
+            )
             if not ingredient:
                 return None
             session.delete(ingredient)
-            session.commit() # фиксируем изменения
+            session.commit()  # фиксируем изменения
             return ingredient
 
     def select_all_products(self):
@@ -255,16 +286,23 @@ class OtrazhenieDB(Database):
         """Возвращает все записи из таблицы product_ingredients с названиями ингредиентов вместо внешних ключей"""
         with self.get_session() as session:
             # Выполняем JOIN запрос между таблицами product_ingredients и ingredients
-            results = session.query(
-                ProductIngredient.id,
-                ProductIngredient.name,
-                IngredientCategory.name_ru.label('ingredient_name'),  # Берем русское название ингредиента
-                ProductIngredient.safety_score,
-                ProductIngredient.description
-            ).join(
-                IngredientCategory,  # Указываем таблицу для JOIN
-                ProductIngredient.category_id == IngredientCategory.id  # Условие соединения
-            ).all()
+            results = (
+                session.query(
+                    ProductIngredient.id,
+                    ProductIngredient.name,
+                    IngredientCategory.name_ru.label(
+                        "ingredient_name"
+                    ),  # Берем русское название ингредиента
+                    ProductIngredient.safety_score,
+                    ProductIngredient.description,
+                )
+                .join(
+                    IngredientCategory,  # Указываем таблицу для JOIN
+                    ProductIngredient.category_id
+                    == IngredientCategory.id,  # Условие соединения
+                )
+                .all()
+            )
             return results
 
     def select_one_ingredient(self, ingredient_name: str):
@@ -273,7 +311,11 @@ class OtrazhenieDB(Database):
         :param ingredient_name: имя ингредиента
         """
         with self.get_session() as session:
-            return session.query(ProductIngredient).filter(ProductIngredient.name == ingredient_name).first()  # одна запись
+            return (
+                session.query(ProductIngredient)
+                .filter(ProductIngredient.name == ingredient_name)
+                .first()
+            )  # одна запись
 
     # --- Функции для пользователей ---
     def create_user_table(self):
@@ -300,7 +342,7 @@ class OtrazhenieDB(Database):
         """Возвращает пользователя по username"""
         with self.get_session() as session:
             return session.query(User).filter(User.username == username).first()
-    
+
     def get_user_by_id(self, user_id: int):
         """Возвращает пользователя по ID"""
         with self.get_session() as session:
@@ -313,7 +355,7 @@ class OtrazhenieDB(Database):
             user = User(
                 username=username,
                 email=email,
-                password_hash=encryptor.hash_password(password)
+                password_hash=encryptor.hash_password(password),
             )
             session.add(user)
             session.commit()
@@ -335,7 +377,8 @@ class OtrazhenieDB(Database):
                 session.commit()
             return is_valid
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     db = OtrazhenieDB()
     # db.delete_tables()
     # db.create_tables()

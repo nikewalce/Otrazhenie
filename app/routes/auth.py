@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask import Blueprint, flash, redirect, render_template, url_for
+from flask_login import login_required, login_user, logout_user
+
 from app.db.crud import OtrazhenieDB
-from app.forms import RegistrationForm, LoginForm
+from app.forms import LoginForm, RegistrationForm
 
 auth_bp = Blueprint("auth_bp", __name__)
 db = OtrazhenieDB()
+
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def auth_register():
@@ -25,6 +27,7 @@ def auth_register():
 
     return render_template("fullpage/auth/register.html", form=form)
 
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def auth_login():
     form = LoginForm()
@@ -44,6 +47,7 @@ def auth_login():
             return redirect(url_for("auth_bp.auth_login"))
 
     return render_template("fullpage/auth/login.html", form=form)
+
 
 @auth_bp.route("/logout")
 @login_required

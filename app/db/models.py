@@ -1,8 +1,21 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table, Text
-from app.db.session import Base
-from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
+
 from flask_login import UserMixin
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    Text,
+)
+from sqlalchemy.orm import relationship
+
+from app.db.session import Base
+
 
 class ProductIngredient(Base):
     """Класс для таблицы с ингредиентами"""
@@ -30,11 +43,13 @@ class ProductIngredient(Base):
             "name": self.name,
             "category_id": self.category_id,
             "safety_score": self.safety_score,
-            "description": self.description
+            "description": self.description,
         }
+
 
 class IngredientCategory(Base):
     """Класс для категорий ингредиентов"""
+
     __tablename__ = "ingredient_categories"
 
     id = Column(Integer, primary_key=True, index=True)  # уникальный ID
@@ -45,40 +60,50 @@ class IngredientCategory(Base):
     ingredients = relationship("ProductIngredient", back_populates="category")
 
     def __repr__(self):
-        return (f"IngredientCategory(\nid={self.id}, \nname_en='{self.name_en}', "
-                f"\nname_ru='{self.name_ru}'), \ndescription='{self.description}')")
+        return (
+            f"IngredientCategory(\nid={self.id}, \nname_en='{self.name_en}', "
+            f"\nname_ru='{self.name_ru}'), \ndescription='{self.description}')"
+        )
 
     def to_dict(self):
         return {
             "id": self.id,
             "name_en": self.name_en,
             "name_ru": self.name_ru,
-            "description": self.description
+            "description": self.description,
         }
+
 
 # Таблица связей между ролями и правами
 role_permissions = Table(
-    'role_permissions', Base.metadata,
-    Column('role_id', Integer, ForeignKey('roles.id'), primary_key=True),
-    Column('permission_id', Integer, ForeignKey('permissions.id'), primary_key=True)
+    "role_permissions",
+    Base.metadata,
+    Column("role_id", Integer, ForeignKey("roles.id"), primary_key=True),
+    Column("permission_id", Integer, ForeignKey("permissions.id"), primary_key=True),
 )
 
 # Таблица связей между пользователями и ролями (многие-ко-многим)
 user_roles = Table(
-    'user_roles', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('role_id', Integer, ForeignKey('roles.id'), primary_key=True)
+    "user_roles",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("role_id", Integer, ForeignKey("roles.id"), primary_key=True),
 )
 
 # Связь продукты → ингредиенты (многие-ко-многим)
 product_ingredients_link = Table(
-    'product_ingredients_link', Base.metadata,
-    Column('product_id', Integer, ForeignKey('products.id'), primary_key=True),
-    Column('ingredient_id', Integer, ForeignKey('product_ingredients.id'), primary_key=True)
+    "product_ingredients_link",
+    Base.metadata,
+    Column("product_id", Integer, ForeignKey("products.id"), primary_key=True),
+    Column(
+        "ingredient_id", Integer, ForeignKey("product_ingredients.id"), primary_key=True
+    ),
 )
+
 
 class Product(Base):
     """Сканированный продукт"""
+
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -86,8 +111,8 @@ class Product(Base):
     name = Column(String(255), nullable=False)
     brand = Column(String(255), nullable=True)
 
-    ingredients_text = Column(Text, nullable=True)       # Английский текст ингредиентов
-    ingredients_text_ru = Column(Text, nullable=True)    # Русский текст ингредиентов
+    ingredients_text = Column(Text, nullable=True)  # Английский текст ингредиентов
+    ingredients_text_ru = Column(Text, nullable=True)  # Русский текст ингредиентов
 
     image_url = Column(String(512), nullable=True)
     packaging = Column(String(255), nullable=True)
@@ -98,9 +123,7 @@ class Product(Base):
 
     # Связь с ингредиентами
     ingredients = relationship(
-        "ProductIngredient",
-        secondary=product_ingredients_link,
-        backref="products"
+        "ProductIngredient", secondary=product_ingredients_link, backref="products"
     )
 
     def __repr__(self):
@@ -119,20 +142,25 @@ class Product(Base):
             "quantity": self.quantity,
             "countries": self.countries,
             "ingredients": [i.to_dict() for i in self.ingredients],
-            "created_at": self.created_at
+            "created_at": self.created_at,
         }
 
 
 class User(Base, UserMixin):
     """Класс пользователя"""
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)  # Уникальный ID пользователя
     username = Column(String(50), unique=True, nullable=False)  # Логин / ник
     email = Column(String(120), unique=True, nullable=False)  # Электронная почта
     password_hash = Column(String(256), nullable=False)  # Хэш пароля
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))  # Дата регистрации
-    last_login = Column(DateTime, default=None, onupdate=datetime.now(timezone.utc))  # Дата последнего входа
+    created_at = Column(
+        DateTime, default=datetime.now(timezone.utc)
+    )  # Дата регистрации
+    last_login = Column(
+        DateTime, default=None, onupdate=datetime.now(timezone.utc)
+    )  # Дата последнего входа
     is_active = Column(Boolean, default=True)  # Активен или нет
 
     profile = relationship("Profile", uselist=False, back_populates="user")
@@ -142,7 +170,9 @@ class User(Base, UserMixin):
     messages = relationship("Message", back_populates="user")
     activities = relationship("ActivityLog", back_populates="user")
     reset_tokens = relationship("PasswordResetToken", back_populates="user")
-    scans = relationship("ScanHistory", back_populates="user", cascade="all, delete-orphan")
+    scans = relationship(
+        "ScanHistory", back_populates="user", cascade="all, delete-orphan"
+    )
 
     def to_dict(self):
         return {
@@ -156,8 +186,10 @@ class User(Base, UserMixin):
     def __repr__(self):
         return f"<User {self.username}>"
 
+
 class Profile(Base):
     """Профиль пользователя"""
+
     __tablename__ = "profiles"
 
     id = Column(Integer, primary_key=True)
@@ -176,6 +208,7 @@ class Profile(Base):
 
 class Role(Base):
     """Роль пользователя"""
+
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True)
@@ -183,21 +216,28 @@ class Role(Base):
     description = Column(Text)
 
     users = relationship("User", secondary=user_roles, back_populates="roles")
-    permissions = relationship("Permission", secondary=role_permissions, back_populates="roles")
+    permissions = relationship(
+        "Permission", secondary=role_permissions, back_populates="roles"
+    )
 
 
 class Permission(Base):
     """Права доступа"""
+
     __tablename__ = "permissions"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True, nullable=False)
     description = Column(Text)
 
-    roles = relationship("Role", secondary=role_permissions, back_populates="permissions")
+    roles = relationship(
+        "Role", secondary=role_permissions, back_populates="permissions"
+    )
+
 
 class ScanHistory(Base):
     """История сканированных продуктов пользователем"""
+
     __tablename__ = "scan_history"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -213,6 +253,7 @@ class ScanHistory(Base):
 
 class Session(Base):
     """Сессии пользователя"""
+
     __tablename__ = "sessions"
 
     id = Column(Integer, primary_key=True)
@@ -226,6 +267,7 @@ class Session(Base):
 
 class Notification(Base):
     """Уведомления"""
+
     __tablename__ = "notifications"
 
     id = Column(Integer, primary_key=True)
@@ -239,6 +281,7 @@ class Notification(Base):
 
 class Message(Base):
     """Сообщения"""
+
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
@@ -252,6 +295,7 @@ class Message(Base):
 
 class ActivityLog(Base):
     """История активности пользователя"""
+
     __tablename__ = "activity_logs"
 
     id = Column(Integer, primary_key=True)
@@ -264,6 +308,7 @@ class ActivityLog(Base):
 
 class PasswordResetToken(Base):
     """Токены восстановления пароля"""
+
     __tablename__ = "password_reset_tokens"
 
     id = Column(Integer, primary_key=True)

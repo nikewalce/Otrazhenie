@@ -1,15 +1,24 @@
 from typing import Dict, Optional
-from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.db.crud import OtrazhenieDB
-from app.schemas.user_schema import UserRegistrationSchema
 from app.exceptions.validation import ValidationError
+from app.schemas.user_schema import UserRegistrationSchema
 
 
 class User(UserMixin):
     """Объект пользователя для Flask-Login и сервисного слоя"""
-    def __init__(self, id: int, username: str, email: str, password_hash: str, is_active: bool = True):
+
+    def __init__(
+        self,
+        id: int,
+        username: str,
+        email: str,
+        password_hash: str,
+        is_active: bool = True,
+    ):
         self.id = id
         self.username = username
         self.email = email
@@ -32,6 +41,7 @@ class UserService:
     - аутентификация
     - проверка данных
     """
+
     def __init__(self, db: Optional[OtrazhenieDB] = None):
         self.db = db or OtrazhenieDB()
         self.schema = UserRegistrationSchema()
@@ -48,7 +58,7 @@ class UserService:
         user_obj = self.db.create_user(
             username=valid_data["username"],
             email=valid_data["email"],
-            password=valid_data["password_hash"]
+            password=valid_data["password_hash"],
         )
         return self._to_user_model(user_obj)
 
@@ -59,9 +69,13 @@ class UserService:
             raise ValidationError(errors)
 
         if self.db.get_user_by_email(data["email"]):
-            raise ValidationError({"email": "Пользователь с таким email уже существует"})
+            raise ValidationError(
+                {"email": "Пользователь с таким email уже существует"}
+            )
         if self.db.get_user_by_username(data["username"]):
-            raise ValidationError({"username": "Пользователь с таким именем уже существует"})
+            raise ValidationError(
+                {"username": "Пользователь с таким именем уже существует"}
+            )
 
         self._validate_password_strength(data["password"])
         return self.schema.load(data)
@@ -69,11 +83,17 @@ class UserService:
     def _validate_password_strength(self, password: str):
         """Дополнительная проверка сложности пароля"""
         if len(password) < 8:
-            raise ValidationError({"password": "Пароль должен быть не менее 8 символов"})
+            raise ValidationError(
+                {"password": "Пароль должен быть не менее 8 символов"}
+            )
         if password.isdigit():
-            raise ValidationError({"password": "Пароль не должен состоять только из цифр"})
+            raise ValidationError(
+                {"password": "Пароль не должен состоять только из цифр"}
+            )
         if password.isalpha():
-            raise ValidationError({"password": "Пароль должен содержать хотя бы одну цифру"})
+            raise ValidationError(
+                {"password": "Пароль должен содержать хотя бы одну цифру"}
+            )
 
     # ---------------- Аутентификация ----------------
     def authenticate_user(self, email: str, password: str) -> Optional[User]:
@@ -84,6 +104,7 @@ class UserService:
 
         # Используем CRUD метод проверки пароля
         from app.db.encrypt import EncryptData
+
         encryptor = EncryptData()
         is_valid, new_hash = encryptor.verify_password(user_obj.password_hash, password)
         if is_valid and new_hash:
@@ -117,7 +138,7 @@ class UserService:
             username=user_obj.username,
             email=user_obj.email,
             password_hash=user_obj.password_hash,
-            is_active=user_obj.is_active
+            is_active=user_obj.is_active,
         )
 
 

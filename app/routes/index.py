@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template
 from flask_login import current_user
-from app.forms import CompositionForm, SearchForm, ScanForm
+
+from app.forms import CompositionForm, ScanForm, SearchForm
 
 index_bp = Blueprint("index_bp", __name__, url_prefix="/")
 
-@index_bp.route("/", methods=['GET'], endpoint="index")
+
+@index_bp.route("/", methods=["GET"], endpoint="index")
 def index_page():
     composition_form = CompositionForm()
     search_form = SearchForm()
@@ -15,5 +17,5 @@ def index_page():
         composition_form=composition_form,
         search_form=search_form,
         scan_form=scan_form,
-        current_user=current_user
+        current_user=current_user,
     )

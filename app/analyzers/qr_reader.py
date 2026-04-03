@@ -29,12 +29,14 @@ def scan_barcode():
             barcode_type = barcode.type
 
             # Рисуем рамку вокруг штрих-кода
-            (x, y, w, h) = barcode.rect
+            x, y, w, h = barcode.rect
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             # Выводим данные штрих-кода
             text = f"{barcode_data} ({barcode_type})"
-            cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(
+                frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2
+            )
 
             # Получаем информацию о косметике
             product_info = get_cosmetic_info(barcode_data)
@@ -42,7 +44,7 @@ def scan_barcode():
 
         cv2.imshow("Barcode Scanner", frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     cap.release()
@@ -88,12 +90,13 @@ def scan_barcode():
 #
 #     return "Товар не найден в доступных базах."
 
+
 def get_cosmetic_info(barcode):
     """Получает информацию о продукте по штрих-коду"""
     try:
         response = requests.get(
             f"https://world.openbeautyfacts.org/api/v0/product/{barcode}.json",
-            timeout=5
+            timeout=5,
         )
         data = response.json()
         if data.get("status") == 1:
@@ -108,13 +111,14 @@ def get_cosmetic_info(barcode):
                 "additional_info": {
                     "Упаковка": product.get("packaging", ""),
                     "Вес": product.get("quantity", ""),
-                    "Страна": product.get("countries", "")
-                }
+                    "Страна": product.get("countries", ""),
+                },
             }
         return None
     except Exception as e:
         print(f"Ошибка API: {str(e)}")
         return None
+
 
 if __name__ == "__main__":
     barcode = read_barcode_from_image("img_example/barcode.jpg")
