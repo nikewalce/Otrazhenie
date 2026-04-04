@@ -107,39 +107,78 @@ class OtrazhenieDB(Database):
             session.refresh(category)  # обновляем, чтобы получить ID
             return category
 
+    # Работа с ingredients
+    def _parse_ingredients(self, ingredients_text: str) -> list[str]:
+        """
+        Безопасный парсинг строки ингредиентов.
+        Никогда не падает.
+        """
+        if not ingredients_text:
+            return []
+
+        try:
+            return [
+                item.strip()
+                for item in ingredients_text.split(",")
+                if item.strip()
+            ]
+        except Exception as e:
+            print(f"ingredients_parse_failed: {e}")
+            return []
+
+    def _attach_ingredients(self, session, product, ingredients_list: list[str]):
+        """
+        Привязывает ингредиенты к продукту.
+        Fail-safe: не ломает pipeline.
+        """
+        for ing_name in ingredients_list:
+            try:
+                ingredient = (
+                    session.query(ProductIngredient)
+                    .filter_by(name=ing_name)
+                    .first()
+                )
+
+                if not ingredient:
+                    ingredient = ProductIngredient(name=ing_name)
+                    session.add(ingredient)
+                    session.flush()
+
+                product.ingredients.append(ingredient)
+
+            except Exception as e:
+                print(
+                    f"ingredient_attach_failed: {ing_name}, error: {e}"
+                )
+
     def add_product(
-        self,
-        barcode: int,
-        name: str,
-        brand: str = None,
-        ingredients_text: str = None,
-        ingredients_text_ru: str = None,
-        image_url: str = None,
-        packaging: str = None,
-        quantity: int = None,
-        countries: str = None,
+            self,
+            barcode: int,
+            name: str,
+            brand: str = None,
+            ingredients_text: str = None,
+            ingredients_text_ru: str = None,
+            image_url: str = None,
+            packaging: str = None,
+            quantity: int = None,
+            countries: str = None,
     ):
         """
-        Добавляет новый продукт в базу.
-
-        :param barcode: штрихкод продукта
-        :param name: название продукта
-        :param brand: бренд
-        :param ingredients_text: список ингредиентов, строка (англ)
-        :param ingredients_text_ru: список ингредиентов, строка (рус)
-        :param image_url: ссылка на изображение
-        :param packaging: упаковка
-        :param quantity: количество
-        :param countries: страна производства
-        :return: объект Product
+        Добавляет новый продукт в базу (устойчивый ingestion).
         """
-        with self.get_session() as session:
-            # Проверяем, есть ли уже продукт с таким barcode
-            existing_product = session.query(Product).filter_by(barcode=barcode).first()
-            if existing_product:
-                return existing_product  # можно обновить данные, если нужно
 
-            # Создаём продукт
+        with self.get_session() as session:
+            # 1. Проверка на существование
+            existing_product = (
+                session.query(Product)
+                .filter_by(barcode=barcode)
+                .first()
+            )
+            if existing_product:
+                print(f"product_exists: {barcode}")
+                return existing_product
+
+            # 2. Создание продукта (ВСЕГДА succeeds)
             product = Product(
                 barcode=barcode,
                 name=name,
@@ -151,26 +190,27 @@ class OtrazhenieDB(Database):
                 quantity=quantity,
                 countries=countries,
             )
-            ingredients_list = [item.strip() for item in ingredients_text.split(",")]
-            # Добавляем ингредиенты
-            if ingredients_list:
-                for ing_name in ingredients_list:
-                    # Ищем ингредиент в базе, если нет — создаём
-                    ingredient = (
-                        session.query(ProductIngredient)
-                        .filter_by(name=ing_name)
-                        .first()
-                    )
-                    if not ingredient:
-                        ingredient = ProductIngredient(name=ing_name)
-                        session.add(ingredient)
-                        session.flush()  # чтобы получить id
-                    product.ingredients.append(ingredient)
 
-            # Добавляем продукт в сессию и сохраняем
             session.add(product)
+            session.flush()  # получаем id, но ещё не commit
+
+            print(f"product_created: {barcode}")
+
+            # 3. Парсинг ингредиентов (fail-safe)
+            ingredients_list = self._parse_ingredients(ingredients_text)
+
+            if not ingredients_list:
+                print(
+                    f"product_saved_without_ingredients: {barcode}"
+                )
+            else:
+                # 4. Привязка ингредиентов (fail-safe)
+                self._attach_ingredients(session, product, ingredients_list)
+
+            # 5. Финальный commit (ОДИН раз)
             session.commit()
             session.refresh(product)
+
             return product
 
     def add_ingredient_with_category(

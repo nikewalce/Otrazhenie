@@ -107,7 +107,12 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    barcode = Column(Integer, unique=True, nullable=False)
+    # Длина с запасом
+    # EAN-8 → 8 символов
+    # UPC → 12
+    # EAN-13 → 13
+    # ITF-14 → 14
+    barcode = Column(String(32), unique=True, nullable=False, index=True)
     name = Column(String(255), nullable=False)
     brand = Column(String(255), nullable=True)
 
