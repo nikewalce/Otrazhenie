@@ -1,7 +1,8 @@
 from decouple import UndefinedValueError, config
-from flask import CSRFError, Flask, flash, redirect, url_for
+from flask import Flask, flash, redirect, url_for
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
+from flask_wtf.csrf import CSRFError
 
 from app.routes.auth import auth_bp
 from app.routes.diary import diary_bp

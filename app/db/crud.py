@@ -348,14 +348,13 @@ class OtrazhenieDB(Database):
         with self.get_session() as session:
             return session.query(User).filter(User.id == user_id).first()
 
-    def create_user(self, username: str, email: str, password: str):
+    def create_user(self, username: str, email: str, password_hash: str):
         """Создаёт нового пользователя"""
-        encryptor = EncryptData()
         with self.get_session() as session:
             user = User(
                 username=username,
                 email=email,
-                password_hash=encryptor.hash_password(password),
+                password_hash=password_hash,
             )
             session.add(user)
             session.commit()
@@ -364,17 +363,14 @@ class OtrazhenieDB(Database):
 
     def verify_user_password(self, email: str, password: str):
         """Проверяет пароль пользователя"""
-        encryptor = EncryptData()
         with self.get_session() as session:
             user = session.query(User).filter(User.email == email).first()
             if not user:
                 return False
 
-            is_valid, new_hash = encryptor.verify_password(user.password_hash, password)
-            if is_valid and new_hash:
-                # обновляем хеш в базе на Argon2
-                user.password_hash = new_hash
-                session.commit()
+            is_valid, new_hash = EncryptData().verify_password(
+                user.password_hash, password
+            )
             return is_valid
 
 

@@ -1,1 +1,1 @@
-#Pydantic-схемы
+# Pydantic-схемы

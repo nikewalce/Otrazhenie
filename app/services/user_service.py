@@ -1,9 +1,9 @@
 from typing import Dict, Optional
 
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.db.crud import OtrazhenieDB
+from app.db.encrypt import EncryptData
 from app.exceptions.validation import ValidationError
 from app.schemas.user_schema import UserRegistrationSchema
 
@@ -27,7 +27,7 @@ class User(UserMixin):
 
     def check_password(self, password: str) -> bool:
         """Проверяет пароль пользователя"""
-        return check_password_hash(self.password_hash, password)
+        return EncryptData.verify_password(self.password_hash, password)[0]
 
     def get_id(self):
         """Возвращает ID пользователя как строку (для Flask-Login)"""
@@ -52,13 +52,15 @@ class UserService:
         valid_data = self.validate_registration_data(data)
 
         # Хэшируем пароль
-        valid_data["password_hash"] = generate_password_hash(valid_data.pop("password"))
+        valid_data["password_hash"] = EncryptData.hash_password(
+            valid_data.pop("password")
+        )
 
         # Сохраняем пользователя через CRUD
         user_obj = self.db.create_user(
             username=valid_data["username"],
             email=valid_data["email"],
-            password=valid_data["password_hash"],
+            password_hash=valid_data["password_hash"],
         )
         return self._to_user_model(user_obj)
 
@@ -101,18 +103,10 @@ class UserService:
         user_obj = self.db.get_user_by_email(email)
         if not user_obj:
             return None
-
-        # Используем CRUD метод проверки пароля
-        from app.db.encrypt import EncryptData
-
-        encryptor = EncryptData()
-        is_valid, new_hash = encryptor.verify_password(user_obj.password_hash, password)
-        if is_valid and new_hash:
-            # обновляем хеш в базе на новый формат
-            user_obj.password_hash = new_hash
-            with self.db.get_session() as session:
-                session.add(user_obj)
-                session.commit()
+        # Проверка пароля
+        is_valid, new_hash = EncryptData().verify_password(
+            user_obj.password_hash, password
+        )
         return self._to_user_model(user_obj) if is_valid else None
 
     # ---------------- Получение пользователей ----------------

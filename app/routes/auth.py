@@ -2,6 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import login_required, login_user, logout_user
 
 from app.db.crud import OtrazhenieDB
+from app.db.encrypt import EncryptData
 from app.forms import LoginForm, RegistrationForm
 
 auth_bp = Blueprint("auth_bp", __name__)
@@ -15,13 +16,13 @@ def auth_register():
     if form.validate_on_submit():  # Проверяет POST и валидность формы
         username = form.username.data
         email = form.email.data
-        password = form.password.data
+        password_hash = EncryptData().hash_password(form.password.data)
 
         if db.get_user_by_email(email):
             flash("Такой email уже зарегистрирован", "error")
             return redirect(url_for("auth_bp.auth_register"))
 
-        db.create_user(username, email, password)
+        db.create_user(username, email, password_hash)
         flash("Регистрация успешна!", "success")
         return redirect(url_for("auth_bp.auth_login"))
 
