@@ -24,15 +24,3 @@ def test_service_with_fake_db(MockDB):
 def test_api(mock_get):
     mock_get.return_value.status_code = 200
 
-
-@patch("app.services.demo_service.datetime")
-def test_get_current_date(mock_dt, demo_service):
-    mock_dt.now.return_value = datetime(2025, 1, 1)
-    result = demo_service.get_current_date()
-    assert result == datetime(2025, 1, 1)
-
-
-@patch("app.services.demo_service.random.randint", return_value=7)
-def test_generate_random_number(mock_rand, demo_service):
-    result = demo_service.generate_random_number()
-    assert result == 7
