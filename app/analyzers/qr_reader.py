@@ -1,10 +1,14 @@
-import cv2
 import requests
 from PIL import Image
-from pyzbar import pyzbar
 
 
 def read_barcode_from_image(image_path):
+    # lazy imports для усиления устойчивости
+    try:
+        from pyzbar import pyzbar
+    except ImportError:
+        print("pyzbar/zbar не установлен, чтение штрих-кода недоступно")
+        return
     image = Image.open(image_path)
     barcodes = pyzbar.decode(image)
 
@@ -15,6 +19,13 @@ def read_barcode_from_image(image_path):
 
 
 def scan_barcode():
+    # lazy imports для усиления устойчивости
+    try:
+        import cv2
+        from pyzbar import pyzbar
+    except ImportError:
+        print("OpenCV или pyzbar не установлены, сканирование с камеры недоступно")
+        return
     cap = cv2.VideoCapture(0)  # Используем камеру
 
     while True:

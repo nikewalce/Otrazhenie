@@ -1,6 +1,4 @@
-import cv2
 import numpy as np
-import pyzbar.pyzbar as pyzbar
 from flask import Blueprint, flash, redirect, render_template, url_for
 
 from app.analyzers.qr_reader import get_cosmetic_info
@@ -15,8 +13,18 @@ def decode_barcode(image_data):
     Декодирует штрих-код (или QR-код) из изображения с помощью OpenCV и pyzbar.
     Возвращает строковое значение распознанного кода или None, если код не найден.
     """
+    # lazy imports для усиления устойчивости
+    try:
+        import cv2
+        import pyzbar.pyzbar as pyzbar
+    except ImportError:
+        print("OpenCV или pyzbar не установлены, сканирование с камеры недоступно")
+        return None
     nparr = np.frombuffer(image_data, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    # чтобы приложение не падало при отсутствии системных библиотек в CI/контейнере
+    if img is None:
+        return
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     barcodes = pyzbar.decode(gray)
     return barcodes[0].data.decode("utf-8") if barcodes else None
