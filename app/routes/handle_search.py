@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 
-from app.analyzers.qr_reader import get_cosmetic_info
+from app.services.product_lookup_service import get_product_info_from_api
 from app.forms import CompositionForm, ScanForm, SearchForm
 
 handle_search_bp = Blueprint("handle_search_bp", __name__)
@@ -25,11 +25,11 @@ def handle_search_page():
         error_message = "Длина штрих-кода должна быть не менее 8"
     else:
         try:
-            product_info = get_cosmetic_info(input_data)
+            product_info = get_product_info_from_api(input_data)
             if product_info:
                 return render_template(
                     "fullpage/product_info.html",
-                    product=product_info,
+                    product=product_info.model_dump(), # преобразуем pydantic модель в dict
                     active_tab="scanner",
                 )
             else:

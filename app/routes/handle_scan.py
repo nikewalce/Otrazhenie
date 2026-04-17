@@ -1,7 +1,7 @@
 import numpy as np
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-from app.analyzers.qr_reader import get_cosmetic_info
+from app.services.product_lookup_service import get_product_info_from_api
 from app.forms import ScanForm
 
 handle_scan_bp = Blueprint("handle_scan_bp", __name__)
@@ -51,12 +51,12 @@ def handle_scan_page():
                 flash("Не удалось распознать штрих-код", "warning")
                 return redirect(url_for("handle_scan_bp.handle_scan"))
 
-            product_info = get_cosmetic_info(barcode_data)
+            product_info = get_product_info_from_api(barcode_data)
 
             if product_info:
                 return render_template(
                     "fullpage/product_info.html",
-                    product=product_info,
+                    product=product_info.model_dump(), # преобразуем pydantic модель в dict
                     active_tab="scanner",
                 )
             else:
