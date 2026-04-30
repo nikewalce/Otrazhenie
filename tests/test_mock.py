@@ -23,4 +23,3 @@ def test_service_with_fake_db(MockDB):
 @patch("requests.get")
 def test_api(mock_get):
     mock_get.return_value.status_code = 200
-

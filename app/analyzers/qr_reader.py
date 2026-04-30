@@ -1,7 +1,9 @@
 import requests
 from PIL import Image
-from app.schemas.products_schema import OpenBeautyFactsResponse
+
 from app.schemas.product_dto import ProductDTO
+from app.schemas.products_schema import OpenBeautyFactsResponse
+
 
 def parse_api_response(data: dict) -> OpenBeautyFactsResponse | None:
     try:
@@ -9,6 +11,7 @@ def parse_api_response(data: dict) -> OpenBeautyFactsResponse | None:
     except Exception as e:
         print(f"Ошибка валидации API: {e}")
         return None
+
 
 def read_barcode_from_image(image_path):
     # lazy imports для усиления устойчивости
@@ -69,12 +72,13 @@ def scan_barcode():
     cap.release()
     cv2.destroyAllWindows()
 
+
 def get_cosmetic_info(barcode: str) -> ProductDTO | None:
     """Получает информацию о продукте по штрих-коду"""
     try:
         response = requests.get(
             f"https://world.openbeautyfacts.org/api/v0/product/{barcode}.json",
-            timeout=5, # если API не ответил за 5 секунд — считаем, что он умер
+            timeout=5,  # если API не ответил за 5 секунд — считаем, что он умер
         )
         data = parse_api_response(response.json())
         if data.status == 1:

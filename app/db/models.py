@@ -180,9 +180,7 @@ class User(Base, UserMixin):
     )
 
     def to_dict(self):
-        raise NotImplementedError(
-            "Use UserPublicSchema.dump() instead"
-        )
+        raise NotImplementedError("Use UserPublicSchema.dump() instead")
 
     def __repr__(self):
         return f"<User {self.username}>"

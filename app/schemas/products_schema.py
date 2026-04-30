@@ -1,6 +1,8 @@
-from pydantic import BaseModel, field_validator, Field
 import re
 from typing import Optional
+
+from pydantic import BaseModel, field_validator
+
 
 class ProductCreateSchema(BaseModel):
     barcode: str
@@ -15,10 +17,12 @@ class ProductCreateSchema(BaseModel):
 
         return v
 
+
 class OpenBeautyFactsProduct(BaseModel):
     """Pydantic-схема API openbeautyfacts
     Без Optional будет падать, т.к. API может не вернуть поле, может вернуть null, может вернуть пустую строку
     """
+
     product_name: Optional[str] = None
     brands: Optional[str] = None
     categories: Optional[str] = None
@@ -27,6 +31,7 @@ class OpenBeautyFactsProduct(BaseModel):
     packaging: Optional[str] = None
     quantity: Optional[str] = None
     countries: Optional[str] = None
+
 
 class OpenBeautyFactsResponse(BaseModel):
     status: int

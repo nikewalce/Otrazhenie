@@ -118,9 +118,7 @@ class OtrazhenieDB(Database):
 
         try:
             return [
-                item.strip()
-                for item in ingredients_text.split(",")
-                if item.strip()
+                item.strip() for item in ingredients_text.split(",") if item.strip()
             ]
         except Exception as e:
             print(f"ingredients_parse_failed: {e}")
@@ -134,9 +132,7 @@ class OtrazhenieDB(Database):
         for ing_name in ingredients_list:
             try:
                 ingredient = (
-                    session.query(ProductIngredient)
-                    .filter_by(name=ing_name)
-                    .first()
+                    session.query(ProductIngredient).filter_by(name=ing_name).first()
                 )
 
                 if not ingredient:
@@ -147,21 +143,19 @@ class OtrazhenieDB(Database):
                 product.ingredients.append(ingredient)
 
             except Exception as e:
-                print(
-                    f"ingredient_attach_failed: {ing_name}, error: {e}"
-                )
+                print(f"ingredient_attach_failed: {ing_name}, error: {e}")
 
     def add_product(
-            self,
-            barcode: int,
-            name: str,
-            brand: str = None,
-            ingredients_text: str = None,
-            ingredients_text_ru: str = None,
-            image_url: str = None,
-            packaging: str = None,
-            quantity: int = None,
-            countries: str = None,
+        self,
+        barcode: int,
+        name: str,
+        brand: str = None,
+        ingredients_text: str = None,
+        ingredients_text_ru: str = None,
+        image_url: str = None,
+        packaging: str = None,
+        quantity: int = None,
+        countries: str = None,
     ):
         """
         Добавляет новый продукт в базу (устойчивый ingestion).
@@ -169,11 +163,7 @@ class OtrazhenieDB(Database):
 
         with self.get_session() as session:
             # 1. Проверка на существование
-            existing_product = (
-                session.query(Product)
-                .filter_by(barcode=barcode)
-                .first()
-            )
+            existing_product = session.query(Product).filter_by(barcode=barcode).first()
             if existing_product:
                 print(f"product_exists: {barcode}")
                 return existing_product
@@ -200,9 +190,7 @@ class OtrazhenieDB(Database):
             ingredients_list = self._parse_ingredients(ingredients_text)
 
             if not ingredients_list:
-                print(
-                    f"product_saved_without_ingredients: {barcode}"
-                )
+                print(f"product_saved_without_ingredients: {barcode}")
             else:
                 # 4. Привязка ингредиентов (fail-safe)
                 self._attach_ingredients(session, product, ingredients_list)

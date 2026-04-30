@@ -1,8 +1,8 @@
 import numpy as np
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-from app.services.product_lookup_service import get_product_info_from_api
 from app.forms import ScanForm
+from app.services.product_lookup_service import get_product_info_from_api
 
 handle_scan_bp = Blueprint("handle_scan_bp", __name__)
 
@@ -56,7 +56,7 @@ def handle_scan_page():
             if product_info:
                 return render_template(
                     "fullpage/product_info.html",
-                    product=product_info.model_dump(), # преобразуем pydantic модель в dict
+                    product=product_info.model_dump(),  # преобразуем pydantic модель в dict
                     active_tab="scanner",
                 )
             else:

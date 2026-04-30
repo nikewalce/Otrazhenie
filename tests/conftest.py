@@ -8,6 +8,7 @@ def user_service():
     service = UserService()
     return service
 
+
 @pytest.fixture
 def mock_email_check(mocker):
     return mocker.patch(

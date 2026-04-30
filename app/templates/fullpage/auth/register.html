@@ -10,7 +10,17 @@
             <h1 class="auth-title"><i data-lucide="user-plus" class="title-icon"></i>Регистрация</h1>
             <p class="auth-subtitle">Создайте новый аккаунт</p>
         </div>
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
         <form method="POST" action="{{ url_for('auth_bp.auth_register') }}" class="auth-form">
             {{ form.hidden_tag() }}
 

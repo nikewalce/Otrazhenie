@@ -46,6 +46,7 @@ def create_app():
 
     # Настраиваем Flask-Login
     login_manager.init_app(app)
+    # если пользователь не авторизован и заходит на @login_required его редиректит на /login
     login_manager.login_view = "auth_bp.auth_login"
     login_manager.login_message = (
         "Пожалуйста, войдите в систему для доступа к этой странице."
@@ -66,7 +67,16 @@ def create_app():
 
 @login_manager.user_loader
 def load_user(user_id):
-    """Функция для загрузки пользователя по ID (требуется для Flask-Login)"""
+    """Функция для загрузки пользователя по ID (требуется для Flask-Login)
+    Flask-Login работает так:
+
+    Он хранит user_id в session (cookie)
+    На каждый запрос:
+    берет user_id из сессии
+    вызывает load_user(user_id)
+    получает пользователя
+    кладёт в current_user
+    """
     from app.db.crud import OtrazhenieDB
 
     db = OtrazhenieDB()
