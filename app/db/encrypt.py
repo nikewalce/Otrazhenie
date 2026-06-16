@@ -1,5 +1,8 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class EncryptData:
@@ -10,6 +13,7 @@ class EncryptData:
 
     def hash_password(self, password: str) -> str:
         """Создать новый Argon2-хеш"""
+        logger.info("Создан новый Argon2-хеш")
         return self.ph.hash(password)
 
     def verify_password(
@@ -28,5 +32,6 @@ class EncryptData:
                     return True, self.ph.hash(password)
                 return True, None
             except VerifyMismatchError:
+                logger.exception("Введенный пароль не совпадает с тем, что хранится в базе данных!")
                 return False, None
         return False, None

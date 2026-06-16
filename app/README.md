@@ -73,4 +73,5 @@ Otrazhenie/
 DATABASE_URL=postgresql://nickname:password@host:port/nameDB
 SECRET_KEY='your_secret_key'
 DEBUG=True
+LOG_LEVEL=INFO
 ```

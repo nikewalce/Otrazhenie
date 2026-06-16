@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import login_required, login_user, logout_user
 from pydantic import ValidationError as PydanticValidationError
-
+import logging
 # Кастомная ошибка бизнес-валидации (уровень сервиса)
 from app.exceptions.validation import ValidationError
 
@@ -17,7 +17,7 @@ from app.services.user_service import user_service
 # - масштабируемость (auth, profile, admin и т.д.)
 auth_bp = Blueprint("auth_bp", __name__)
 
-
+logger = logging.getLogger(__name__)
 # =========================================================
 #                 РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ
 # =========================================================
@@ -46,6 +46,10 @@ def auth_register():
         try:
             # Передаём данные в сервисный слой
             # Важно: view НЕ знает как создаётся пользователь
+            logger.info(
+                "Попытка регистрации пользователя. username={form.username.data}, email={form.email.data}"
+            )
+
             user = user_service.register_user(
                 {
                     "username": form.username.data,
@@ -53,7 +57,8 @@ def auth_register():
                     "password": form.password.data,
                 }
             )
-
+            logger.info(
+                f"Пользователь успешно зарегистрирован. id={user.id}")
             # flash — механизм уведомлений Flask (хранится в session)
             flash("Регистрация успешна!", "success")
 
@@ -66,11 +71,11 @@ def auth_register():
             - ValidationError → бизнес-логика (дубликаты, правила)
             - PydanticValidationError → формат данных
 
-            Почему тут:
             - сервис не знает про flash / UI
             - view отвечает за отображение ошибок
             """
-
+            logger.exception(
+                f"Ошибка регистрации пользователя. username={form.username.data}, email={form.email.data}")
             # e.errors() — стандарт Pydantic (dict ошибок по полям)
             for field, msg in e.errors.items():
 
@@ -79,6 +84,7 @@ def auth_register():
                     flash(msg, "error")
                 else:
                     flash(msg, "error")
+
 
     # GET запрос или невалидная форма → просто рендерим страницу
     return render_template("fullpage/auth/register.html", form=form)

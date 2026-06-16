@@ -3,13 +3,15 @@ from decouple import config
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
-
+import logging
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 # Используем значение по умолчанию для DATABASE_URL если переменная окружения не установлена
 try:
     DATABASE_URL = config("DATABASE_URL")
 except Exception:
+    logger.exception("Используется значение по умолчанию для DATABASE_URL, переменная окружения не установлена")
     DATABASE_URL = "sqlite:///./test.db"  # Используем SQLite для тестирования
 
 Base = declarative_base()  # Базовый класс для определения моделей (таблиц ORM)

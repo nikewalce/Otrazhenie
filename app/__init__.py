@@ -1,4 +1,5 @@
 from decouple import UndefinedValueError, config
+from app.core.logging_config import setup_logging
 from flask import Flask, flash, redirect, url_for
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
@@ -26,6 +27,9 @@ login_manager = LoginManager()
 
 
 def create_app():
+    # инициализация логирования на старте Flask-приложения,
+    # чтобы все модули получали одинаковое поведение логов автоматически при запуске приложения
+    setup_logging()
     app = Flask(__name__)
     # устанавливаем секретный ключ, если его нет, вызываем исключение RuntimeError
     try:

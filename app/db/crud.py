@@ -1,7 +1,9 @@
 from app.db.encrypt import EncryptData
 from app.db.models import IngredientCategory, Product, ProductIngredient, User
 from app.db.session import Base, Database
+import logging
 
+logger = logging.getLogger(__name__)
 
 class OtrazhenieDB(Database):
     """Класс для работы с таблицами"""
@@ -9,7 +11,7 @@ class OtrazhenieDB(Database):
     def create_tables(self):
         """Создаёт все таблицы, которые определены в моделях"""
         Base.metadata.create_all(self.engine)
-        print("Таблицы созданы!")
+        logger.info("Таблицы созданы!")
 
     def create_table(self, table_class):
         """
@@ -28,14 +30,14 @@ class OtrazhenieDB(Database):
         # Проверяем, есть ли уже таблица в базе
         if table.name not in inspector.get_table_names():
             table.create(self.engine)
-            print(f"Таблица '{table.name}' создана!")
+            logger.info("Таблица создана!", extra={"table_name": table.name})
         else:
-            print(f"Таблица '{table.name}' уже существует.")
+            logger.info("Таблица уже существует.", extra={"table_name": table.name})
 
     def delete_tables(self):
         """Удаляет все таблицы, которые определены в моделях"""
         Base.metadata.drop_all(self.engine)
-        print("Таблицы удалены!")
+        logger.info("Таблицы удалены!")
 
     def add_ingredient(
         self,
@@ -60,6 +62,12 @@ class OtrazhenieDB(Database):
             session.add(ingredient)
             session.commit()  # фиксируем изменения
             session.refresh(ingredient)
+            logger.info("Добавлен новый ингредиент", extra={
+                "name":name,
+                "safety_score" : safety_score,
+                "description" : description,
+                "category_id" : category_id
+            })
             return ingredient
 
     def show_all_tables(self):
@@ -105,6 +113,12 @@ class OtrazhenieDB(Database):
             session.add(category)
             session.commit()
             session.refresh(category)  # обновляем, чтобы получить ID
+            logger.info("Добавлена новая категория ингредиентов",
+                        extra={
+                            "name_en" : name_en,
+                            "name_ru" : name_ru,
+                            "description" : description
+                        })
             return category
 
     # Работа с ingredients
@@ -121,7 +135,7 @@ class OtrazhenieDB(Database):
                 item.strip() for item in ingredients_text.split(",") if item.strip()
             ]
         except Exception as e:
-            print(f"ingredients_parse_failed: {e}")
+            logger.exception("ingredients_parse_failed")
             return []
 
     def _attach_ingredients(self, session, product, ingredients_list: list[str]):
@@ -143,7 +157,7 @@ class OtrazhenieDB(Database):
                 product.ingredients.append(ingredient)
 
             except Exception as e:
-                print(f"ingredient_attach_failed: {ing_name}, error: {e}")
+                logger.exception(f"ingredient_attach_failed: {ing_name}")
 
     def add_product(
         self,
@@ -165,7 +179,7 @@ class OtrazhenieDB(Database):
             # 1. Проверка на существование
             existing_product = session.query(Product).filter_by(barcode=barcode).first()
             if existing_product:
-                print(f"product_exists: {barcode}")
+                logger.info(f"Продукт существует: {barcode}")
                 return existing_product
 
             # 2. Создание продукта (ВСЕГДА succeeds)
@@ -184,13 +198,13 @@ class OtrazhenieDB(Database):
             session.add(product)
             session.flush()  # получаем id, но ещё не commit
 
-            print(f"product_created: {barcode}")
+            logger.info(f"Продукт создан: {barcode}")
 
             # 3. Парсинг ингредиентов (fail-safe)
             ingredients_list = self._parse_ingredients(ingredients_text)
 
             if not ingredients_list:
-                print(f"product_saved_without_ingredients: {barcode}")
+                logger.info(f"Продукт создан без ингредиентов: {barcode}")
             else:
                 # 4. Привязка ингредиентов (fail-safe)
                 self._attach_ingredients(session, product, ingredients_list)
@@ -198,7 +212,6 @@ class OtrazhenieDB(Database):
             # 5. Финальный commit (ОДИН раз)
             session.commit()
             session.refresh(product)
-
             return product
 
     def add_ingredient_with_category(
@@ -250,6 +263,7 @@ class OtrazhenieDB(Database):
                 description=description,
                 category_id=category_id,
             )
+            logger.info("Добавлен новый ингредиент с категорией", extra={"ingredient": ingredient})
             return ingredient
 
     def update_ingredient(
@@ -279,6 +293,7 @@ class OtrazhenieDB(Database):
                 ingredient.description = description
             session.commit()  # фиксируем изменения
             session.refresh(ingredient)  # обновляем объект после commit
+            logger.info("Данные ингредиента обновлены", extra={"ingredient": ingredient})
             return ingredient
 
     def delete_ingredient(self, ingredient_id: int):
@@ -293,6 +308,7 @@ class OtrazhenieDB(Database):
                 return None
             session.delete(ingredient)
             session.commit()  # фиксируем изменения
+            logger.info("Ингредиент удален", extra={"ingredient": ingredient})
             return ingredient
 
     def select_all_products(self):
@@ -349,12 +365,12 @@ class OtrazhenieDB(Database):
     def create_user_table(self):
         """Создаёт только таблицу пользователей"""
         User.__table__.create(self.engine, checkfirst=True)
-        print("Таблица users создана!")
+        logger.info("Таблица users создана!")
 
     def delete_user_table(self):
         """Удаляет только таблицу пользователей"""
         User.__table__.drop(self.engine, checkfirst=True)
-        print("Таблица users удалена!")
+        logger.info("Таблица users удалена!")
 
     def select_all_users(self):
         """Возвращает всех юзеров"""
@@ -387,6 +403,7 @@ class OtrazhenieDB(Database):
             session.add(user)
             session.commit()
             session.refresh(user)
+            logger.info("Создан новый пользователь", extra={"user": user})
             return user
 
     def verify_user_password(self, email: str, password: str):

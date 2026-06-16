@@ -59,7 +59,16 @@ class User(UserMixin):
         self.password_hash = password_hash
 
         # Флаг активности (можно блокировать пользователя)
-        self.is_active = is_active
+        self._is_active = is_active
+
+    @property
+    def is_active(self) -> bool:
+        """
+        Flask-Login использует этот property
+
+        Мы контролируем значение через _is_active
+        """
+        return self._is_active
 
     def check_password(self, password: str) -> bool:
         """

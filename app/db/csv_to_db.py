@@ -1,35 +1,12 @@
 import csv
-
+import logging
 from app.db.models import IngredientCategory, ProductIngredient
 from app.db.session import Database
 
+logger = logging.getLogger(__name__)
+
 
 class CSVToDB(Database):
-    def import_categories_from_csv(self, file_path: str):
-        """
-        Импорт категорий (ingredient_categories) из CSV
-        Ожидаемые поля: name_en, name_ru, description
-        """
-        with self.get_session() as session:
-            with open(file_path, newline="", encoding="utf-8-sig") as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    # проверяем наличие по уникальному name_en
-                    existing = (
-                        session.query(IngredientCategory)
-                        .filter_by(name_en=row["name_en"])
-                        .first()
-                    )
-                    if existing:
-                        continue
-                    category = IngredientCategory(
-                        name_en=row["name_en"],
-                        name_ru=row.get("name_ru"),
-                        description=row.get("description"),
-                    )
-                    session.add(category)
-                session.commit()
-        print("Категории импортированы!")
 
     def import_ingredients_from_csv(self, file_path: str):
         """
@@ -68,8 +45,9 @@ class CSVToDB(Database):
                     )
                     session.add(ingredient)
                 session.commit()
-        print("Ингредиенты импортированы!")
+        logger.info("Ингредиенты импортированы из CSV!")
 
 
-# CSVToDB().import_categories_from_csv("csv_files/ingredient_categories.csv")
-CSVToDB().import_ingredients_from_csv("csv_files/ingredients.csv")
+if __name__ == "__main__":
+    # CSVToDB().import_categories_from_csv("csv_files/ingredient_categories.csv")
+    CSVToDB().import_ingredients_from_csv("csv_files/ingredients.csv")
