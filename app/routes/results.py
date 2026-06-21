@@ -2,9 +2,10 @@ from flask import Blueprint, jsonify, redirect, render_template, request, url_fo
 
 from app.db import crud
 from app.forms import CompositionForm
-
+import logging
 results_bp = Blueprint("results_bp", __name__)
 
+logger = logging.getLogger(__name__)
 
 def load_ingredients_database():
     """
@@ -14,6 +15,7 @@ def load_ingredients_database():
     """
     try:
         db_data = crud.OtrazhenieDB().select_all_ingredients_with_names()
+        logger.info("Загрузка базы данных ингредиентов")
         ingredients_dict = {}
         for row in db_data:
             db_dict = {
@@ -23,9 +25,11 @@ def load_ingredients_database():
                 "description": row[4],
             }
             ingredients_dict[row[1].lower()] = db_dict
+            logger.info("База данных ингредиентов успешно загружена: %s элементов", len(ingredients_dict))
         return ingredients_dict
     except FileNotFoundError:
-        print("Warning: Ingredients database not found!")
+        logger.exception("Не удалось загрузить базу данных ингредиентов")
+        return {}
 
 
 def analyze_composition(composition: str):
@@ -36,6 +40,10 @@ def analyze_composition(composition: str):
     normalized_ingredients = [
         i.strip().lower() for i in composition.split(",") if i.strip()
     ]
+    logger.info(
+        "Анализ состава, количество ингредиентов=%s",
+        len(normalized_ingredients)
+    )
     db_data = load_ingredients_database() or {}
     analysis_result = []
     for ingredient_name in normalized_ingredients:
@@ -50,6 +58,7 @@ def analyze_composition(composition: str):
                 },
             )
         )
+    logger.info("Анализ состава завершен")
     return analysis_result
 
 
@@ -58,11 +67,13 @@ def analyze():
     form = CompositionForm()
 
     if form.validate_on_submit():
+        logger.info("Отправлена валидная форма состава")
         return redirect(
             url_for("results_bp.results", composition=form.composition.data)
         )
 
     # если форма невалидна — вернуть на главную
+    logger.warning("Отправлена невалидная форма состава")
     return redirect(url_for("index_bp.index"))
 
 
@@ -78,7 +89,12 @@ def results_page():
         or request.args.get("composition")  # если нет — берём из query (GET)
         or ""  # если нигде нет — пустая строка
     )
-
+    logger.info(
+        "Запрошена страница результатов, длина состава=%s",
+        len(composition)
+    )
+    if not composition:
+        logger.warning("На странице результатов отображается пустой состав")
     analysis = analyze_composition(composition)
     # return render_template("results.html",
     return render_template(
@@ -99,19 +115,25 @@ def add_unknown():
     description = data.get("description")
     safety_score = data.get("safety_score")
 
+    logger.info("Запрос на добавление неизвестного ингредиента: %s", name)
     if not name or not safety_score:
+        logger.warning("Отсутствуют обязательные поля: %s", data)
         return jsonify(success=False, message="Не хватает данных"), 400
-
-    new_ing = crud.OtrazhenieDB()
-    new_ing.add_ingredient_with_category(
-        name=name,
-        category_name_ru=function_ru,
-        category_name_en=function_en,
-        description_category=description_category,
-        safety_score=safety_score,
-        description=description,
-    )
-    return jsonify(success=True, message=f"{name} добавлен")
+    try:
+        new_ing = crud.OtrazhenieDB()
+        new_ing.add_ingredient_with_category(
+            name=name,
+            category_name_ru=function_ru,
+            category_name_en=function_en,
+            description_category=description_category,
+            safety_score=safety_score,
+            description=description,
+        )
+        logger.info("Ингредиенты успешно добавлены: %s", name)
+        return jsonify(success=True, message=f"{name} добавлен")
+    except:
+        logger.exception("Ошибка в добавлении ингредиента: %s", name)
+        return jsonify(success=False, message="Ошибка сервера"), 500
 
 
 @results_bp.route(
@@ -123,6 +145,8 @@ def ingredient_detail(name: str):
     """
     db_data = load_ingredients_database() or {}
     key = (name or "").strip().lower()
+    logger.info("Запрошенная информация об ингредиенте: %s", key)
+
     data = db_data.get(
         key,
         {
@@ -132,6 +156,8 @@ def ingredient_detail(name: str):
             "description": "Не найден в базе данных",
         },
     )
+    if data.get("function") == "Неизвестно":
+        logger.warning("Ингредиент не найден: %s", key)
     # Рендерим fullpage-шаблон с деталями
     return render_template(
         "fullpage/ingredient_detail.html", ingredient=data, active_tab="scanner"

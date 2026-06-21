@@ -47,7 +47,7 @@ def auth_register():
             # Передаём данные в сервисный слой
             # Важно: view НЕ знает как создаётся пользователь
             logger.info(
-                "Попытка регистрации пользователя. username={form.username.data}, email={form.email.data}"
+                "Попытка регистрации пользователя. username=%s, email=%s", form.username.data, form.email.data
             )
 
             user = user_service.register_user(
@@ -58,7 +58,7 @@ def auth_register():
                 }
             )
             logger.info(
-                f"Пользователь успешно зарегистрирован. id={user.id}")
+                "Пользователь успешно зарегистрирован. id=%s", user.id)
             # flash — механизм уведомлений Flask (хранится в session)
             flash("Регистрация успешна!", "success")
 
@@ -75,7 +75,7 @@ def auth_register():
             - view отвечает за отображение ошибок
             """
             logger.exception(
-                f"Ошибка регистрации пользователя. username={form.username.data}, email={form.email.data}")
+                "Ошибка регистрации пользователя. username=%s, email=%s", form.username.data, form.email.data)
             # e.errors() — стандарт Pydantic (dict ошибок по полям)
             for field, msg in e.errors.items():
 
@@ -112,6 +112,7 @@ def auth_login():
         user = user_service.authenticate_user(form.email.data, form.password.data)
 
         if user:
+            logger.info("Пользователь авторизовался с данными: \nлогин: %s\nпочта: %s", user.username, user.email)
             # login_user:
             # - сохраняет user_id в session
             # - активирует Flask-Login контекст пользователя
@@ -124,6 +125,7 @@ def auth_login():
             return redirect(url_for("profile_bp.profile"))
 
         else:
+            logger.info("Пользователь %s ввел неверные данные или такого пользователя не существует", form.email.data)
             # Неправильные данные → не создаём session
             flash("Неправильный email или пароль", "error")
 
@@ -153,7 +155,7 @@ def auth_logout():
     """
 
     logout_user()
-
+    logger.info("Пользователь вышел из системы")
     flash("Вы успешно вышли из системы!", "success")
 
     # после выхода обычно отправляют на главную

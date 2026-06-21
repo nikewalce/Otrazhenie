@@ -157,7 +157,7 @@ class OtrazhenieDB(Database):
                 product.ingredients.append(ingredient)
 
             except Exception as e:
-                logger.exception(f"ingredient_attach_failed: {ing_name}")
+                logger.exception("ingredient_attach_failed: %s", ing_name)
 
     def add_product(
         self,
@@ -179,7 +179,7 @@ class OtrazhenieDB(Database):
             # 1. Проверка на существование
             existing_product = session.query(Product).filter_by(barcode=barcode).first()
             if existing_product:
-                logger.info(f"Продукт существует: {barcode}")
+                logger.info("Продукт существует: %s", barcode)
                 return existing_product
 
             # 2. Создание продукта (ВСЕГДА succeeds)
@@ -198,13 +198,13 @@ class OtrazhenieDB(Database):
             session.add(product)
             session.flush()  # получаем id, но ещё не commit
 
-            logger.info(f"Продукт создан: {barcode}")
+            logger.info("Продукт создан: %s", barcode)
 
             # 3. Парсинг ингредиентов (fail-safe)
             ingredients_list = self._parse_ingredients(ingredients_text)
 
             if not ingredients_list:
-                logger.info(f"Продукт создан без ингредиентов: {barcode}")
+                logger.info("Продукт создан без ингредиентов: %s", barcode)
             else:
                 # 4. Привязка ингредиентов (fail-safe)
                 self._attach_ingredients(session, product, ingredients_list)

@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template
-
+# import logging
 diary_bp = Blueprint("diary_bp", __name__)
 
+# logger = logging.getLogger(__name__)
 
 @diary_bp.route("/diary", endpoint="diary")
 def diary():
