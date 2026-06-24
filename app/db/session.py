@@ -24,6 +24,7 @@ class Database:
         self.engine = create_engine(
             db_url, future=True
         )  # создаём подключение к базе данных
+        logger.info("Подключение к БД создано!")
         # Создаём фабрику сессий
         self.SessionLocal = sessionmaker(
             bind=self.engine,  # подключение к конкретной базе
@@ -31,6 +32,7 @@ class Database:
             autocommit=False,  # управление транзакциями вручную
             class_=Session,  # используем ORM сессию
         )
+        logger.info("Фабрика сессий создана!")
         self.inspect = inspect(self.engine)
 
     def get_session(self):
@@ -39,6 +41,7 @@ class Database:
             with db.get_session() as session:
                 # работа с базой
         """
+        logger.info("Получен объект сессии: %s", self.SessionLocal())
         return (
             self.SessionLocal()
         )  # Возвращает объект сессии, который закрывается после выхода из блока with

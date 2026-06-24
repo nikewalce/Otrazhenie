@@ -30,9 +30,9 @@ class OtrazhenieDB(Database):
         # Проверяем, есть ли уже таблица в базе
         if table.name not in inspector.get_table_names():
             table.create(self.engine)
-            logger.info("Таблица создана!", extra={"table_name": table.name})
+            logger.info("Таблица создана: %s!", table.name)
         else:
-            logger.info("Таблица уже существует.", extra={"table_name": table.name})
+            logger.info("Таблица уже существует: %s", table.name)
 
     def delete_tables(self):
         """Удаляет все таблицы, которые определены в моделях"""
@@ -62,7 +62,7 @@ class OtrazhenieDB(Database):
             session.add(ingredient)
             session.commit()  # фиксируем изменения
             session.refresh(ingredient)
-            logger.info("Добавлен новый ингредиент", extra={
+            logger.info("Добавлен новый ингредиент: %s", {
                 "name":name,
                 "safety_score" : safety_score,
                 "description" : description,
@@ -77,11 +77,11 @@ class OtrazhenieDB(Database):
         inspector = self.inspect
         tables = inspector.get_table_names()
         if not tables:
-            print("В базе данных нет таблиц.")
+            logger.info("В базе данных нет таблиц")
             return []
-        print("Таблицы в базе данных:")
+        logger.info("Таблицы в базе данных:")
         for table in tables:
-            print(f"- {table}")
+            logger.info("%s- ", table)
         return tables
 
     def show_table_columns(self, table_name: str):
@@ -91,11 +91,11 @@ class OtrazhenieDB(Database):
         inspector = self.inspect
         columns = inspector.get_columns(table_name)
         if not columns:
-            print(f"Таблица '{table_name}' не найдена.")
+            logger.info("Таблица %s не найдена.", table_name)
             return []
-        print(f"Колонки таблицы '{table_name}':")
+        logger.info("Колонки таблицы %s:", table_name)
         for col in columns:
-            print(f"- {col['name']} ({col['type']})")
+            logger.info("- %s (%s)", col['name'], col['type'])
         return columns
 
     def add_category(
@@ -113,8 +113,8 @@ class OtrazhenieDB(Database):
             session.add(category)
             session.commit()
             session.refresh(category)  # обновляем, чтобы получить ID
-            logger.info("Добавлена новая категория ингредиентов",
-                        extra={
+            logger.info("Добавлена новая категория ингредиентов: %s",
+                        {
                             "name_en" : name_en,
                             "name_ru" : name_ru,
                             "description" : description
@@ -263,7 +263,7 @@ class OtrazhenieDB(Database):
                 description=description,
                 category_id=category_id,
             )
-            logger.info("Добавлен новый ингредиент с категорией", extra={"ingredient": ingredient})
+            logger.info("Добавлен новый ингредиент с категорией: %s", ingredient)
             return ingredient
 
     def update_ingredient(
@@ -293,7 +293,7 @@ class OtrazhenieDB(Database):
                 ingredient.description = description
             session.commit()  # фиксируем изменения
             session.refresh(ingredient)  # обновляем объект после commit
-            logger.info("Данные ингредиента обновлены", extra={"ingredient": ingredient})
+            logger.info("Данные ингредиента обновлены: %s", ingredient)
             return ingredient
 
     def delete_ingredient(self, ingredient_id: int):
@@ -308,7 +308,7 @@ class OtrazhenieDB(Database):
                 return None
             session.delete(ingredient)
             session.commit()  # фиксируем изменения
-            logger.info("Ингредиент удален", extra={"ingredient": ingredient})
+            logger.info("Ингредиент удален: %s", ingredient)
             return ingredient
 
     def select_all_products(self):
@@ -403,7 +403,7 @@ class OtrazhenieDB(Database):
             session.add(user)
             session.commit()
             session.refresh(user)
-            logger.info("Создан новый пользователь", extra={"user": user})
+            logger.info("Создан новый пользователь: %s", user)
             return user
 
     def verify_user_password(self, email: str, password: str):

@@ -18,7 +18,7 @@ def setup_logging() -> None:
     CRITICAL — только для действительно аварийных случаев
     """
 
-    level_name = config("LOG_LEVEL").upper()
+    level_name = config("LOG_LEVEL", default="INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
 
     if logging.getLogger().handlers:
