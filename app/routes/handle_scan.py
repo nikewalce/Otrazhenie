@@ -51,7 +51,7 @@ def handle_scan_page():
             logger.info("Получено изображение для сканирования")
             barcode_data = decode_barcode(file.read())
             if not barcode_data:
-                logger.warning("Продукт со штрих-кодом %s не найден", barcode_data)
+                logger.warning("Не удалось распознать штрих-код на изображении")
                 flash("Не удалось распознать штрих-код", "warning")
                 return redirect(url_for("handle_scan_bp.handle_scan"))
             logger.info("Распознан штрих-код: %s", barcode_data)

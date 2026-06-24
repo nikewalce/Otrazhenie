@@ -46,9 +46,7 @@ def auth_register():
         try:
             # Передаём данные в сервисный слой
             # Важно: view НЕ знает как создаётся пользователь
-            logger.info(
-                "Попытка регистрации пользователя. username=%s, email=%s", form.username.data, form.email.data
-            )
+            logger.info("Попытка регистрации пользователя: username_len=%s", len(form.username.data or ""))
 
             user = user_service.register_user(
                 {
@@ -57,8 +55,7 @@ def auth_register():
                     "password": form.password.data,
                 }
             )
-            logger.info(
-                "Пользователь успешно зарегистрирован. id=%s", user.id)
+            logger.info("Пользователь успешно зарегистрирован: user_id=%s", user.id)
             # flash — механизм уведомлений Flask (хранится в session)
             flash("Регистрация успешна!", "success")
 
@@ -112,7 +109,8 @@ def auth_login():
         user = user_service.authenticate_user(form.email.data, form.password.data)
 
         if user:
-            logger.info("Пользователь авторизовался с данными: \nлогин: %s\nпочта: %s", user.username, user.email)
+
+            logger.info("Пользователь успешно авторизован: user_id=%s", user.id)
             # login_user:
             # - сохраняет user_id в session
             # - активирует Flask-Login контекст пользователя

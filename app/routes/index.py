@@ -12,7 +12,7 @@ def index_page():
     composition_form = CompositionForm()
     search_form = SearchForm()
     scan_form = ScanForm()
-    logger.info("Главная страница загружена")
+    logger.debug("Главная страница загружена")
     return render_template(
         "fullpage/index.html",
         composition_form=composition_form,

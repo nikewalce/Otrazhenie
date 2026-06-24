@@ -11,7 +11,7 @@ def profile():
     """
     Рендерит страницу профиля пользователя.
     """
-    logger.info("Загрузка профиля")
+    logger.debug("Загрузка профиля")
     # return render_template("profile.html", active_tab='profile')
     # return render_template("fullpage/profile.html", active_tab='profile')
     return render_template(

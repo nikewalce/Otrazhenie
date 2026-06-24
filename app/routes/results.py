@@ -25,7 +25,10 @@ def load_ingredients_database():
                 "description": row[4],
             }
             ingredients_dict[row[1].lower()] = db_dict
-            logger.info("База данных ингредиентов успешно загружена: %s элементов", len(ingredients_dict))
+        logger.info(
+            "База данных ингредиентов успешно загружена: %s элементов",
+            len(ingredients_dict),
+        )
         return ingredients_dict
     except FileNotFoundError:
         logger.exception("Не удалось загрузить базу данных ингредиентов")
@@ -117,7 +120,11 @@ def add_unknown():
 
     logger.info("Запрос на добавление неизвестного ингредиента: %s", name)
     if not name or not safety_score:
-        logger.warning("Отсутствуют обязательные поля: %s", data)
+        logger.warning(
+            "Отсутствуют обязательные поля при добавлении ингредиента: has_name=%s, has_safety_score=%s",
+            bool(name),
+            bool(safety_score),
+        )
         return jsonify(success=False, message="Не хватает данных"), 400
     try:
         new_ing = crud.OtrazhenieDB()

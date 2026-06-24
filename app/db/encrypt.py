@@ -32,6 +32,5 @@ class EncryptData:
                     return True, self.ph.hash(password)
                 return True, None
             except VerifyMismatchError:
-                logger.exception("Введенный пароль не совпадает с тем, что хранится в базе данных!")
                 return False, None
         return False, None

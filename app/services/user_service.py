@@ -1,43 +1,24 @@
 from typing import Dict, Optional
-
-# UserMixin — это готовая реализация базовых методов пользователя для Flask-Login:
-# - is_authenticated
-# - is_active
-# - is_anonymous
-# - get_id (можно переопределять)
+import logging
 from flask_login import UserMixin
-
-# Ошибка валидации от Pydantic (используется для схем)
 from pydantic import ValidationError as PydanticValidationError
 
-# CRUD слой — работает напрямую с БД (SQLAlchemy или другой ORM)
 from app.db.crud import OtrazhenieDB
-
-# Класс для работы с паролями:
-# - хэширование
-# - проверка
 from app.db.encrypt import EncryptData
-
-# Кастомная ошибка доменной валидации (твой уровень приложения)
 from app.exceptions.validation import ValidationError
-
-# Pydantic-схема для регистрации пользователя
 from app.schemas.user_schema import UserRegistrationSchema
 
+logger = logging.getLogger(__name__)
+
+def mask_email(email: str) -> str:
+    """user@example.com -> u***@example.com"""
+    try:
+        name, domain = email.split("@")
+        return f"{name[0]}***@{domain}"
+    except Exception:
+        return "***@***"
 
 class User(UserMixin):
-    """
-    Доменная модель пользователя (НЕ ORM!)
-
-    Это важный момент:
-    - Это НЕ модель БД (не SQLAlchemy)
-    - Это объект, с которым работает сервисный слой и Flask-Login
-
-    Зачем это нужно:
-    - отделяем БД от бизнес-логики
-    - можем менять ORM, не ломая остальной код
-    """
-
     def __init__(
         self,
         id: int,
@@ -46,195 +27,133 @@ class User(UserMixin):
         password_hash: str,
         is_active: bool = True,
     ):
-        # ID пользователя (используется Flask-Login)
+        logger.debug("Инициализация пользователя: user_id=%s username=%s", id, username)
+
         self.id = id
-
-        # Логин пользователя
         self.username = username
-
-        # Email (используется как основной идентификатор при логине)
         self.email = email
-
-        # Хэш пароля (НИКОГДА не храним пароль в открытом виде)
         self.password_hash = password_hash
-
-        # Флаг активности (можно блокировать пользователя)
         self._is_active = is_active
 
     @property
     def is_active(self) -> bool:
-        """
-        Flask-Login использует этот property
-
-        Мы контролируем значение через _is_active
-        """
+        logger.debug("Проверка is_active для user_id= %s", self.id)
         return self._is_active
 
     def check_password(self, password: str) -> bool:
-        """
-        Проверяет пароль пользователя
+        result = EncryptData.verify_password(self.password_hash, password)[0]
 
-        Как работает:
-        1. Берем сохраненный hash
-        2. Сравниваем с введенным паролем
-        3. verify_password возвращает tuple (bool, ...)
-        """
-        return EncryptData.verify_password(self.password_hash, password)[0]
+        logger.debug(
+            "Проверка пароля: user_id=%s result=%s",
+            self.id,
+            "ok" if result else "fail",
+        )
+
+        return result
 
     def get_id(self):
-        """
-        Flask-Login требует, чтобы ID был строкой
-
-        Этот метод используется:
-        - при сохранении user_id в сессии
-        - при загрузке пользователя (user_loader)
-        """
         return str(self.id)
 
 
 class UserService:
-    """
-    Сервисный слой (Business Logic Layer)
-
-    Его задача:
-    - НЕ работать напрямую с Flask
-    - НЕ работать напрямую с ORM
-    - управлять логикой приложения
-
-    Здесь происходит:
-    - валидация
-    - регистрация
-    - аутентификация
-    """
-
-    # Создаем экземпляр CRUD слоя
     db = OtrazhenieDB()
 
-    # ---------------- Регистрация ----------------
     def register_user(self, data: Dict) -> User:
-        """
-        Регистрирует пользователя
+        logger.info("Попытка регистрации пользователя")
 
-        Pipeline (очень важно понимать):
-        1. Валидация данных (Pydantic + бизнес-правила)
-        2. Хэширование пароля
-        3. Сохранение в БД
-        4. Преобразование в доменную модель
-        """
-
-        # 1. Валидируем входные данные
         validated_data = self.validate_registration_data(data)
 
-        # 2. Хэшируем пароль (безопасность)
-        hash_password = EncryptData.hash_password(validated_data.password)
+        logger.debug("Данные регистрации успешно валидированы")
 
-        # 3. Сохраняем пользователя в БД через CRUD слой
+        hash_password = EncryptData.hash_password(validated_data.password)
+        logger.debug("Пароль успешно захеширован")
+
         user_obj = self.db.create_user(
             username=validated_data.username,
             email=validated_data.email,
             password_hash=hash_password,
         )
 
-        # 4. Конвертируем ORM → доменная модель
+        logger.info("Пользователь создан в БД: user_id=%s username=%s",
+            user_obj.id,
+            user_obj.username,
+        )
+
         return self._to_user_model(user_obj)
 
     def validate_registration_data(self, data: Dict) -> UserRegistrationSchema:
-        """
-        Валидирует данные регистрации
-
-        Уровни валидации:
-        1. Pydantic (формат, типы, длины)
-        2. Бизнес-логика (уникальность email/username)
-        """
+        logger.debug("Валидация данных регистрации: %s", data)
 
         try:
-            # Pydantic автоматически:
-            # - проверяет типы
-            # - проверяет обязательные поля
-            # - может делать кастомные валидаторы
             validated_user = UserRegistrationSchema(**data)
+            logger.debug("Pydantic-валидация прошла успешно")
 
         except PydanticValidationError as e:
-            # Перехватываем ошибку Pydantic и преобразуем в свою
-            # Это важно, чтобы:
-            # - не "протекали" внешние зависимости наружу
-            # - унифицировать ошибки
-            print(f"Ошибка валидации: {e}")
-
+            logger.warning("РЕГИСТРАЦИЯ_ОТКЛОНЕНА причина=ошибка_валидации")
             raise ValidationError(e.errors())
 
-        # Проверка уникальности email
         if self.db.get_user_by_email(validated_user.email):
-            raise ValidationError(
-                {"email": "Пользователь с таким email уже существует"}
+            logger.warning(
+                "РЕГИСТРАЦИЯ_ОТКЛОНЕНА причина=дубликат_email email=%s",
+                mask_email(validated_user.email),
             )
+            raise ValidationError({"email": "Пользователь с таким email уже существует"})
 
-        # Проверка уникальности username
         if self.db.get_user_by_username(validated_user.username):
-            raise ValidationError(
-                {"username": "Пользователь с таким именем уже существует"}
+            logger.warning(
+                "РЕГИСТРАЦИЯ_ОТКЛОНЕНА причина=дубликат_username username=%s",
+                validated_user.username,
             )
+            raise ValidationError({"username": "Пользователь с таким именем уже существует"})
 
+        logger.debug("РЕГИСТРАЦИЯ_ПРОШЛА_ВАЛИДАЦИЮ_УСПЕШНО")
         return validated_user
 
-    # ---------------- Аутентификация ----------------
     def authenticate_user(self, email: str, password: str) -> Optional[User]:
-        """
-        Аутентификация пользователя (логин)
+        logger.info("Попытка аутентификации пользователя")
 
-        Логика:
-        1. Ищем пользователя по email
-        2. Если нет — возвращаем None
-        3. Проверяем пароль
-        4. Если верно — возвращаем User
-        """
-
-        # Получаем пользователя из БД
         user_obj = self.db.get_user_by_email(email)
 
-        # Если пользователь не найден
         if not user_obj:
+            logger.warning("ВХОД_НЕУДАЧЕН причина=неверные_данные")
             return None
 
-        # Проверяем пароль через CRUD слой
-        # (возможно внутри используется EncryptData)
         is_valid = self.db.verify_user_password(email, password)
 
-        # Если пароль верный → возвращаем доменную модель
-        return self._to_user_model(user_obj) if is_valid else None
+        if not is_valid:
+            logger.warning(
+                "ВХОД_НЕУДАЧЕН причина=неверные_данные user_id=%s",
+                user_obj.id
+            )
+            return None
 
-    # ---------------- Получение пользователей ----------------
+        logger.info("ВХОД_УСПЕШЕН user_id=%s", user_obj.id)
+        return self._to_user_model(user_obj)
+
     def get_user_by_id(self, user_id: int) -> Optional[User]:
-        """
-        Получение пользователя по ID
+        logger.debug("Поиск пользователя по id= %s", user_id)
 
-        Используется:
-        - Flask-Login (user_loader)
-        """
         user_obj = self.db.get_user_by_id(user_id)
-        return self._to_user_model(user_obj) if user_obj else None
+
+        if not user_obj:
+            logger.debug("ПОЛЬЗОВАТЕЛЬ_НЕ_НАЙДЕН user_id=%s", user_id)
+            return None
+
+        return self._to_user_model(user_obj)
 
     def get_user_by_email(self, email: str) -> Optional[User]:
-        """Получение пользователя по email"""
+        logger.debug("Поиск пользователя по email: %s", mask_email(email))
+
         user_obj = self.db.get_user_by_email(email)
         return self._to_user_model(user_obj) if user_obj else None
 
     def get_user_by_username(self, username: str) -> Optional[User]:
-        """Получение пользователя по username"""
+        logger.debug("Поиск пользователя по username= %s", username)
+
         user_obj = self.db.get_user_by_username(username)
         return self._to_user_model(user_obj) if user_obj else None
 
     def _to_user_model(self, user_obj) -> User:
-        """
-        Конвертер ORM → доменная модель
-
-        Зачем:
-        - не тащим SQLAlchemy объекты в бизнес-логику
-        - контролируем, какие поля доступны
-        - изолируем слой БД
-
-        Это ключевой элемент "чистой архитектуры"
-        """
         return User(
             id=user_obj.id,
             username=user_obj.username,
@@ -243,9 +162,5 @@ class UserService:
             is_active=user_obj.is_active,
         )
 
-
-# ---------------- Глобальный экземпляр ----------------
-# Упрощение:
-# можно импортировать user_service в любом месте приложения
 
 user_service = UserService()

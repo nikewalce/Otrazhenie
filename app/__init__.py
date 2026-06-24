@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, url_for
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
+import logging
 
 from app.routes.auth import auth_bp
 from app.routes.diary import diary_bp
@@ -25,6 +26,7 @@ csrf = CSRFProtect()
 # Инициализируем LoginManager
 login_manager = LoginManager()
 
+logger = logging.getLogger(__name__)
 
 def create_app():
     # инициализация логирования на старте Flask-приложения,
@@ -42,6 +44,7 @@ def create_app():
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
+        logger.warning("CSRF validation failed")
         flash("Сессия истекла или неверный CSRF токен. Повторите попытку.", "error")
         return redirect(url_for("index_bp.index")), 400
 
@@ -84,4 +87,25 @@ def load_user(user_id):
     from app.db.crud import OtrazhenieDB
 
     db = OtrazhenieDB()
-    return db.get_user_by_id(int(user_id))
+
+    # 1. защита от повреждённого session / атаки / мусора
+    try:
+        user_id_int = int(user_id)
+    except (ValueError, TypeError):
+        logger.warning(
+            "FLASK_LOGIN: некорректный user_id в session"
+        )
+        return None
+
+    # 2. получаем пользователя
+    user = db.get_user_by_id(user_id_int)
+
+    # 3. пользователь удалён / не существует
+    if not user:
+        logger.info(
+            "FLASK_LOGIN: пользователь не найден в БД, user_id=%s",
+            user_id_int
+        )
+        return None
+
+    return user
