@@ -120,7 +120,7 @@
                 <label for="composition" class="form-label">
                     <i data-lucide="list" class="label-icon"></i>
                     Список ингредиентов
-                </label>
+                       </label>
                 <textarea name="composition" id="composition" rows="4" class="form-input"
                           placeholder="Введите ингредиенты через запятую, например: Aqua, Glycerin, Hyaluronic Acid..." required></textarea>
                 <div class="form-hint">
@@ -144,11 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const scanTrigger = document.getElementById('scan-trigger');
     const barcodeInput = document.getElementById('barcode-input');
     const barcodeForm = document.getElementById('barcode-form');
-
-    // При клике на кнопку открываем камеру / файловый выбор
-    scanTrigger.addEventListener('click', function() {
-        barcodeInput.click();
-    });
 
     // При выборе файла отправляем форму
     barcodeInput.addEventListener('change', function() {
