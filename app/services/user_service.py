@@ -65,7 +65,7 @@ class UserService:
 
         logger.debug("Данные регистрации успешно валидированы")
 
-        hash_password = EncryptData.hash_password(validated_data.password)
+        hash_password = EncryptData().hash_password(validated_data.password)
         logger.debug("Пароль успешно захеширован")
 
         user_obj = self.db.create_user(

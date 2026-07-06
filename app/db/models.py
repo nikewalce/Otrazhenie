@@ -154,6 +154,16 @@ class Product(Base):
 class User(Base, UserMixin):
     """Класс пользователя"""
 
+    def has_role(self, role_name: str) -> bool:
+        return any(role.name == role_name for role in self.roles)
+
+    def has_permission(self, permission_name: str) -> bool:
+        return any(
+            permission.name == permission_name
+            for role in self.roles
+            for permission in role.permissions
+        )
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)  # Уникальный ID пользователя

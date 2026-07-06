@@ -133,10 +133,12 @@
                     {% if ingredient.safety_score == '?' %}
                     <div class="unknown-ingredient">
                         <p class="unknown-text">Этот ингредиент не найден в нашей базе данных</p>
+                        {% if current_user.is_authenticated and current_user.has_permission("ingredients:create") %}
                         <button class="add-ingredient-btn" onclick="addIngredient('{{ ingredient.name }}')">
                             <i data-lucide="plus" class="button-icon"></i>
                             <span>Добавить в базу</span>
                         </button>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

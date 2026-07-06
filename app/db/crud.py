@@ -1,7 +1,8 @@
 from app.db.encrypt import EncryptData
-from app.db.models import IngredientCategory, Product, ProductIngredient, User
+from app.db.models import IngredientCategory, Product, ProductIngredient, User, Role
 from app.db.session import Base, Database
 import logging
+from sqlalchemy.orm import joinedload
 
 logger = logging.getLogger(__name__)
 
@@ -388,9 +389,17 @@ class OtrazhenieDB(Database):
             return session.query(User).filter(User.username == username).first()
 
     def get_user_by_id(self, user_id: int):
-        """Возвращает пользователя по ID"""
+        """Возвращает пользователя по ID с ролями и доступами"""
         with self.get_session() as session:
-            return session.query(User).filter(User.id == user_id).first()
+            return (
+                session.query(User)
+                .options(
+                    joinedload(User.roles)
+                    .joinedload(Role.permissions)
+                )
+                .filter(User.id == user_id)
+                .first()
+            )
 
     def create_user(self, username: str, email: str, password_hash: str):
         """Создаёт нового пользователя"""

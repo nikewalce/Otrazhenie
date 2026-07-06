@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask_login import login_required
 
 from app.db import crud
 from app.forms import CompositionForm
+from app.auth.rbac.permissions import permission_required
 import logging
 results_bp = Blueprint("results_bp", __name__)
 
@@ -109,6 +111,8 @@ def results_page():
 
 
 @results_bp.route("/add_unknown", methods=["POST"])
+@login_required
+@permission_required("ingredients:create")
 def add_unknown():
     data = request.get_json()
     name = data.get("name")
